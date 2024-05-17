@@ -17,8 +17,8 @@ export default defineConfig({
       usePolling: true, // Needed for hot-reloading to work inside Docker
     },
     hmr: {
-      clientPort: 8080, // The port on which the client can reach the server
-      host: 'localhost' // Use Docker host IP or a specific domain if needed
+      clientPort: 80, // The port on which the client can reach the server
+      host: '130.61.49.116' // Use Docker host IP or a specific domain if needed
     },
   },
 });
