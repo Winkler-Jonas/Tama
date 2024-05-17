@@ -1,12 +1,14 @@
 <template>
   <main>
-    <img alt="placeholder-img" :src="working">
+    <img alt="placeholder-img" :src="imgUrl">
     <h1>Working on it ... </h1>
   </main>
 </template>
 
 <script setup>
-import working from '@/assets/working.gif'
+import {ref} from "vue";
+
+const imgUrl = ref('http://130.61.49.116/static/working.gif/')
 
 </script>
 
