@@ -52,7 +52,8 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "${NGINX_PORT}:80"
+      - "8080:80"
+      #- "${NGINX_PORT}:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - static_volume:/app/staticfiles
@@ -71,3 +72,5 @@ volumes:
   postgres_data:
   static_volume:
   media_volume:
+  frontend_dist:
+
