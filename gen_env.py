@@ -1,17 +1,37 @@
 import os
 import secrets
 import string
-from django.core.management.utils import get_random_secret_key
+import sys
 
-# Function to generate a secure random password
 def generate_secure_password(length=16):
     characters = string.ascii_letters + string.digits + string.punctuation
-    return ''.join(secrets.choice(characters) for i in range(length))
+    password = ''.join(secrets.choice(characters) for i in range(length))
+    # Ensure the password is wrapped in double quotes and escape any existing double quotes
+    return '"' + password.replace('"', '\\"') + '"'
+
+def generate_secret_key(length=50):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    secret_key = ''.join(secrets.choice(characters) for i in range(length))
+    # Ensure the secret key is wrapped in double quotes and escape any existing double quotes
+    return '"' + secret_key.replace('"', '\\"') + '"'
+
+# Get environment argument
+environment = sys.argv[1]
 
 # Generate secure random values
-secret_key = get_random_secret_key()
+secret_key = generate_secret_key()
 postgres_user = 'projectuser'
 postgres_password = generate_secure_password()
+
+# Determine environment-specific settings
+if environment == 'dev':
+    environment_setting = 'development'
+    nginx_port = 8080
+elif environment == 'prod':
+    environment_setting = 'production'
+    nginx_port = 80
+else:
+    raise ValueError("Invalid environment. Use 'dev' or 'prod'.")
 
 # Create the .env file content
 env_content = f"""
@@ -19,19 +39,17 @@ SECRET_KEY={secret_key}
 POSTGRES_DB=myproject
 POSTGRES_USER={postgres_user}
 POSTGRES_PASSWORD={postgres_password}
+ENVIRONMENT={environment_setting}
+NGINX_PORT={nginx_port}
 """
 
 env_path = '.env'
 
-# Check if .env file already exists
-if os.path.exists(env_path):
-    print(f"{env_path} already exists. Skipping creation.")
-else:
-    with open(env_path, 'w') as env_file:
-        env_file.write(env_content.strip())
-    print(f"{env_path} has been created with a new SECRET_KEY and PostgreSQL credentials.")
+# Always overwrite the .env file with the new content
+with open(env_path, 'w') as env_file:
+    env_file.write(env_content.strip())
+print(f"{env_path} has been created/overwritten with a new SECRET_KEY and PostgreSQL credentials.")
 
 # Optionally, output the generated content for verification
 print("Generated .env content:")
 print(env_content)
-

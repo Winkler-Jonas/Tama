@@ -8,7 +8,9 @@
 <script setup>
 import {ref} from "vue";
 
-const imgUrl = ref('http://130.61.49.116/static/working.gif/')
+const staticUrl = import.meta.env.VITE_STATIC_URL;
+
+const imgUrl = ref(`${staticUrl}/working.gif`)
 
 </script>
 

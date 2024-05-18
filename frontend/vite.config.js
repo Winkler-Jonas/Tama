@@ -11,14 +11,14 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0', // Listen on all network interfaces
-    port: 5173, // Ensure the port matches what Nginx proxies to
-    strictPort: true, // Exit if the port is already in use
+    port: 5173, // Port for nginx
+    strictPort: true,
     watch: {
-      usePolling: true, // Needed for hot-reloading to work inside Docker
+      usePolling: true,
     },
     hmr: {
-      clientPort: 80, // The port on which the client can reach the server
-      host: '130.61.49.116' // Use Docker host IP or a specific domain if needed
+      clientPort: parseInt(process.env.VITE_HMR_PORT), // client-port
+      host: process.env.VITE_HMR_HOST // external ip or domain
     },
   },
 });
