@@ -4,18 +4,19 @@ import string
 import sys
 
 def generate_secure_password(length=16):
-    characters = string.ascii_letters + string.digits + string.punctuation
+    characters = string.ascii_letters + string.digits + string.punctuation.replace('"', '').replace("'", '')
     password = ''.join(secrets.choice(characters) for i in range(length))
-    # Ensure the password is wrapped in double quotes and escape any existing double quotes
-    return '"' + password.replace('"', '\\"') + '"'
+    return password
 
 def generate_secret_key(length=50):
-    characters = string.ascii_letters + string.digits + string.punctuation
+    characters = string.ascii_letters + string.digits + string.punctuation.replace('"', '').replace("'", '')
     secret_key = ''.join(secrets.choice(characters) for i in range(length))
-    # Ensure the secret key is wrapped in double quotes and escape any existing double quotes
-    return '"' + secret_key.replace('"', '\\"') + '"'
+    return secret_key
 
 # Get environment argument
+if len(sys.argv) < 2:
+    raise ValueError("Please provide an environment (dev or prod).")
+
 environment = sys.argv[1]
 
 # Generate secure random values
@@ -35,10 +36,10 @@ else:
 
 # Create the .env file content
 env_content = f"""
-SECRET_KEY={secret_key}
+SECRET_KEY="{secret_key}"
 POSTGRES_DB=myproject
 POSTGRES_USER={postgres_user}
-POSTGRES_PASSWORD={postgres_password}
+POSTGRES_PASSWORD="{postgres_password}"
 ENVIRONMENT={environment_setting}
 NGINX_PORT={nginx_port}
 """
