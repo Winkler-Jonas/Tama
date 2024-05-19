@@ -20,15 +20,17 @@ MAC
 
    2. Set python PATH
 
-      - Open ``~/.zshrc`` or ``~/.zprofile``
+   - Open ``~/.zshrc`` or ``~/.zprofile``
 
-         .. code-block:: sh
+   .. code-block:: sh
 
-            open -e ~/.zshrc
+      open -e ~/.zshrc
 
-      - Add this line to the end of the file ``export PATH="$(brew --prefix python)/libexec/bin:$PATH"``
+   - Add this line to the end of the file ``export PATH="$(brew --prefix python)/libexec/bin:$PATH"``
 
-      - Restart the terminal reload the PATH-variable
+   - Restart the terminal reload the PATH-variable
+
+|
 
 3. Docker
 
