@@ -10,4 +10,4 @@ Latest App version:
 
 |
 
-http://http://130.61.49.116/
+http://130.61.49.116/
