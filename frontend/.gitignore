@@ -29,4 +29,4 @@ coverage
 .vscode/
 
 *.tsbuildinfo
-Dockerfile
+./Dockerfile
