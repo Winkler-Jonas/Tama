@@ -1,5 +1,6 @@
 .env
 venv
 .idea
-./nginx.conf
+nginx.conf
 nginx/ssl/*
+frontend/Dockerfile
