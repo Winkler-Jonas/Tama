@@ -16,6 +16,7 @@ def copy_files(environment):
         shutil.copy(os.path.join(nginx_conf_dir, 'nginx_prod.conf'), 'nginx.conf')
         shutil.copy('frontend/prod.Dockerfile', 'frontend/Dockerfile')
 
+
 def main():
     parser = argparse.ArgumentParser(description='Set up the project environment.')
     parser.add_argument('environment', choices=['dev', 'prod'], help='Environment to set up (dev or prod)')
