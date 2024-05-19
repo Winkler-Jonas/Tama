@@ -4,3 +4,4 @@ venv
 nginx.conf
 nginx/ssl/*
 frontend/Dockerfile
+docs/build
