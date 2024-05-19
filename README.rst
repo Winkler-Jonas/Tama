@@ -1,15 +1,15 @@
 TAMA
 ====
 
-How to setup
-------------
+Setup
+-----
 
 1. Clone repository:
 
-    ..code-block: sh
+    .. code-block:: sh
 
         git clone https://github.com/Winkler-Jonas/Tama.git
-       cd Tama
+        cd Tama
 
 2. Install python and docker.io
 
@@ -17,7 +17,7 @@ How to setup
 
 3. Setup project
 
-    ..code-block: sh
+    .. code-block:: sh
 
         # dev
         python3 setup.py dev
@@ -26,17 +26,17 @@ How to setup
 
 4. Starting Server
 
-    ..code-block: sh
+    .. code-block:: sh
 
         docker-compose up --build
 
-5. Reseting Server:
+5. Resetting Server:
 
-    ..code-block: sh
+    .. code-block:: sh
 
         docker-compose down -v
 
 6. Accessing the application:
 
-    - Dev `http://localhost:8080` <http://localhost:8080>
-    - Prod `http://130.61.49.116/` <http://130.61.49.116/>
+    - Dev: `http://localhost:8080 <http://localhost:8080>`_
+    - Prod: `http://130.61.49.116/ <http://130.61.49.116/>`_
