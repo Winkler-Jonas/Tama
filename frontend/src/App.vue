@@ -1,6 +1,5 @@
 <template>
   <main>
-    <p>{{imgUrl}}</p>
     <img alt="placeholder-img" :src="imgUrl">
     <h1>Working on it ... </h1>
   </main>
@@ -12,7 +11,6 @@ import {ref} from "vue";
 
 const imgUrl = ref(`/static/working.gif`)
 
-console.log(imgUrl.value)
 
 </script>
 
