@@ -1,7 +1,7 @@
 <template>
   <main>
     <p>{{staticUrl}}</p>
-    <img alt="placeholder-img" :src="imgUrl">
+    <img alt="placeholder-img" src="/static/working.gif">
     <h1>Working on it ... </h1>
   </main>
 </template>
