@@ -1,7 +1,6 @@
 <template>
   <main>
-    <p>{{staticUrl}}</p>
-    <img alt="placeholder-img" src="/static/working.gif">
+    <img alt="placeholder-img" :src="imgUrl">
     <h1>Working on it ... </h1>
   </main>
 </template>
@@ -9,9 +8,9 @@
 <script setup>
 import {ref} from "vue";
 
-const staticUrl = import.meta.env.VITE_STATIC_URL;
 
-const imgUrl = ref(`${staticUrl}/working.gif`)
+const imgUrl = ref(`/static/working.gif`)
+
 
 </script>
 
