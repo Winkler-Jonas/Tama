@@ -1,13 +1,29 @@
 Windows
 -------
 
-1. Git + OpenSSL
+1. Intall a packet-manager like choco
 
-   - Install `git-cli`_ or use an IDE like Webstorm/VSCode.
+   1. Open ``Powershell`` as ``Admin``
 
-.. _git-cli: https://git-scm.com/download/win
+   .. code-block:: sh
+
+      # setup environment
+      Set-ExecutionPolicy AllSigned
+      # confirm with Y or J
+      # install choco
+      Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+      # restart Powershell (as admin)
+      choco install git mkcert
 
 2. Python
+
+   1. Install using choco
+
+   .. code-block:: sh
+
+      choco install -y python312 --override --install-arguments '/quiet InstallAllUsers=1 PrependPath=1 TargetDir=C:\Python3'
+
+   2. Install using python-installer
 
    - `Python for Windows`_
 
@@ -43,41 +59,30 @@ Windows
 
       python setup.py dev
 
-6. Add the SSL-Certificate to your system
-
-   1. Open the Certificate Manager:
-
-      - Press ``Win + R``, type ``mmc``, and press ``Enter``.
-      - Go to ``File`` > ``Add/Remove Snap-in``....
-      - Select ``Certificates`` and click ``Add``.
-      - Choose ``Computer account`` and click ``Next``.
-      - Select ``Local computer`` and click ``Finish``.
-
-   2. Import Certificate:
-
-      - Expand ``Certificates (Local Computer)`` > ``Trusted Root Certification Authorities``.
-      - Right-click on ``Certificates``, then choose ``All Tasks`` > ``Import``....
-      - Follow the wizard to import the ``nginx/ssl/nginx-selfsigned.crt`` file from the project.
-
-   3. Complete the Import:
-
-      - Finish the wizard, and you should see the certificate listed under ``Certificates``.
-
-
 6. Start / Stop the App
 
    - Start the application
 
    .. code-block:: sh
 
+      # First time build
       docker-compose up --build
+      # Afterwards
+      docker-compose up
 
    - Stop the application
 
    .. code-block:: sh
 
+      docker-compose down
+      # If you need to remove volumes
       docker-compose down -v
 
 5. Access the App
 
    https://localhost
+
+6. To test the App / PWA on your mobile
+
+   1. Copy the ``rootCA.pem`` to your phone
+   2. Install the certificate.

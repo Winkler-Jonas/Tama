@@ -1,14 +1,23 @@
 Linux
 -----
 
-1. Python Git + OpenSSL
+1. Install Python + Git
 
    .. code-block:: sh
 
       sudo apt update
-      sudo apt install git openssl python3
+      sudo apt install git python3
 
-2. Install Docker + Compose
+2. Install mkCert
+
+   .. code-block:: sh
+
+      sudo apt install libnss3-tools
+      curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+      chmod +x mkcert-v*-linux-amd64
+      sudo cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+
+3. Install Docker + Compose
 
    1. Docker
 
@@ -34,30 +43,23 @@ Linux
       sudo groupadd docker
       sudo usermod -aG docker $USER
 
-3. Clone the Repo
+4. Clone the Repo
 
    .. code-block:: sh
 
       git clone https://github.com/Winkler-Jonas/Tama.git
 
-4. Navigate to the project folder
+5. Navigate to the project folder
 
    .. code-block:: sh
 
       cd Tama/
 
-5. Setup the project
+6. Setup the project
 
    .. code-block:: sh
 
       python3 setup.py dev
-
-6. Add the SSL-Certificate to your system (make sure you are inside the project-dir)
-
-   .. code-block:: sh
-
-      sudo cp nginx/ssl/nginx-selfsigned.crt /usr/local/share/ca-certificates/nginx-selfsigned.crt
-      sudo update-ca-certificates
 
 6. Start / Stop the App
 
@@ -65,14 +67,24 @@ Linux
 
    .. code-block:: sh
 
+      # First time build
       docker-compose up --build
+      # Afterwards
+      docker-compose up
 
    - Stop the application
 
    .. code-block:: sh
 
+      docker-compose down
+      # If you need to remove volumes
       docker-compose down -v
 
 5. Access the App
 
    https://localhost
+
+6. To test the App / PWA on your mobile
+
+   1. Copy the ``rootCA.pem`` to your phone
+   2. Install the certificate.
