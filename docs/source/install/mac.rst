@@ -1,11 +1,13 @@
 MAC
 ---
 
-1. Git + OpenSSL
+1. Install Git + mkcert
 
    .. code-block:: sh
 
       brew install git openssl
+      brew install mkcert
+      brew install nss
 
 2. Python
 
@@ -61,39 +63,30 @@ MAC
 
       python setup.py dev
 
-6. Add the SSL-Certificate to your system
-
-   1. Open the Certificate Manager:
-
-      - You can find Keychain Access in ``Applications`` > ``Utilities`` > ``Keychain Access``.
-
-   2. Import Certificate:
-
-      - Drag the ``nginx/ssl/nginx-selfsigned.crt`` file from the project into the Keychain Access window.
-      - Alternatively, you can import it using ``File`` > ``Import Items``....
-
-   3. Trust the Certificate:
-
-      - Find the imported certificate in the ``Certificates`` category (usually in the login keychain).
-      - Double-click the certificate to open its details.
-      - Expand the ``Trust`` section.
-      - Set ``When using this certificate`` to ``Always Trust``.
-      - Close the certificate details window, and you'll be prompted to enter your password to save the changes.
-
 6. Start / Stop the App
 
    - Start the application
 
    .. code-block:: sh
 
+      # First time build
       docker-compose up --build
+      # Afterwards
+      docker-compose up
 
    - Stop the application
 
    .. code-block:: sh
 
+      docker-compose down
+      # If you need to remove volumes
       docker-compose down -v
 
 5. Access the App
 
    https://localhost
+
+6. To test the App / PWA on your mobile
+
+   1. Copy the ``rootCA.pem`` to your phone
+   2. Install the certificate.
