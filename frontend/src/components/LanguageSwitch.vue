@@ -1,11 +1,17 @@
-<script setup>
-
-</script>
-
 <template>
-  
+  <div>
+    <p>Current Locale: {{ languageStore.locale }}</p>
+    <button @click="changeLanguage('en')">English</button>
+    <button @click="changeLanguage('de')">German</button>
+  </div>
 </template>
 
-<style scoped>
+<script setup>
+import { useLanguageStore } from '@/stores/langStore.js'
 
-</style>
+const languageStore = useLanguageStore()
+
+const changeLanguage = (newLocale) => {
+  languageStore.setLocale(newLocale)
+}
+</script>
