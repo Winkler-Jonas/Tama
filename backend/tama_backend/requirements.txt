@@ -1,7 +1,10 @@
-Django>=4.0,<5.0
+Django>=4.0,<6.0
 psycopg2-binary
 django-redis
 daphne
 channels
 channels-redis
 python-decouple
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers

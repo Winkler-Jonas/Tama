@@ -1,0 +1,13 @@
+{
+  "views": {
+    "register": {
+      "userTaken": "Username not available",
+      "emailTaken": "Email already taken",
+      "passNoMatch": "Passwords do not match",
+      "mailNoMatch": "Email address do not match",
+      "mailNoValid": "Please enter a valid Email address",
+      "passInvalid": "Password contains invalid characters",
+      "passShort": "Password is to short. Min {min} characters"
+    }
+  }
+}

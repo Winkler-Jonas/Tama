@@ -1,25 +1,36 @@
 import './assets/main.css'
+import { setupI18n } from './i18n';
+import { useLanguageStore } from './stores/langStore.js';
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import { registerSW } from "virtual:pwa-register"
 
-const app = createApp(App)
+async function init() {
+  const app = createApp(App)
 
-app.use(createPinia())
-app.use(router)
+  // Create Pinia instance
+  const pinia = createPinia()
+  app.use(pinia)
 
-app.mount('#app')
+  // Access the store after the Pinia instance is created
+  const languageStore = useLanguageStore()
+  const i18n = await setupI18n(languageStore.locale)
+  app.use(i18n)
 
-// Register the service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').then(registration => {
-      console.log('Service Worker registered: ', registration);
-    }).catch(registrationError => {
-      console.log('Service Worker registration failed: ', registrationError);
-    });
-  });
+  app.use(router)
+
+  app.mount('#app')
+
+  // Register the service worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      registerSW({ immediate: true })
+    })
+  }
 }
+
+init()
