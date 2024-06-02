@@ -12,17 +12,24 @@ class UsernameCheckConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def check_username_availability(self, username):
-        from .models import CustomUser  # Import here to delay the model loading
+        from .models import CustomUser
         return not CustomUser.objects.filter(username=username).exists()
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        username = data['username']
-        is_available = await self.check_username_availability(username)
-        await self.send(text_data=json.dumps({
-            'username': username,
-            'is_available': is_available
-        }))
+        username = data.get('username')
+        if username:
+            is_available = await self.check_username_availability(username)
+            response = {
+                'username': username,
+                'is_available': is_available
+            }
+            await self.send(text_data=json.dumps(response))
+        else:
+            error_response = {
+                'error': 'Invalid username'
+            }
+            await self.send(text_data=json.dumps(error_response))
 
 
 class EmailCheckConsumer(AsyncWebsocketConsumer):
@@ -34,7 +41,7 @@ class EmailCheckConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def check_email_availability(self, email):
-        from .models import CustomUser  # Import here to delay the model loading
+        from .models import CustomUser
         return not CustomUser.objects.filter(email=email).exists()
 
     async def receive(self, text_data):
