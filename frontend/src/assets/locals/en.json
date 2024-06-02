@@ -1,13 +1,100 @@
 {
+  "lang": {
+    "de": "German",
+    "en": "English"
+  },
+  "placeholder": {
+    "pass": "Enter password",
+    "passRepeat": "Confirm password",
+    "user": "Enter Username",
+    "email": "Enter email"
+  },
   "views": {
     "register": {
+      "inputLabel": {
+        "mail": "Email",
+        "pwd": "Password",
+        "usr": "Username",
+        "pwdConf": "Confirm password"
+      },
+      "hdr": "Sign up",
       "userTaken": "Username not available",
+      "userShort": "Username too short",
       "emailTaken": "Email already taken",
       "passNoMatch": "Passwords do not match",
       "mailNoMatch": "Email address do not match",
       "mailNoValid": "Please enter a valid Email address",
       "passInvalid": "Password contains invalid characters",
-      "passShort": "Password is to short. Min {min} characters"
+      "passShort": "Password is to short. Min {min} characters",
+      "btnEnter": "Register",
+      "unexpected": "An unexpected error occurred. Please try again later.",
+      "mailSent": "We have sent you an email containing all the necessary information to conclude your registration.",
+      "redirect": "Processing {num}"
+    },
+    "login": {
+      "hdr": "Sing in",
+      "btn": "Sign In",
+      "credentials": "The credentials you entered do not match any existing Account",
+      "userShort": "Username too short",
+      "inputLabel": {
+        "usr": "Username",
+        "pwd": "Password"
+      },
+      "notVerified": {
+        "hdr": "Verification",
+        "msg": "Unfortunately we were not able to verify your Email",
+        "resend": "Resend Email",
+        "newMail": "Your email address?",
+        "redirect": "Processing {num}"
+      },
+      "newQ": "New to Tamado?",
+      "newBtn": "Sign up now"
+    },
+    "welcome": {
+      "greet": "Good to see you!",
+      "txt": "Hi, I am Tama! I hope to help you achieve your goals whilst having fun",
+      "proceed": "Let's start!",
+      "email": {
+        "hdr": "Ready?",
+        "info": "Enter your email to create or sign into your account.",
+        "label": "EMail",
+        "btn": "Get started"
+      }
+    }
+  },
+  "error": {
+    "system": {
+      "unexpected": "An unexpected error occurred. Please try again later."
+    },
+    "pass": {
+      "short": "Password to short. Min. {min} characters!",
+      "invalid": "Password contains invalid characters",
+      "numeric": "Password cannot be exclusively be numeric!",
+      "similar": "Password and username too similar!",
+      "common": "Password contains common words!",
+      "noMatch": "Passwords do not match!",
+      "empty": "Please enter a password"
+    },
+    "user": {
+      "short": "Username too short",
+      "taken": "The username is already taken",
+      "corrupt": "Not a valid input",
+      "empty": "Please enter a username"
+    },
+    "credentials": {
+      "mismatch": "The credentials you entered do not match any existing Account"
+    },
+    "email": {
+      "valid": "The Email you entered appears to be invalid.",
+      "noMatch": "Email address do not match",
+      "taken": "Email already taken",
+      "verified": "Unfortunately we were not able to verify your Email",
+      "empty": "Please enter an email address"
+    }
+  },
+  "components": {
+    "horizontalSeparator": {
+      "or": "or"
     }
   }
 }

@@ -2,10 +2,8 @@ class WebSocketService {
     constructor() {
         this.usernameSocket = null;
         this.emailSocket = null;
-        this.username = null;
-        this.email = null;
-        this.setUsernameError = null;
-        this.setEmailError = null;
+        this.usernameCallbacks = {};
+        this.emailCallbacks = {};
         this.usernameQueue = [];
         this.emailQueue = [];
     }
@@ -19,63 +17,101 @@ class WebSocketService {
     }
 
     connectUsernameSocket() {
-        if (!this.usernameSocket) {
+        if (!this.usernameSocket || this.usernameSocket.readyState === WebSocket.CLOSED) {
             this.usernameSocket = new WebSocket(this.getWebSocketUrl('/ws/check_username/'));
             this.usernameSocket.onmessage = this.handleUsernameMessage.bind(this);
             this.usernameSocket.onopen = () => {
-                this.usernameQueue.forEach((msg) => this.usernameSocket.send(msg));
+                this.usernameQueue.forEach((msg) => {
+                    if (this.usernameSocket && this.usernameSocket.readyState === WebSocket.OPEN) {
+                        this.usernameSocket.send(msg);
+                    } else {
+                        this.usernameQueue.push(msg);
+                    }
+                });
                 this.usernameQueue = [];
+            };
+            this.usernameSocket.onclose = () => {
+                this.usernameSocket = null;
             };
         }
     }
 
     connectEmailSocket() {
-        if (!this.emailSocket) {
+        if (!this.emailSocket || this.emailSocket.readyState === WebSocket.CLOSED) {
             this.emailSocket = new WebSocket(this.getWebSocketUrl('/ws/check_email/'));
             this.emailSocket.onmessage = this.handleEmailMessage.bind(this);
             this.emailSocket.onopen = () => {
-                this.emailQueue.forEach((msg) => this.emailSocket.send(msg));
+                this.emailQueue.forEach((msg) => {
+                    if (this.emailSocket && this.emailSocket.readyState === WebSocket.OPEN) {
+                        this.emailSocket.send(msg);
+                    } else {
+                        this.emailQueue.push(msg);
+                    }
+                });
                 this.emailQueue = [];
             };
+            this.emailSocket.onclose = () => {
+                this.emailSocket = null;
+            };
+        }
+    }
+
+    disconnectUsernameSocket() {
+        if (this.usernameSocket) {
+            this.usernameSocket.close();
+            this.usernameSocket = null;
+        }
+    }
+
+    disconnectEmailSocket() {
+        if (this.emailSocket) {
+            this.emailSocket.close();
+            this.emailSocket = null;
         }
     }
 
     handleUsernameMessage(event) {
         const data = JSON.parse(event.data);
-        if (data.username === this.username) {
-            this.setUsernameError(data.is_available ? '' : 'Username is already taken');
+        const callback = this.usernameCallbacks[data.username];
+        if (callback) {
+            callback(data.is_available);
+            delete this.usernameCallbacks[data.username];
         }
     }
 
     handleEmailMessage(event) {
         const data = JSON.parse(event.data);
-        if (data.email === this.email) {
-            this.setEmailError(data.is_available ? '' : 'Email is already taken');
+        const callback = this.emailCallbacks[data.email];
+        if (callback) {
+            callback(data.is_available);
+            delete this.emailCallbacks[data.email];
         }
     }
 
-    checkUsername(username, setUsernameError) {
-        this.username = username;
-        this.setUsernameError = setUsernameError;
-        this.connectUsernameSocket();
-        const message = JSON.stringify({ username: this.username });
-        if (this.usernameSocket.readyState === WebSocket.OPEN) {
-            this.usernameSocket.send(message);
-        } else {
-            this.usernameQueue.push(message);
-        }
+    checkUsername(username) {
+        return new Promise((resolve) => {
+            this.connectUsernameSocket();
+            const message = JSON.stringify({ username });
+            this.usernameCallbacks[username] = resolve;
+            if (this.usernameSocket.readyState === WebSocket.OPEN) {
+                this.usernameSocket.send(message);
+            } else {
+                this.usernameQueue.push(message);
+            }
+        });
     }
 
-    checkEmail(email, setEmailError) {
-        this.email = email;
-        this.setEmailError = setEmailError;
-        this.connectEmailSocket();
-        const message = JSON.stringify({ email: this.email });
-        if (this.emailSocket.readyState === WebSocket.OPEN) {
-            this.emailSocket.send(message);
-        } else {
-            this.emailQueue.push(message);
-        }
+    checkEmail(email) {
+        return new Promise((resolve) => {
+            this.connectEmailSocket();
+            const message = JSON.stringify({ email });
+            this.emailCallbacks[email] = resolve;
+            if (this.emailSocket.readyState === WebSocket.OPEN) {
+                this.emailSocket.send(message);
+            } else {
+                this.emailQueue.push(message);
+            }
+        });
     }
 }
 

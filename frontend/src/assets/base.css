@@ -3,6 +3,7 @@
 
 
 :root {
+  --vh: 100vh;
   --vt-c-white: #ffffff;
   --vt-c-white-soft: #f8f8f8;
   --vt-c-white-mute: #f2f2f2;
@@ -21,7 +22,7 @@
   --vt-c-text-light-1: var(--vt-c-indigo);
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
   --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  --vt-c-text-dark-2: #000000; /* Todo changed font color for dark mode temporarily */
 }
 
 /* semantic color variables for this project */
@@ -37,6 +38,28 @@
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
+}
+
+/* signup + welcome*/
+:root {
+  --sgn-mi: 2rem;
+  --sgn-mbt: 2rem;
+  --sgn-mt-txt: 2rem;
+
+  /* header (back + context menu) */
+  --h-icon-sz: 2rem;
+  --h-p-rl: .4rem;
+  --h-bg: transparent;
+
+
+  /*--h-bg: rgba(131, 182, 199, 1);*/
+  /* header rounded top*/
+  --greet-f-sz: 2rem;
+  --greet-sz: 70%;
+
+  /* Context Menu */
+  --ctx-ft-sz: 1.5rem;
+  --wlc-txt-sz: 2em;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -58,11 +81,10 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
-  font-weight: normal;
 }
 
 body {
-  min-height: 100svh;
+  height: 100%;
   color: var(--color-text);
   background: var(--color-background);
   transition:
@@ -88,6 +110,12 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.full-height {
+    height: calc(var(--vh, 1vh) * 100);
+    display: flex;
+    flex-direction: column;
 }
 
 /* Apply the font to input fields */

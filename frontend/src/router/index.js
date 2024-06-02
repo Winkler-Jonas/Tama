@@ -7,6 +7,7 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import { useAuthStore } from '@/stores/auth'
 import ProfileView from "@/views/ProfileView.vue";
 import ResendActivationView from "@/views/ResendActivationView.vue";
+import WelcomeView from "@/views/WelcomeView.vue";
 
 const routes = [
   {
@@ -16,14 +17,19 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/welcome',
+    name: 'welcome',
+    component: WelcomeView,
+  },
+  {
     path: '/profile',
     name: 'profile',
     component: ProfileView,
     meta: {requiresAuth: true}
   },
   {
-    path: '/register',
-    name: 'register',
+    path: '/sign-up',
+    name: 'signUp',
     component: RegisterView
   },
   {
