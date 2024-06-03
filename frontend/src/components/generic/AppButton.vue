@@ -1,17 +1,18 @@
 <template>
-  <button
-    @click="onButtonClick"
-    class="tama-app-button"
-    ref="buttonRef"
-  >
-    {{ btnText }}
-  </button>
-
+  <div
+      @click="handleButtonClick"
+      @focusin="toggleFocus"
+      @focusout="toggleFocus"
+      ref="buttonRef"
+      class="tama-app-button-container">
+    <button class="btn-remove-default"></button>
+    <p class="text-button" :style="focusText">{{ btnText }}</p>
+  </div>
 </template>
 
 <script setup>
 
-import {ref} from "vue";
+import {computed, reactive, ref} from "vue";
 
 const props = defineProps({
   btnText: {
@@ -20,15 +21,22 @@ const props = defineProps({
   }
 })
 
-
 const buttonRef = ref(null)
+const hasFocus = ref(false)
+const focusText = computed( () => {
+  return hasFocus.value ? {'color': 'var(--tama-color-blue)'} : ''
+})
 
 const emit = defineEmits([
     'onClick'
 ])
 
-const onButtonClick = () => {
+const handleButtonClick = () => {
   emit("onClick")
+}
+
+const toggleFocus = () => {
+  hasFocus.value = !hasFocus.value
 }
 
 const focusButton = () => {
@@ -38,38 +46,42 @@ const focusButton = () => {
 defineExpose({
   focusButton
 })
-
 </script>
 
 <style scoped>
+.tama-app-button-container {
+  background-color: var(--tama-color-orange);
+  padding: 1em;
+  border-radius: 8px;
 
-.tama-app-button {
-  /* Remove default button styling (except cursor)*/
+  width: fit-content;
+  height: fit-content;
 
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  color: inherit;
+  display: grid;
+  grid-template-columns: [left] max-content;
+  grid-template-rows: [top] min-content;
+}
+
+.tama-app-button-container button {
+  z-index: 0;
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  background-color: transparent;
+}
+
+.tama-app-button-container:focus-visible {
   outline: none;
-  text-decoration: none;
-  box-shadow: none;
-
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-.tama-app-button {
   border: none;
-  border-radius: 10px;
-  max-width: fit-content;
-  padding: 1rem;
-  background-color: #FFA976;
-  color: white;
-  text-align: center;
-
 }
 
+.tama-app-button-container p {
+  z-index: 1;
+  background-color: transparent;
+  text-align: center;
+  border: none;
+  outline: none;
+
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+}
 </style>

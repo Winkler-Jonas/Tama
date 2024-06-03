@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Short+Stack&display=swap" rel="stylesheet">
+    <title>Activate Your Account</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+        }
+        body {
+            font-family: 'Short Stack', 'Comic Sans MS', sans-serif;
+            padding: 0;
+            background-color: #777777;
+        }
+        #content {
+            max-width: fit-content;
+            margin-inline: auto;
+            padding: 2em;
+            background-color: white;
+
+
+            display: flex;
+            flex-direction: column;
+            gap: 2em;
+        }
+        #image-container {
+            position: relative;
+            overflow: hidden;
+            width: 200px;
+            aspect-ratio: 1 / 1;
+            height: auto;
+            border-radius: 50%;
+            border: 1px solid black;
+
+            float: left;
+            margin: 1em;
+        }
+        #image-container img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: auto;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+
+        }
+        header {
+            display: flex;
+            align-items: center;
+            max-height: fit-content;
+        }
+    </style>
+</head>
+<body>
+    <section id="content">
+        <header>
+            <div id="image-container">
+                <img src="https://i.pinimg.com/564x/f8/53/20/f853208b54ba94e2cc37e25d367aa577.jpg" alt="logo">
+            </div>
+            <div style="text-align: center; flex: 1;">
+                <h1>Tamado</h1>
+                <p style="padding-top: 1em;">Registrierung</p>
+            </div>
+        </header>
+        <main>
+            <h2>Hi {{ user.username }},</h2>
+            <section id="activation">
+                <p style="padding-top: 2em;">Thank you for registering. Please click on the link below to activate your account:</p>
+                <p style="padding-top: 2em;">
+                    <a href="https://{{ domain }}/activate/{{ uid }}/{{ token }}/">
+                        Activate your account
+                    </a>
+                </p>
+            </section>
+            <section id="pwa-explanation">
+
+            </section>
+        </main>
+        <footer>
+
+        </footer>
+    </section>
+</body>
+</html>

@@ -1,6 +1,6 @@
 /* color palette from <https://github.com/vuejs/theme> */
 @import url('https://fonts.googleapis.com/css2?family=Short+Stack&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Short+Stack&display=swap');
 
 :root {
   --vh: 100vh;
@@ -42,6 +42,10 @@
 
 /* signup + welcome*/
 :root {
+   --tama-color-orange: #FFA976;
+   --tama-color-blue: #83B6C7;
+
+
   --sgn-mi: 2rem;
   --sgn-mbt: 2rem;
   --sgn-mt-txt: 2rem;
@@ -94,6 +98,7 @@ body {
   font-family:
           'Short Stack',
           'Comic Sans MS',
+          'Josefin Sans',
           cursive,
           -apple-system,
           BlinkMacSystemFont,
@@ -122,6 +127,63 @@ body {
 input {
     font-family: 'Short Stack', 'Comic Sans MS', cursive, sans-serif;
 }
+
+h1 {
+    font-size: 30px;
+}
+
+h2 {
+    font-family: 'Short Stack', 'Comic Sans MS', cursive, sans-serif;
+    font-size: 20px;
+}
+
+.text-orange {
+    color: var(--tama-color-orange)
+}
+
+.text-blue {
+    color: var(--tama-color-blue)
+}
+
+.text-black {
+    color: black;
+}
+
+.text-gray {
+    color: #777777;
+}
+
+p {
+    font-size: 16px;
+}
+
+.text-sm {
+    font-size: 12px !important;
+}
+
+.text-button {
+    font-size: 20px;
+    color: white;
+}
+
+.btn-remove-default {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    outline: none;
+    text-decoration: none;
+    box-shadow: none;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+
+
 
 /* Apply the font to input placeholders */
 input::placeholder {
