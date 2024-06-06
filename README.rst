@@ -10,4 +10,4 @@ Latest App version:
 
 |
 
-http://130.61.49.116/
+https://tamado.app
