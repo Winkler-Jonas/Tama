@@ -1,92 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Short+Stack&display=swap" rel="stylesheet">
     <title>Activate Your Account</title>
     <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-        }
-        body {
-            font-family: 'Short Stack', 'Comic Sans MS', sans-serif;
-            padding: 0;
-            background-color: #777777;
-        }
-        #content {
-            max-width: fit-content;
-            margin-inline: auto;
-            padding: 2em;
-            background-color: white;
+        /* Import the font */
+        @import url('https://fonts.googleapis.com/css2?family=Short+Stack&display=swap');
 
-
-            display: flex;
-            flex-direction: column;
-            gap: 2em;
-        }
-        #image-container {
-            position: relative;
-            overflow: hidden;
-            width: 200px;
-            aspect-ratio: 1 / 1;
-            height: auto;
-            border-radius: 50%;
-            border: 1px solid black;
-
-            float: left;
-            margin: 1em;
-        }
-        #image-container img {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: auto;
-            height: 100%;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-
-        }
-        header {
-            display: flex;
-            align-items: center;
-            max-height: fit-content;
+        /* Define base styles and fallbacks */
+        body, p, h1, h2, h3, a, li {
+            font-family: 'Short Stack', 'Comic Sans MS', Arial, sans-serif;
         }
     </style>
 </head>
-<body>
-    <section id="content">
-        <header>
-            <div id="image-container">
-                <img src="https://i.pinimg.com/564x/f8/53/20/f853208b54ba94e2cc37e25d367aa577.jpg" alt="logo">
-            </div>
-            <div style="text-align: center; flex: 1;">
-                <h1>Tamado</h1>
-                <p style="padding-top: 1em;">Registrierung</p>
-            </div>
-        </header>
-        <main>
-            <h2>Hi {{ user.username }},</h2>
-            <section id="activation">
-                <p style="padding-top: 2em;">Thank you for registering. Please click on the link below to activate your account:</p>
-                <p style="padding-top: 2em;">
-                    <a href="https://{{ domain }}/activate/{{ uid }}/{{ token }}/">
-                        Activate your account
-                    </a>
+<body style="background: #83B6C7; margin: 0; padding: 20px; font-family: 'Short Stack', 'Comic Sans MS', Arial, sans-serif;">
+    <table width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: auto; background: #ffffff; padding: 20px;">
+        <tr>
+            <td style="text-align: center; padding: 10px;">
+                <img src="https://i.pinimg.com/564x/f8/53/20/f853208b54ba94e2cc37e25d367aa577.jpg" alt="logo" style="width: 100px; height: 100px; border-radius: 50%;">
+            </td>
+            <td style="text-align: center;">
+                <h1 style="font-size: 24px; margin: 0;">Tamado</h1>
+                <p>Account activation</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <h2>Hi {{ user.username }},</h2>
+                <p>Thank you for registering. Please click on the link below to activate your account:</p>
+                <p style="background-color: #FFA976; border-radius: 10px; padding: 10px; display: inline-block;">
+                    <a href="https://{{ domain }}/activate/{{ uid }}/{{ token }}/" style="color: white; text-decoration: none;">Activate your account</a>
                 </p>
-            </section>
-            <section id="pwa-explanation">
-
-            </section>
-        </main>
-        <footer>
-
-        </footer>
-    </section>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <hr style="border: 0; height: 1px; background: #333; margin: 20px 0;">
+                <h3>Install Tamado on your mobile device</h3>
+                <table width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td valign="top">
+                            <h4>Android</h4>
+                            <ol>
+                                <li>Open Chrome</li>
+                                <li>Visit <a href="https://{{ domain }}">Tamado</a></li>
+                                <li>Tap the menu icon</li>
+                                <li>Select 'Add to Home screen'</li>
+                                <li>Follow the instructions</li>
+                            </ol>
+                        </td>
+                        <td valign="top">
+                            <h4>iPhone</h4>
+                            <ol>
+                                <li>Open Safari</li>
+                                <li>Visit <a href="https://{{ domain }}">Tamado</a></li>
+                                <li>Tap the share icon</li>
+                                <li>Tap 'Add to Home Screen'</li>
+                                <li>Follow the instructions</li>
+                            </ol>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

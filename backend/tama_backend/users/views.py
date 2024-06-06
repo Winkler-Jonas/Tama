@@ -26,16 +26,17 @@ def send_activation_email(user, request):
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     domain = request.get_host()
-    message = render_to_string('activation_email.html', {
+    locale = request.data.get('locale', 'en') if hasattr(request, 'data') else 'en'
+    message = render_to_string(f'activation_email_{locale}.html', {
         'user': user,
         'domain': domain,
         'uid': uid,
         'token': token,
     })
     email = EmailMessage(
-        'Activate your account',
+        'Tamado | Activate your account',
         message,
-        'from@example.com',
+        'register@tamado.app',
         [user.email],
     )
     email.content_subtype = "html"
