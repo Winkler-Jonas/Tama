@@ -133,7 +133,7 @@ const setEmail = async (emailData) => {
   email.value = emailData
   emit('onNewInput', emailData)
   await nextTick(() => {
-    emit('onIsTaken', isTaken)
+    emit('onIsTaken', isTaken.value)
     emit('onValidated', !errorMessage.value && (props.isRequired ? email.value : true))
   })
 }
