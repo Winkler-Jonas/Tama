@@ -8,3 +8,4 @@ python-decouple
 djangorestframework
 djangorestframework-simplejwt
 django-cors-headers
+Twisted[tls,http2]
