@@ -5,6 +5,7 @@ BUILD_PATH="/usr/share/nginx/html/index.html"
 
 # Check the environment variable
 if [ "$NGINX_CONFIG" = "production" ]; then
+  echo "Production mode: Checking for build files at $BUILD_PATH"
   # Wait until the build files are available
   while [ ! -f "$BUILD_PATH" ]; do
     echo "Waiting for build files..."
