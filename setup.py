@@ -74,8 +74,8 @@ def get_local_ip():
 
 
 def create_ssl_certificate_mkcert(local_ip):
-    cert_path = Path('nginx/ssl/localhost.pem').resolve()
-    key_path = Path('nginx/ssl/localhost-key.pem').resolve()
+    cert_path = Path('nginx/ssl/tamado.app.cert.pem').resolve()
+    key_path = Path('nginx/ssl/tamado.app.key.pem').resolve()
 
     if not cert_path.exists() or not key_path.exists():
         cert_path.parent.mkdir(parents=True, exist_ok=True)
