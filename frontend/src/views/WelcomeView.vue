@@ -123,7 +123,6 @@ const handleEnter = () => {
 const handleEmailButton = () => {
   if (formValid()) {
     userStore.setWelcomeDone(true)
-    console.log(`Email: ${email.value} is valid? ${email.valid} is taken ${mailTaken.value}`)
     router.push(mailTaken.value ? '/login' : '/sign-up')
   }
 };
