@@ -25,6 +25,7 @@ export default defineConfig({
         },
       } : {
         workbox: {
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           globPatterns: ['**/*.{js,css,html,png,jpg,svg}'],
           runtimeCaching: [
             {
@@ -34,7 +35,7 @@ export default defineConfig({
                 cacheName: 'django-static-files',
                 expiration: {
                   maxEntries: 50,
-                  maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+                  maxAgeSeconds: 30 * 24 * 60 * 60,
                 },
                 cacheableResponse: {
                   statuses: [0, 200],
