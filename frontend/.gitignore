@@ -31,4 +31,3 @@ dev-dist/*
 .vscode/
 
 *.tsbuildinfo
-./Dockerfile
