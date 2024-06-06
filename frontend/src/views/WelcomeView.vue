@@ -101,12 +101,14 @@ const handleBackBtn = () => {
  * Form logic
  */
 const formValid = () => {
-  if (email.valid && !mailTaken.value) {
-    return true
-  } else {
+  if (!email.valid) {
+    return false
+  }
+  if (!email.value) {
     email.error = t('error.email.empty')
     return false
   }
+  return true
 }
 
 const handleEnter = () => {
