@@ -2,10 +2,9 @@
   <section id="tama-login-view">
     <app-default-header class="tama-login-header-grid" :btn-clickable="false" :back-operation="false" />
     <div class="tama-login-content-grid">
-      <app-rounded-top-pet
-          :content-height="30"
-          :header-txt="inputScreen ? $t('views.login.hdr') : $t('views.login.notVerified.hdr')"
-      />
+      <app-tama-area :tama-area-text="inputScreen ? $t('views.login.hdr') : $t('views.login.notVerified.hdr')"
+                     :tama-area-height="30" />
+
       <section v-if="inputScreen" id="tama-login-view-bottom-first">
         <login-form @on-login="login" :credential-error="errorMessage" />
         <div style="text-align: center">
@@ -26,12 +25,12 @@ import { ref } from 'vue'
 import {useRouter} from 'vue-router'
 import {useAuthStore} from '@/stores/auth'
 import {useI18n} from "vue-i18n";
-import AppRoundedTopPet from "@/components/generic/AppRoundedTopPet.vue";
 import {useUserStore} from "@/stores/userStore.js"
 import LoginForm from "@/components/login/LoginForm.vue";
 import LoginEmailVerification from "@/components/login/LoginEmailVerification.vue";
 import {CredentialError, EmailError, PasswordError, UnexpectedError} from "@/utils/errorHandler.js";
 import AppDefaultHeader from "@/components/header/AppDefaultHeader.vue";
+import AppTamaArea from "@/components/generic/AppTamaArea.vue";
 
 
 const { t } = useI18n();

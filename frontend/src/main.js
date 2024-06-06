@@ -11,6 +11,7 @@ import piniaPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 import { registerSW } from "virtual:pwa-register"
+import Vue3TouchEvents from "vue3-touch-events";
 
 function setVhProperty() {
   let vh = window.innerHeight * 0.01;
@@ -39,6 +40,7 @@ async function init() {
   app.directive('click-outside', ClickOutside);
   app.directive('text-animation', vTextAnimation);
   app.directive('delay', delayDirective)
+  app.use(Vue3TouchEvents)
   app.mount('#app')
 
   // Register the service worker

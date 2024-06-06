@@ -142,4 +142,10 @@ const resetError = () => {
   emit('onActive')
 }
 
+const blurInput = () => inputRef.value.blurInput()
+
+defineExpose({
+  blurInput
+})
+
 </script>

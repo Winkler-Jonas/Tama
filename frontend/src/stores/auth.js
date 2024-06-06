@@ -3,16 +3,19 @@ import {ref} from 'vue'
 import api from '@/services/api.js'
 import {getAPIErrorMessage} from "@/utils/errorHandler.js";
 
+
+
 export const useAuthStore = defineStore('auth', () => {
     const user = ref(null)
     const token = ref(null)
 
-    const register = async (username, email, password) => {
+    const register = async (username, email, password, locale) => {
         try {
             const response = await api.post('/users/register/', {
                 username,
                 email,
                 password,
+                locale
             })
             token.value = response.data.token
             user.value = response.data.user
@@ -70,9 +73,9 @@ export const useAuthStore = defineStore('auth', () => {
         }
     };
 
-    const resendActivationEmail = async (username) => {
+    const resendActivationEmail = async (username, locale) => {
         try {
-            const response = await api.post('/users/resend-activation/', { username });
+            const response = await api.post('/users/resend-activation/', { username, locale });
             return response.data;
         } catch (error) {
             throw getAPIErrorMessage(error);

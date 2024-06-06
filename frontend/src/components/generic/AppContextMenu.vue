@@ -14,13 +14,12 @@
       </i>
       <Transition name="slide-fade">
         <app-tool-tip v-if="isVisible" bg-color="white"
-                      @focusout="handleFocusOut"
                       v-click-outside="toggleMenu">
           <template #content>
             <div class="tama-context-menu-items" >
               <app-context-menu-button v-for="(item, index) in menuItems" :key="index"
                       class="tama-context-menu-btn"
-                      @click="handleUserAction(item[Object.keys(item)[0]])"
+                      @click.stop.prevent="handleUserAction(item[Object.keys(item)[0]])"
                       @keydown.enter.prevent="handleUserAction(item[Object.keys(item)[0]])"
                       :btn-text="Object.keys(item)[0]"
                       :tabindex="0"
@@ -59,17 +58,13 @@ const handleUserAction = (callable) => {
   callable();
 };
 
-const handleFocusOut = (event) => {
-  if (!event.currentTarget.contains(event.relatedTarget)) {
-    nextTick(() => {
-      toggleMenu()
-    })
-  }
-};
-
-const toggleMenu = () => {
+const toggleMenu = (event) => {
   isVisible.value = !isVisible.value
   clickInstance.value++
+
+  if (event) {
+    console.log(event)
+  }
 
   if (isVisible.value === true) {
     nextTick(() => {

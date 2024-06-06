@@ -1,23 +1,20 @@
 <template>
   <div class="tama-signup-header-container">
-    <div v-if="backOperation" class="tama-signup-header-container-icon"
-         :class="{ 'tama-signup-header-container-icon-active': btnClickable }"
-         @click="handleClick"
-    >
-      <i :tabindex="0" class="ri-arrow-left-line "></i>
-    </div>
+    <app-back-buttton :is-clickable="btnClickable" @on-click="handleClick" />
     <app-context-menu class="tama-default-header-context-menu" :menu-items="menuItems" />
   </div>
 </template>
 
 <script setup>
-import {computed} from "vue"
+import {computed, ref} from "vue"
 import {useI18n} from "vue-i18n"
 import {useLanguageStore} from "@/stores/langStore.js"
 import AppContextMenu from "@/components/generic/AppContextMenu.vue"
+import AppBackButtton from "@/components/generic/AppBackButtton.vue";
 
 const languageStore = useLanguageStore()
 const { t, locale, messages } = useI18n();
+const backButton = ref(null)
 
 const props = defineProps({
   btnClickable: {
@@ -87,7 +84,6 @@ const menuItems = computed(() => {
 .tama-signup-header-container-icon i:active {
   outline: none;
   border: none;
-  box-shadow: inset 0 0 0 2px #FFA976;
 }
 
 .tama-default-header-context-menu {

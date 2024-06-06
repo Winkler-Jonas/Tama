@@ -16,6 +16,8 @@ import AppButton from "@/components/generic/AppButton.vue";
 import { ref } from "vue";
 import {useUserStore} from "@/stores/userStore.js"
 import {useAuthStore} from '@/stores/auth'
+import {useLanguageStore} from "@/stores/langStore.js";
+
 
 const props = defineProps({
   userEmail: {
@@ -28,6 +30,7 @@ const emit = defineEmits(['mailSent'])
 
 const userStore = useUserStore()
 const authStore = useAuthStore()
+const languageStore = useLanguageStore()
 
 const countdown = ref(0)
 const errorMail = ref('')
@@ -59,7 +62,7 @@ const waitToRedirect = async () => {
 
 const handleResend = async () => {
   try {
-    await authStore.resendActivationEmail(userStore.username);
+    await authStore.resendActivationEmail(userStore.username, languageStore.locale);
     await waitToRedirect()
   } catch (error) {
     // unexpected error

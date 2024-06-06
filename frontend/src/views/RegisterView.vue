@@ -2,10 +2,8 @@
   <section id="tama-register-view">
     <app-default-header class="tama-register-header-grid" :btn-clickable="false" :back-operation="false" />
     <div class="tama-register-content-grid">
-      <app-rounded-top-pet
-          :content-height="25"
-          :header-txt="$t('views.register.hdr')"
-      />
+      <app-tama-area :tama-area-text="$t('views.register.hdr')"
+                     :tama-area-height="25"/>
       <section v-if="inputScreen" id="tama-register-view-bottom-first">
         <form @keydown.enter.stop.prevent="handleEnter">
           <app-input-email
@@ -81,12 +79,12 @@ import { useAuthStore } from '@/stores/auth'
 import {useUserStore} from "@/stores/userStore.js"
 import {useLanguageStore} from "@/stores/langStore.js"
 import AppButton from "@/components/generic/AppButton.vue";
-import AppRoundedTopPet from "@/components/generic/AppRoundedTopPet.vue"
 import AppInputEmail from "@/components/generic/input/AppInputEmail.vue"
 import {EmailError, PasswordError, UnexpectedError, UserError} from "@/utils/errorHandler.js"
 import AppInputPassword from "@/components/generic/input/AppInputPassword.vue"
 import AppInputUsername from "@/components/generic/input/AppInputUsername.vue"
 import AppDefaultHeader from "@/components/header/AppDefaultHeader.vue";
+import AppTamaArea from "@/components/generic/AppTamaArea.vue";
 
 const { t, locale, messages } = useI18n();
 const languageStore = useLanguageStore()
@@ -152,7 +150,7 @@ const handleEnter = () => {
 const handleRegister = async () => {
   if (formValid()) {
     try {
-      await authStore.register(username.value, email.value, pwdOne.value)
+      await authStore.register(username.value, email.value, pwdOne.value, languageStore.locale)
       inputScreen.value = false
       userStore.setEmail(email.value)
       userStore.setUsername(username.value)
