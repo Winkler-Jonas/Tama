@@ -1,5 +1,5 @@
 <script setup>
-import Task from '@/components/Task.vue';
+import TaskOverview from '@/components/Task/TaskOverview.vue';
 import Footer from '@/components/Footer.vue';
 import AddTaskForm from '@/components/AddTaskForm.vue';
 import Header from '@/components/Header.vue';
@@ -8,7 +8,7 @@ import Header from '@/components/Header.vue';
 <template>
   <Header />
   <!-- <div class="kalender"></div> -->
-  <Task />
+  <TaskOverview />
   <Footer @openAddTask="toggleAddTask" />
   <Transition>
     <AddTaskForm v-if="AddTask" @backdropClicked="toggleAddTask" />
@@ -22,15 +22,15 @@ export default {
   data() {
     return {
       AddTask: false,
+      selectHeader: 'home',
     }
   },
-  components: { Task, Footer, AddTaskForm },
+  components: { Task: TaskOverview, Footer, AddTaskForm },
   methods: {
     toggleAddTask(toggle) {
       this.AddTask = toggle;
     }
   },
-
 }
 </script>
 

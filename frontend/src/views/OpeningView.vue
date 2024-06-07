@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     redirectToFokus() {
-      this.$router.push({ name: 'fokus'})
+      this.$router.push({ name: 'SelectFokus'})
     }
   },
 }

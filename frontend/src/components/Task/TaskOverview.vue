@@ -1,8 +1,13 @@
+<script setup>
+import Daily from '@/components/Task/Daily.vue';
+import Aufgabe from '@/components/Task/Aufgabe.vue';
+</script>
+
 <template>
   <h1>Aufgaben</h1>
-  <p>Nichts zu finden, drücke "+" und füge eine neue Aufgabe hinzu</p>
+  <Aufgabe />
   <h1>Daily</h1>
-  <p>Nichts zu finden, content folgt</p>
+  <Daily />
 </template>
 
 <script>

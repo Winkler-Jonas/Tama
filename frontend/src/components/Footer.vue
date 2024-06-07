@@ -1,10 +1,10 @@
 <template>
   <div class="footer">
     <button @click="handleClickOnAddTask">+</button>
-    <div class="icon_wrapper">
-      <img src="../assets/Kalender.png" alt="">
-      <img src="../assets/Ziel.png" alt="">
-      <img src="../assets/Settings.png" alt="">
+    <div class="icon_wrapper" >
+      <img src="../assets/Kalender.png" alt="" @click="goToCalender">
+      <img src="../assets/Ziel.png" alt=""  @click="goToFocus">
+      <img src="../assets/Settings.png" alt="" @click="goToSettings">
     </div>
   </div>
 
@@ -21,7 +21,16 @@ export default {
   methods: {
     handleClickOnAddTask() {
       this.$emit('openAddTask', this.openAddTask);
-    }
+    },
+    goToCalender() {
+      this.$router.push({ name: 'Kalender'})
+    },
+    goToFocus() {
+      this.$router.push({ name: 'Fokus'})
+    },
+    goToSettings() {
+      this.$router.push({ name: 'Settings'})
+    },
   },
 }
 </script>
@@ -32,6 +41,7 @@ button {
 }
 
 .footer {
+  text-align: center;
   position: fixed;
   bottom: 0;
   left: 0;

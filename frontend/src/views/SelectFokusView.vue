@@ -1,9 +1,11 @@
 <script setup>
 import Header from '@/components/Header.vue';
+import FokusBoxes from '@/components/FokusBoxes.vue'
 </script>
 
 <template>
   <Header :selectHeader="selectHeader"/>
+  <FokusBoxes />
   <button @click="redirectToHome">Fertig</button>
 </template>
 

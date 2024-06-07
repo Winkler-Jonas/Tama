@@ -1,8 +1,11 @@
 <template>
-  <div class="headerWrapper">
+  <div class="header-wrapper">
     <div class="image-container">
-      <h2 v-if="showHeadline"> {{ headline }}</h2>
-      <img src="../assets/tama.png" alt="tama" v-if="showTama">
+      <div class="headline-container">
+        <img  id="back-arrow" v-if="showBackArrow" src="../assets/arrow.png" alt="" @click="goToHome">
+        <h1 id="headline" v-if="showHeadline"> {{ headline }}</h1>
+      </div>
+      <img id="tama" src="../assets/tama.png" alt="tama" v-if="showTama">
     </div>
   </div>
 </template>
@@ -15,22 +18,49 @@ export default {
       showTama: true,
       showHeadline: false,
       headline: null,
+      showBackArrow: false,
+    }
+  },
+  methods: {
+    goToHome() {
+      this.$router.push({ name: 'home'})
     }
   },
   mounted() {
     switch (this.selectHeader) {
       case 'opening':
         this.showTama = true;
+        this.showBackArrow = false;
         this.showHeadline = true;
         this.headline = 'Schön, dass du da bist!';
         break;
       case 'fokus':
         this.showTama = false;
+        this.showBackArrow = false;
         this.showHeadline = true;
         this.headline = 'Was ist dein Fokus?';
         break;
-    
+      case 'calender':
+        this.showTama = false;
+        this.showBackArrow = true;
+        this.showHeadline = true;
+        this.headline = 'Kalender';
+        break;
+      case 'changeFokus':
+        this.showTama = false;
+        this.showBackArrow = true;
+        this.showHeadline = true;
+        this.headline = 'Fokus';
+        break;
+      case 'settings':
+        this.showTama = false;
+        this.showBackArrow = true;
+        this.showHeadline = true;
+        this.headline = 'Einstellungen';
+        break;
+
       default:
+        this.showBackArrow = false;
         this.showHeadline = false;
         this.headline = null;
         this.showTama = true;
@@ -42,21 +72,31 @@ export default {
 </script>
 
 <style scoped>
-.image-container h2 {
-  width: 50%;
+#headline {
+  width: 80%;
   margin: 0 auto;
 }
 
-.headerWrapper {
+.header-wrapper {
   clip-path: ellipse(100% 100% at 50% 0%);
   background-color: #83b6c7;
   text-align: center;
   min-width: 150px;
 }
 
-.image-container img {
+#tama {
   width: 50%;
   max-width: 400px;
   min-width: 150px;
 }
+
+.headline-container {
+  display: flex;
+}
+#back-arrow {
+  width: 20%;
+  max-width: 100px;
+  min-width: 50px;
+}
+
 </style>
