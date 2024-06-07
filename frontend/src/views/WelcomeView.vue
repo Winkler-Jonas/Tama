@@ -3,11 +3,10 @@
     <welcome-header class="gl-header" :btn-clickable="backBtn" @on-back-click="handleBackBtn"/>
     <app-tama-area class="gl-tama" :tama-area-text="$t('views.welcome.greet')"
                    :tama-area-height="initialScreen ? tamaHeight: 30"/>
-
     <transition name="slide-down" mode="out-in">
       <app-vertical-slider v-if="initialScreen"
                              class="tama-welcome-view-content gl-content-underflow"
-                             :container-height="70"
+                             :container-height="80"
                              :bounce-top-target="20"
                              :bounce-bot-target="1"
                              :bounce-bot-threshold="1"
@@ -19,7 +18,7 @@
           </div>
         </template>
       </app-vertical-slider>
-      <div v-else key="email" class="tama-welcome-view-content gl-content-fit">
+      <div v-else key="email" class="tama-welcome-view-content gl-content-overflow">
         <h2 class="tama-welcome-view-email-header">{{ $t('views.welcome.email.hdr') }}</h2>
         <p class="tama-welcome-view-email-txt">{{ $t('views.welcome.email.info') }}</p>
         <form @keydown.enter.stop.prevent="handleEnter">
@@ -148,9 +147,6 @@ const handleEmailButton = () => {
 </script>
 
 <style scoped>
-#tama-welcome-view {
-  padding-bottom: var(--sgn-mbt);
-}
 
 .tama-welcome-view-content {
   margin-inline: var(--sgn-mi);

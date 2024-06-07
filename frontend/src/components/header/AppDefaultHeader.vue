@@ -1,6 +1,6 @@
 <template>
   <div class="tama-signup-header-container">
-    <app-back-buttton :is-clickable="btnClickable" @on-click="handleClick" />
+    <app-back-buttton v-if="backOperation" :is-clickable="btnClickable" @on-click="handleClick" />
     <app-context-menu class="tama-default-header-context-menu" :menu-items="menuItems" />
   </div>
 </template>
@@ -19,7 +19,7 @@ const backButton = ref(null)
 const props = defineProps({
   btnClickable: {
     type: Boolean,
-    required: true,
+    required: false,
   },
   backOperation: {
     type: Boolean,

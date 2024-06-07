@@ -1,11 +1,15 @@
 /* Side Layout */
 
 .gl-view {
+    max-height: 100%;
     height: 100%;
     width: 100%;
 
     display: grid;
+    /*
     grid-template-rows: [header-start] min-content [header-end tama-start] min-content [tama-end content-start] auto [content-end button-row] min-content;
+    */
+    grid-template-rows: [header-start] min-content [header-end tama-start] min-content [tama-end content-start] auto;
     grid-template-columns: 1fr;
 }
 
@@ -21,9 +25,10 @@
     z-index: 2;
 }
 
+/* Use for tama-area overflow (top) */
 .gl-content-underflow {
     grid-column: 1 / -1;
-    grid-row: tama-start / content-end;
+    grid-row: tama-start / 5;
     z-index: 1;
     align-self: end;
     height: 100%;
@@ -31,14 +36,59 @@
 
 .gl-content-fit {
     grid-column: 1 / -1;
-    grid-row: content-start / content-end;
-    align-self: end;
+    grid-row: tama-start / -1;
+    align-self: start;
+
     height: 100%;
+    max-height: 100%;
+}
+
+/* Use for bottom button overflow (bottom) */
+.gl-content-overflow {
+    grid-column: 1 / -1;
+    grid-row: content-start / -1;
+    align-self: start;
+
+    max-height: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 .gl-button {
-    z-index: 1;
+    z-index: 3;
     grid-row: button-row / -1;
     grid-column: 1 / -1;
     justify-self: center;
+    align-self: end;
+    margin-bottom: var(--sgn-mbt);
+}
+
+.no-scrollbar {
+    scrollbar-width: none;
+    scrollbar-gutter: stable both-edges;
+    -webkit-overflow-scrolling: touch;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.sticky-button {
+    position: sticky;
+    width: 100%;
+
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+
+    background: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0) -30%,
+            rgba(255, 255, 255, 0.9) 50%
+    );
 }

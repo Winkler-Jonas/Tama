@@ -38,6 +38,7 @@ header {
 main {
   grid-column: 1 / 3;
   z-index: 1;
+  overflow-y: hidden;
 }
 
 footer {

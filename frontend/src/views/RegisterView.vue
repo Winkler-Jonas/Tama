@@ -1,91 +1,94 @@
 <template>
-  <section id="tama-register-view">
-    <app-default-header class="tama-register-header-grid" :btn-clickable="false" :back-operation="false" />
-    <div class="tama-register-content-grid">
-      <app-tama-area :tama-area-text="$t('views.register.hdr')"
-                     :tama-area-height="25"/>
-      <section v-if="inputScreen" id="tama-register-view-bottom-first">
-        <form @keydown.enter.stop.prevent="handleEnter">
-          <app-input-email
-              :email-label="$t('views.register.inputLabel.mail')"
-              :extern-error="email.error"
-              :default-value="email.value"
-              :check-taken="true"
-              @on-active="() => email.error = ''"
-              @on-validated="(valid) => email.valid = valid"
-              @on-new-input="(data) => email.value = data"
-              class="tama-register-input-field-sep"
-          />
-          <app-input-username
-              :username-label="$t('views.register.inputLabel.usr')"
-              :extern-error="username.error"
-              :default-value="username.value"
-              :check-taken="true"
-              @on-active="() => username.error = ''"
-              @on-validated="(valid) => username.valid = valid"
-              @on-new-input="(data) => username.value = data"
-              class="tama-register-input-field-sep"
-          />
-          <app-input-password
-              :password-label="$t('views.register.inputLabel.pwd')"
-              :extern-error="pwdOne.error"
-              :user-name="''"
-              @on-active="() => pwdOne.error = ''"
-              @on-validated="(valid) => pwdOne.valid = valid"
-              @on-new-input="(data) => pwdOne.value = data"
-              class="tama-register-input-field-sep"
-          />
-          <app-input-password
-              :password-label="$t('views.register.inputLabel.pwdConf')"
-              :extern-error="pwdTwo.error"
-              :second-password="pwdOne.value"
-              placeholder-str="placeholder.passRepeat"
-              :user-name="''"
-              @on-active="() => pwdTwo.error = ''"
-              @on-validated="(valid) => pwdTwo.valid = valid"
-              @on-new-input="(data) => pwdTwo.value = data"
-              class="tama-register-input-field-sep"
-          />
-        </form>
-        <app-button :btn-text="$t('views.register.btnEnter')"
-                    class="tama-register-view-bottom-button"
-                    @on-click="handleRegister"
-                    ref="submitFormRef"
-        />
+  <section id="tama-register-view" class="gl-view">
+    <welcome-header class="gl-header" :back-operation="false"/>
+    <app-tama-area class="gl-tama" :tama-area-text="$t('views.register.hdr')" :tama-area-height="35"/>
+    <transition name="slide-down" mode="out-in">
+      <section v-if="inputScreen" class="tama-register-view-content gl-content-fit">
+
+          <form @keydown.enter.stop.prevent="handleEnter" class="tama-register-view-content-scroll tama-register-view-content-fade no-scrollbar">
+            <app-input-email
+                :email-label="$t('views.register.inputLabel.mail')"
+                :extern-error="email.error"
+                :default-value="email.value"
+                :check-taken="true"
+                @on-active="() => email.error = ''"
+                @on-validated="(valid) => email.valid = valid"
+                @on-new-input="(data) => email.value = data"
+                class="tama-register-input-field-sep"
+            />
+            <app-input-username
+                :username-label="$t('views.register.inputLabel.usr')"
+                :extern-error="username.error"
+                :default-value="username.value"
+                :check-taken="true"
+                @on-active="() => username.error = ''"
+                @on-validated="(valid) => username.valid = valid"
+                @on-new-input="(data) => username.value = data"
+                class="tama-register-input-field-sep"
+            />
+            <app-input-password
+                :password-label="$t('views.register.inputLabel.pwd')"
+                :extern-error="pwdOne.error"
+                :user-name="''"
+                @on-active="() => pwdOne.error = ''"
+                @on-validated="(valid) => pwdOne.valid = valid"
+                @on-new-input="(data) => pwdOne.value = data"
+                class="tama-register-input-field-sep"
+            />
+            <app-input-password
+                :password-label="$t('views.register.inputLabel.pwdConf')"
+                :extern-error="pwdTwo.error"
+                :second-password="pwdOne.value"
+                placeholder-str="placeholder.passRepeat"
+                :user-name="''"
+                @on-active="() => pwdTwo.error = ''"
+                @on-validated="(valid) => pwdTwo.valid = valid"
+                @on-new-input="(data) => pwdTwo.value = data"
+                class="tama-register-input-field-sep"
+            />
+          </form>
+
       </section>
-      <section v-else id="tama-register-view-bottom-second">
+      <section v-else class="tama-register-view-content gl-content-fit">
         <p class="tama-register-view-bottom-second-txt">
           {{ $t('views.register.mailSent' )}}
         </p>
-        <app-button
-            v-delay="{
+      </section>
+    </transition>
+    <div v-if="inputScreen" class="sticky-button">
+      <app-button  :btn-text="$t('views.register.btnEnter')"
+                  @on-click="handleRegister"
+                  ref="submitFormRef"
+      />
+    </div>
+    <app-button
+        v-else
+        v-delay="{
                   seconds: 10,
                   onUpdate: (remaining) => countdown = remaining,
                   onComplete: () => router.push('/login')
             }"
-            class="tama-register-view-bottom-button"
-            :btn-text="$t('views.register.redirect', {num: countdown})"
-        />
-      </section>
-    </div>
+        class="tama-register-view-bottom-button"
+        :btn-text="$t('views.register.redirect', {num: countdown})"
+    />
   </section>
+
 </template>
 
 <script setup>
 import { useI18n } from "vue-i18n"
-import {ref, computed, nextTick, reactive} from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import {useUserStore} from "@/stores/userStore.js"
+import {ref, computed, nextTick, reactive} from 'vue'
 import {useLanguageStore} from "@/stores/langStore.js"
 import AppButton from "@/components/generic/AppButton.vue";
+import AppTamaArea from "@/components/generic/AppTamaArea.vue";
 import AppInputEmail from "@/components/generic/input/AppInputEmail.vue"
-import {EmailError, PasswordError, UnexpectedError, UserError} from "@/utils/errorHandler.js"
 import AppInputPassword from "@/components/generic/input/AppInputPassword.vue"
 import AppInputUsername from "@/components/generic/input/AppInputUsername.vue"
-import AppDefaultHeader from "@/components/header/AppDefaultHeader.vue";
-import AppTamaArea from "@/components/generic/AppTamaArea.vue";
-
+import {EmailError, PasswordError, UnexpectedError, UserError} from "@/utils/errorHandler.js"
+import WelcomeHeader from '@/components/header/AppDefaultHeader.vue'
 const { t, locale, messages } = useI18n();
 const languageStore = useLanguageStore()
 const userStore = useUserStore()
@@ -199,50 +202,33 @@ const menuItems = computed(() => {
 
 <style scoped>
 
-#tama-register-view {
-  height: 100%;
-  display: grid;
-  grid:
-    [context-header]  "context-header" min-content
-    [content-start]   "content"        auto;
-}
+.tama-register-view-content {
+  margin-inline: var(--sgn-mi);
+  justify-self: stretch;
+  position: relative;
 
-.tama-register-header-grid {
-  grid-column: 1 / -1;
-  grid-row: 1 / 2;
-  z-index: 2;
-  align-self: start;
-}
-
-.tama-register-content-grid {
-  grid-column: 1 / -1;
-  grid-row: 1 / -1;
-  z-index: 1;
-
+  align-self: stretch;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 25vh;
+  height: calc(100vh - 100px);
+  padding-bottom: 100px;
 }
 
-#tama-register-view-bottom-first,
-#tama-register-view-bottom-second {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-
-  margin-inline: var(--sgn-mi)
+.tama-register-view-content-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1rem;
 }
 
-.tama-register-view-bottom-button {
-  margin-top: auto;
-  align-self: center;
-  margin-bottom: var(--sgn-mbt);
+.tama-register-view-content-fade {
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 }
 
 .tama-register-view-bottom-second-txt {
   text-align: center;
   font-size: var(--wlc-txt-sz);
 }
-
-
-
 </style>
