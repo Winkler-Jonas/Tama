@@ -7,6 +7,9 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import { useAuthStore } from '@/stores/auth'
 import ProfileView from "@/views/ProfileView.vue";
 import ResendActivationView from "@/views/ResendActivationView.vue";
+import OpeningView from '@/views/OpeningView.vue'
+import FokusView from '@/views/FokusView.vue'
+import AboutView from '@/views/AboutView.vue'
 
 const routes = [
   {
@@ -47,8 +50,23 @@ const routes = [
     component: NotFoundView
   },
   {
+    path: '/about',
+    name: 'about',
+    component: AboutView
+  },
+  {
     path: '/:catchAll(.*)',
     redirect: '/404Error'
+  },
+  {
+    path: '/opening',
+    name: 'opening',
+    component: OpeningView,
+  },
+  {
+    path: '/fokus',
+    name: 'fokus',
+    component: FokusView,
   }
 ]
 
