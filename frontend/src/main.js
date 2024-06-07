@@ -1,4 +1,5 @@
 import './assets/main.css'
+import '@/assets/layout.css'
 import 'remixicon/fonts/remixicon.css'
 import { setupI18n } from './i18n'
 import { useLanguageStore } from './stores/langStore.js'

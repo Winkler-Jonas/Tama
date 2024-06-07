@@ -1,0 +1,44 @@
+/* Side Layout */
+
+.gl-view {
+    height: 100%;
+    width: 100%;
+
+    display: grid;
+    grid-template-rows: [header-start] min-content [header-end tama-start] min-content [tama-end content-start] auto [content-end button-row] min-content;
+    grid-template-columns: 1fr;
+}
+
+.gl-header {
+    grid-column: 1 / 2;
+    grid-row: header-start / header-end;
+    z-index: 3;
+}
+
+.gl-tama {
+    grid-column: 1 / -1;
+    grid-row: header-start / tama-end;
+    z-index: 2;
+}
+
+.gl-content-underflow {
+    grid-column: 1 / -1;
+    grid-row: tama-start / content-end;
+    z-index: 1;
+    align-self: end;
+    height: 100%;
+}
+
+.gl-content-fit {
+    grid-column: 1 / -1;
+    grid-row: content-start / content-end;
+    align-self: end;
+    height: 100%;
+}
+
+.gl-button {
+    z-index: 1;
+    grid-row: button-row / -1;
+    grid-column: 1 / -1;
+    justify-self: center;
+}

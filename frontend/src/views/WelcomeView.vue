@@ -1,12 +1,12 @@
 <template>
-  <section id="tama-welcome-view">
-    <welcome-header class="tama-welcome-header-grid" :btn-clickable="backBtn" @on-back-click="handleBackBtn"/>
-    <app-tama-area class="tama-tama-area-grid" :tama-area-text="$t('views.welcome.greet')"
-                   :tama-area-height="tamaHeight"/>
+  <section id="tama-welcome-view" class="gl-view">
+    <welcome-header class="gl-header" :btn-clickable="backBtn" @on-back-click="handleBackBtn"/>
+    <app-tama-area class="gl-tama" :tama-area-text="$t('views.welcome.greet')"
+                   :tama-area-height="initialScreen ? tamaHeight: 30"/>
 
-    <transition :name="transitionName" mode="out-in">
+    <transition name="slide-down" mode="out-in">
       <app-vertical-slider v-if="initialScreen"
-                             class="tama-welcome-content-grid"
+                             class="tama-welcome-view-content gl-content-underflow"
                              :container-height="70"
                              :bounce-top-target="20"
                              :bounce-bot-target="1"
@@ -14,14 +14,14 @@
                              :bounce-top-threshold="10"
       >
         <template #content>
-          <div key="welcome" class="tama-welcome-view-txt">
+          <div key="welcome" class="tama-welcome-view-init-txt">
             <span v-text-animation="{ text: $t('views.welcome.txt'), speed: 100 }"></span>
           </div>
         </template>
       </app-vertical-slider>
-      <div v-else key="email" class="tama-welcome-view-email">
-        <h2>{{ $t('views.welcome.email.hdr') }}</h2>
-        <p>{{ $t('views.welcome.email.info') }}</p>
+      <div v-else key="email" class="tama-welcome-view-content gl-content-fit">
+        <h2 class="tama-welcome-view-email-header">{{ $t('views.welcome.email.hdr') }}</h2>
+        <p class="tama-welcome-view-email-txt">{{ $t('views.welcome.email.info') }}</p>
         <form @keydown.enter.stop.prevent="handleEnter">
           <app-input-email
               class="tama-welcome-view-email-field"
@@ -43,12 +43,12 @@
     <app-button
         v-if="initialScreen"
         tabindex="1"
-        class="tama-welcome-view-button"
+        class="gl-button"
         :btn-text="$t('views.welcome.proceed')"
         @on-click="handleInitScreenButton"/>
     <app-button
         v-else
-        class="tama-welcome-view-button"
+        class="gl-button"
         :btn-text="$t('views.welcome.email.btn')"
         @on-click="handleEmailButton"
         ref="submitFormButton"
@@ -65,7 +65,6 @@ import AppButton from "@/components/generic/AppButton.vue";
 import AppTamaArea from "@/components/generic/AppTamaArea.vue";
 import WelcomeHeader from "@/components/header/AppDefaultHeader.vue";
 import AppInputEmail from "@/components/generic/input/AppInputEmail.vue";
-import AppHorizontalSlider from "@/components/generic/AppVerticalSlider.vue";
 import AppVerticalSlider from "@/components/generic/AppVerticalSlider.vue";
 
 const userStore = useUserStore()
@@ -83,45 +82,65 @@ const email = reactive({
   error: '',
 })
 
-const tamaHeight = ref(45)
-const transitionName = computed(() => initialScreen.value ? 'slide-down' : 'slide-down')
+const tamaHeight = computed(() => initialScreen.value ? 45 : 40)
 
 const handleInitScreenButton = () => {
+  /**
+   * Function handles the first button.
+   * OnClick Text-Screen is replaced by email-form
+   *
+   */
   backBtn.value = true
   initialScreen.value = false
 }
 
 const handleBackBtn = () => {
+  /**
+   * Function handles back-button logic
+   * Back-button is only clickable when user views email-field
+   * otherwise disabled / grayed out
+   *
+   */
   backBtn.value = false
   initialScreen.value = true
 }
 
-
-/**
- * Form logic
- */
 const formValid = () => {
-  if (!email.valid) {
-    return false
-  }
-  if (!email.value) {
-    email.error = t('error.email.empty')
+  /**
+   * Function checks if user-input is valid
+   *
+   * Email-Field has to contain value
+   * Email-Field has be validated (done by input)
+   *
+   */
+  if (!email.valid || !email.value) {
+    email.error = !email.value ? t('error.email.empty') : ''
     return false
   }
   return true
 }
 
 const handleEnter = () => {
-  // Focus button (forms send new data on blur)
+  /**
+   * Function enables content switch from user-input to button
+   *
+   * Input-Field is blurred and button focused
+   * Wait for input-field to register change and execute buttonClick
+   *
+   */
   inputFieldRef.value.blurInput()
   submitFormButton.value.focusButton()
-  // make sure data arrived and call register
   nextTick(() => {
     handleEmailButton()
   })
 }
+
 const handleEmailButton = () => {
+  /**
+   * Function routes to new view if form is valid
+   */
   if (formValid()) {
+    // todo: Change setWelcomeDone to true if user did initial focus-settings
     userStore.setWelcomeDone(true)
     router.push(mailTaken.value ? '/login' : '/sign-up')
   }
@@ -130,66 +149,33 @@ const handleEmailButton = () => {
 
 <style scoped>
 #tama-welcome-view {
-  height: 100%;
-  width: 100%;
-
-  display: grid;
-  grid-template-rows: [header-start] min-content [header-end tama-start] min-content [tama-end content-start] auto [content-end button-row] min-content;
-  grid-template-columns: 1fr;
+  padding-bottom: var(--sgn-mbt);
 }
 
-.tama-welcome-header-grid {
-  grid-column: 1 / 2;
-  grid-row: header-start / header-end;
-  z-index: 3;
-  align-self: end;
-}
-
-.tama-tama-area-grid {
-  grid-column: 1 / -1;
-  grid-row: header-start / tama-end;
-
-  z-index: 2;
-}
-
-.tama-welcome-content-grid {
-  grid-column: 1 / -1;
-  grid-row: tama-start / content-end;
-  z-index: 1;
-  align-self: end;
-  justify-self: center;
-
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.tama-welcome-view-txt {
-  position: relative;
-  flex: 1;
-  text-align: center;
-  font-size: var(--wlc-txt-sz);
-
+.tama-welcome-view-content {
   margin-inline: var(--sgn-mi);
-}
-
-.tama-welcome-view-email {
-  grid-column: 1 / -1;
-  grid-row: content-start / content-end;
-  align-self: end;
-
-  position: relative;
-  flex: 1;
-  height: 100%;
-  margin-inline: var(--sgn-mi);
+  justify-self: stretch;
 
   display: flex;
   flex-direction: column;
-
+  justify-content: center;
 }
 
-.tama-welcome-view-email h2 {
+/*
+ * First View
+ */
+.tama-welcome-view-init-txt {
+  position: relative;
+  flex: 1;
+
+  text-align: center;
+  font-size: var(--wlc-txt-sz);
+}
+
+/*
+ * Second View
+ */
+.tama-welcome-view-email-header {
   text-align: center;
   padding: max(3vh, 2rem) 0;
 }
@@ -198,39 +184,16 @@ const handleEmailButton = () => {
   padding: min(3vw, 3vh, 4vw) 0;
 }
 
-.tama-welcome-view-button {
-  z-index: 1;
-  grid-row: button-row / -1;
-  grid-column: 1 / -1;
-  justify-self: center;
-  margin-bottom: var(--sgn-mbt);
-}
-
-/* For the content sliding down from the top */
+/* Sliding transition on content switch */
 .slide-down-enter-active, .slide-down-leave-active {
   transition: transform 0.5s ease-out;
 }
 
 .slide-down-enter-from, .slide-down-leave-to {
-  transform: translateY(-100%); /* Starts from above the view */
+  transform: translateY(-100%);
 }
 
 .slide-down-enter-to, .slide-down-leave-from {
-  transform: translateY(0); /* Ends at the original position */
+  transform: translateY(0);
 }
-
-/* For the content sliding up from the bottom */
-.slide-up-enter-active, .slide-up-leave-active {
-  transition: transform 0.5s ease-out;
-}
-
-.slide-up-enter-from, .slide-up-leave-to {
-  transform: translateY(100%); /* Starts from below the view */
-}
-
-.slide-up-enter-to, .slide-up-leave-from {
-  transform: translateY(0); /* Ends at the original position */
-}
-
-
 </style>

@@ -35,16 +35,13 @@ const props = defineProps({
   }
 })
 
-
 const tamaCurrentHeight = computed(() => ({height: `${tamaGetHeight.value}vh`}))
-
 
 watch(() => props.tamaAreaHeight, (newHeight) => {
   tamaSetHeight(newHeight);
 }, {immediate: true});
 
 </script>
-
 
 <style scoped>
 
