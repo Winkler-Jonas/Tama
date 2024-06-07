@@ -1,5 +1,5 @@
 <template>
-  <div id="tama-area-container" :style="tamaAreaCurrentHeight">
+  <div id="tama-area-container" ref="tamaContainer" :style="tamaCurrentHeight">
     <div id="tama-area-round-shadow">
       <div id="tama-area-round-content">
       </div>
@@ -12,8 +12,11 @@
 </template>
 
 <script setup>
+import { useUIStore } from "@/stores/uiStore.js"
+import { computed, ref, watch } from "vue";
 
-import {computed} from "vue";
+const tamaContainer = ref(null)
+const { tamaSetHeight, tamaGetHeight } = useUIStore()
 
 const props = defineProps({
   tamaAreaText: {
@@ -24,7 +27,6 @@ const props = defineProps({
   tamaAreaHeight: {
     type: Number,
     required: false,
-    default: 30
   },
   tamaPet: {
     type: String,
@@ -33,7 +35,13 @@ const props = defineProps({
   }
 })
 
-const tamaAreaCurrentHeight = computed(() => ({'height': `${props.tamaAreaHeight}vh`}))
+
+const tamaCurrentHeight = computed(() => ({height: `${tamaGetHeight.value}vh`}))
+
+
+watch(() => props.tamaAreaHeight, (newHeight) => {
+  tamaSetHeight(newHeight);
+}, {immediate: true});
 
 </script>
 
@@ -42,7 +50,7 @@ const tamaAreaCurrentHeight = computed(() => ({'height': `${props.tamaAreaHeight
 
 #tama-area-container {
   width: 100%;
-  height: 30vh;
+
   background-color: transparent;
   position: relative;
   overflow: hidden;
@@ -51,6 +59,8 @@ const tamaAreaCurrentHeight = computed(() => ({'height': `${props.tamaAreaHeight
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+
+  transition: height 0.5s ease;
 }
 
 #tama-area-round-shadow {
