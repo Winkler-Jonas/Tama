@@ -18,6 +18,7 @@
         "pwdConf": "Passwort bestätigen"
       },
       "hdr": "Neues Konto erstellen",
+      "hdrSend": "Konto Aktivierung",
       "userTaken": "Benutzername bereits vergeben",
       "userShort": "Benutzername zu kurz",
       "emailTaken": "Mit dieser E-Mail besteht bereits ein Account",
@@ -28,7 +29,7 @@
       "passShort": "Das Passwort ist zu kurz. Min. {min} Zeichen",
       "btnEnter": "Registrieren",
       "unexpected": "Ein Systemfehler ist aufgetreten. Bitte versuchen Sie es später nochmal.",
-      "mailSent": "Wir haben Ihnen eine E-Mail gesendet, in welcher Sie alle weiteren Informationen zum Anmeldeprozess finden.",
+      "mailSent": "Wir schicken dir eine E-Mail mit allen Informationen zur Registrierung...",
       "redirect": "Bearbeite {num}"
     },
     "login": {

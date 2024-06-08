@@ -18,6 +18,7 @@
         "pwdConf": "Confirm password"
       },
       "hdr": "Sign up",
+      "hdrSend": "Account activation",
       "userTaken": "Username not available",
       "userShort": "Username too short",
       "emailTaken": "Email already taken",
@@ -28,7 +29,7 @@
       "passShort": "Password is to short. Min {min} characters",
       "btnEnter": "Register",
       "unexpected": "An unexpected error occurred. Please try again later.",
-      "mailSent": "We have sent you an email containing all the necessary information to conclude your registration.",
+      "mailSent": "We have sent you an email with all necessary information on how to activate your your account...",
       "redirect": "Processing {num}"
     },
     "login": {

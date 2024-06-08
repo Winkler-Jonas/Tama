@@ -1,9 +1,9 @@
 <template>
   <section id="tama-register-view" class="gl-view">
     <welcome-header class="gl-header" :back-operation="false"/>
-    <app-tama-area class="gl-tama" :tama-area-text="$t('views.register.hdr')" :tama-area-height="35"/>
+    <app-tama-area class="gl-tama" :tama-area-text="inputScreen ? $t('views.register.hdr') : $t('view.register.hdrSend')" :tama-area-height="35"/>
     <transition name="slide-down" mode="out-in">
-      <section v-if="inputScreen" class="tama-register-view-content gl-content-fit">
+      <section v-if="!inputScreen" class="tama-register-view-content gl-content-fit">
 
           <form @keydown.enter.stop.prevent="handleEnter" class="tama-register-view-content-scroll tama-register-view-content-fade no-scrollbar">
             <app-input-email
@@ -49,13 +49,11 @@
           </form>
 
       </section>
-      <section v-else class="tama-register-view-content gl-content-fit">
-        <p class="tama-register-view-bottom-second-txt">
-          {{ $t('views.register.mailSent' )}}
-        </p>
+      <section v-else class="tama-register-view-content gl-content-underflow">
+        <p v-text-animation="{ text: $t('views.register.mailSent' ), speed: 70 }" class="tama-register-view-bottom-second-txt"></p>
       </section>
     </transition>
-    <div v-if="inputScreen" class="sticky-button">
+    <div v-if="!inputScreen" class="sticky-button">
       <app-button  :btn-text="$t('views.register.btnEnter')"
                   @on-click="handleRegister"
                   ref="submitFormRef"
@@ -68,7 +66,7 @@
                   onUpdate: (remaining) => countdown = remaining,
                   onComplete: () => router.push('/login')
             }"
-        class="tama-register-view-bottom-button"
+        class="gl-button"
         :btn-text="$t('views.register.redirect', {num: countdown})"
     />
   </section>
