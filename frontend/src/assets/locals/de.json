@@ -29,7 +29,7 @@
       "passShort": "Das Passwort ist zu kurz. Min. {min} Zeichen",
       "btnEnter": "Registrieren",
       "unexpected": "Ein Systemfehler ist aufgetreten. Bitte versuchen Sie es später nochmal.",
-      "mailSent": "Wir schicken dir eine E-Mail mit allen Informationen zur Registrierung...",
+      "mailSent": "Wir schicken dir eine E-Mail mit allen Informationen zur Registrierung",
       "redirect": "Bearbeite {num}"
     },
     "login": {

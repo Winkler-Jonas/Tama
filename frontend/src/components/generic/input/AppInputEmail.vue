@@ -118,7 +118,8 @@ watch([email, externalError], async (newValues) => {
   } else if (props.checkTaken) {
     // Check if email is already taken
     const available = await doesEmailExistOnServer(newEmail);
-    isTaken.value = available
+    isTaken.value = !available
+    emit('onIsTaken', isTaken.value)
     if (!available && props.validateTaken) {
       errorMessage.value = t('error.email.taken');
     }
@@ -144,8 +145,11 @@ const resetError = () => {
 
 const blurInput = () => inputRef.value.blurInput()
 
+const focusInput = () => inputRef.value.focusInput()
+
 defineExpose({
-  blurInput
+  blurInput,
+  focusInput,
 })
 
 </script>

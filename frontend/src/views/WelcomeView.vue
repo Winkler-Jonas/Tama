@@ -6,7 +6,7 @@
     <transition name="slide-down" mode="out-in">
       <app-vertical-slider v-if="initialScreen"
                              class="tama-welcome-view-content gl-content-underflow"
-                             :container-height="80"
+                             :container-height="70"
                              :bounce-top-target="20"
                              :bounce-bot-target="1"
                              :bounce-bot-threshold="1"
@@ -18,10 +18,10 @@
           </div>
         </template>
       </app-vertical-slider>
-      <div v-else key="email" class="tama-welcome-view-content gl-content-overflow">
+      <div v-else key="email" class="tama-welcome-view-content gl-content-fit">
         <h2 class="tama-welcome-view-email-header">{{ $t('views.welcome.email.hdr') }}</h2>
         <p class="tama-welcome-view-email-txt">{{ $t('views.welcome.email.info') }}</p>
-        <form @keydown.enter.stop.prevent="handleEnter">
+        <form @keydown.enter.stop.prevent="handleEmailButton">
           <app-input-email
               class="tama-welcome-view-email-field"
               ref="inputFieldRef"
@@ -119,30 +119,21 @@ const formValid = () => {
   return true
 }
 
-const handleEnter = () => {
-  /**
-   * Function enables content switch from user-input to button
-   *
-   * Input-Field is blurred and button focused
-   * Wait for input-field to register change and execute buttonClick
-   *
-   */
-  inputFieldRef.value.blurInput()
-  submitFormButton.value.focusButton()
-  nextTick(() => {
-    handleEmailButton()
-  })
-}
-
 const handleEmailButton = () => {
   /**
    * Function routes to new view if form is valid
    */
-  if (formValid()) {
-    // todo: Change setWelcomeDone to true if user did initial focus-settings
-    userStore.setWelcomeDone(true)
-    router.push(mailTaken.value ? '/login' : '/sign-up')
-  }
+  // When enter is used input might still be focused and therefore no data emitted
+  inputFieldRef.value.blurInput()
+  submitFormButton.value.focusButton()
+
+  nextTick(() => {
+    if (formValid()) {
+      // todo: Change setWelcomeDone to true if user did initial focus-settings
+      userStore.setWelcomeDone(true)
+      router.push(mailTaken.value ? '/login' : '/sign-up')
+    }
+  })
 };
 </script>
 

@@ -1,9 +1,9 @@
 <template>
   <section id="tama-register-view" class="gl-view">
     <welcome-header class="gl-header" :back-operation="false"/>
-    <app-tama-area class="gl-tama" :tama-area-text="inputScreen ? $t('views.register.hdr') : $t('view.register.hdrSend')" :tama-area-height="35"/>
+    <app-tama-area class="gl-tama" :tama-area-text="inputScreen ? $t('views.register.hdr') : $t('views.register.hdrSend')" :tama-area-height="35"/>
     <transition name="slide-down" mode="out-in">
-      <section v-if="inputScreen" class="tama-register-view-content gl-content-fit">
+      <section v-if="inputScreen" class="tama-register-view-content gl-content-underflow">
           <form @keydown.enter.stop.prevent="handleEnter" class="tama-register-view-content-scroll tama-register-view-content-fade no-scrollbar">
             <app-input-email
                 :email-label="$t('views.register.inputLabel.mail')"
@@ -48,11 +48,11 @@
           </form>
 
       </section>
-      <section v-else class="tama-register-view-content gl-content-underflow">
-        <p v-text-animation="{ text: $t('views.register.mailSent' ), speed: 70 }" class="tama-register-view-bottom-second-txt"></p>
+      <section v-else class="tama-register-view-content gl-content-fit">
+        <span :lang="locale" v-text-animation="{ text: $t('views.register.mailSent' ), speed: 70 }" class="tama-register-view-bottom-second-txt"></span>
       </section>
     </transition>
-    <div v-if="inputScreen" class="sticky-button">
+    <div v-if="inputScreen" class="gl-button">
       <app-button  :btn-text="$t('views.register.btnEnter')"
                   @on-click="handleRegister"
                   ref="submitFormRef"
@@ -201,16 +201,11 @@ const menuItems = computed(() => {
 
 .tama-register-view-content {
   margin-inline: var(--sgn-mi);
-  justify-self: stretch;
   position: relative;
 
-  align-self: end;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-
-
-  overflow: visible;
+  justify-content: center;
 }
 
 .tama-register-view-content-scroll {
@@ -228,6 +223,7 @@ const menuItems = computed(() => {
 
 .tama-register-view-bottom-second-txt {
   text-align: center;
+  hyphens: auto;
   font-size: var(--wlc-txt-sz);
 }
 </style>
