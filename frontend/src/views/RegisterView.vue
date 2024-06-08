@@ -3,8 +3,7 @@
     <welcome-header class="gl-header" :back-operation="false"/>
     <app-tama-area class="gl-tama" :tama-area-text="inputScreen ? $t('views.register.hdr') : $t('view.register.hdrSend')" :tama-area-height="35"/>
     <transition name="slide-down" mode="out-in">
-      <section v-if="!inputScreen" class="tama-register-view-content gl-content-fit">
-
+      <section v-if="inputScreen" class="tama-register-view-content gl-content-fit">
           <form @keydown.enter.stop.prevent="handleEnter" class="tama-register-view-content-scroll tama-register-view-content-fade no-scrollbar">
             <app-input-email
                 :email-label="$t('views.register.inputLabel.mail')"
@@ -53,7 +52,7 @@
         <p v-text-animation="{ text: $t('views.register.mailSent' ), speed: 70 }" class="tama-register-view-bottom-second-txt"></p>
       </section>
     </transition>
-    <div v-if="!inputScreen" class="sticky-button">
+    <div v-if="inputScreen" class="sticky-button">
       <app-button  :btn-text="$t('views.register.btnEnter')"
                   @on-click="handleRegister"
                   ref="submitFormRef"
@@ -205,19 +204,21 @@ const menuItems = computed(() => {
   justify-self: stretch;
   position: relative;
 
-  align-self: stretch;
+  align-self: end;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  padding-top: 25vh;
-  height: calc(100vh - 100px);
-  padding-bottom: 100px;
+  justify-content: flex-end;
+
+
+  overflow: visible;
 }
 
 .tama-register-view-content-scroll {
+  padding-top: 35vh;
+  padding-bottom: 20vh;
+  height: calc(100vh - 35vh);
   flex: 1 1 auto;
   overflow-y: auto;
-  padding: 1rem;
 }
 
 .tama-register-view-content-fade {
