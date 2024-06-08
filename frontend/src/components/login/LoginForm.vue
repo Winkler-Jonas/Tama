@@ -1,5 +1,7 @@
 <template>
-  <form @keydown.enter.stop.prevent="handleEnter">
+  <form @keydown.enter.stop.prevent="handleEnter"
+        class="no-scrollbar tama-login-form-scroll tama-login-form-fade"
+  >
     <app-input-username
         :username-label="$t('views.login.inputLabel.usr')"
         :extern-error="username.error"
@@ -12,7 +14,7 @@
     <app-input-password
         :password-label="$t('views.login.inputLabel.pwd')"
         :extern-error="password.error"
-        @on-active="() => password.error = ''"
+        @on-active="handleActiveState"
         @on-validated="(valid) => password.valid = valid"
         @on-new-input="(data) => password.value = data"
     />
@@ -22,9 +24,6 @@
               @on-click="handleLogin"
               ref="submitButtonRef"
   />
-  <div class="tama-login-register">
-    <app-horizontal-separator :horizontal-txt="$t('components.horizontalSeparator.or')" />
-  </div>
 </template>
 
 <script setup>
@@ -35,7 +34,6 @@ import AppButton from "@/components/generic/AppButton.vue"
 import AppInputPassword from "@/components/generic/input/AppInputPassword.vue"
 import AppInputUsername from "@/components/generic/input/AppInputUsername.vue"
 import AppHorizontalSeparator from "@/components/generic/AppHorizontalSeparator.vue"
-
 
 const { t } = useI18n();
 const userStore = useUserStore()
@@ -54,7 +52,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['onLogin'])
+const emit = defineEmits(['onLogin', 'onActive'])
 
 const submitButtonRef = ref(null)
 
@@ -84,6 +82,11 @@ const formValid = () => {
   }
 }
 
+const handleActiveState = () => {
+  password.error = ''
+  emit("onActive")
+}
+
 const handleEnter = () => {
   submitButtonRef.value.focusButton()
   nextTick( () => {
@@ -103,7 +106,21 @@ const handleLogin = () => {
 
 <style scoped>
 
+.tama-login-form-scroll {
+  flex: 1 1 auto;
+  padding-top: 20vh;
+  padding-bottom: 5vh;
+  height: calc(20vh - 10vh);
+  overflow-y: auto;
+}
+
+.tama-login-form-fade {
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
 .tama-login-send {
+  margin-top: min(2vh, 1em);
   margin-inline: auto;
 }
 

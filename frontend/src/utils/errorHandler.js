@@ -26,7 +26,6 @@ const apiErrors = {
 }
 
 const errorFactory = (type, message, data) => {
-    console.log(`Error-type: ${type} Message: ${message} Data: ${data}`)
     switch (type) {
         case 'user':
             return new UserError(message, data);
@@ -43,7 +42,6 @@ const errorFactory = (type, message, data) => {
 };
 
 export const getAPIErrorMessage = (apiResponseError) => {
-    console.log(apiResponseError)
     if (!apiResponseError.response || !apiResponseError.response.data) {
         throw new UnexpectedError('Unexpected error occurred');
     }

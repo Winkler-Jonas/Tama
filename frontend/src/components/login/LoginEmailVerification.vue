@@ -1,5 +1,5 @@
 <template>
-  <p>{{ $t('views.login.notVerified.msg') }}</p>
+  <p style="margin-top: 3rem;">{{ $t('views.login.notVerified.msg') }}</p>
   <app-input-field
       input-name="newEmail"
       :default-value="userEmail"
@@ -56,8 +56,7 @@ const waitToRedirect = async () => {
   await delay(3, (remainingSeconds) => {
     countdown.value = remainingSeconds;
   });
-  // todo instead of redirect we need to tell the parent we are done
-  await emit('mailSent')
+  emit('mailSent')
 }
 
 const handleResend = async () => {
@@ -68,6 +67,10 @@ const handleResend = async () => {
     // unexpected error
   }
 }
+
+defineExpose({
+  handleResend
+})
 
 </script>
 

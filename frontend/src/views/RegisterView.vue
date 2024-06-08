@@ -226,4 +226,17 @@ const menuItems = computed(() => {
   hyphens: auto;
   font-size: var(--wlc-txt-sz);
 }
+
+/* Sliding transition on content switch */
+.slide-down-enter-active, .slide-down-leave-active {
+  transition: transform 0.5s ease-out;
+}
+
+.slide-down-enter-from, .slide-down-leave-to {
+  transform: translateY(-100%);
+}
+
+.slide-down-enter-to, .slide-down-leave-from {
+  transform: translateY(0);
+}
 </style>
