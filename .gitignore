@@ -3,7 +3,6 @@ venv
 .idea
 nginx.conf
 nginx/ssl/*
-frontend/Dockerfile
 docs/build
 *__pycache__
 *tests.py

@@ -7,6 +7,9 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import { useAuthStore } from '@/stores/auth'
 import ProfileView from "@/views/ProfileView.vue";
 import ResendActivationView from "@/views/ResendActivationView.vue";
+import WelcomeView from "@/views/WelcomeView.vue";
+import {useUserStore} from '@/stores/userStore'
+
 
 const routes = [
   {
@@ -16,14 +19,19 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/welcome',
+    name: 'welcome',
+    component: WelcomeView,
+  },
+  {
     path: '/profile',
     name: 'profile',
     component: ProfileView,
     meta: {requiresAuth: true}
   },
   {
-    path: '/register',
-    name: 'register',
+    path: '/sign-up',
+    name: 'signUp',
     component: RegisterView
   },
   {
@@ -60,18 +68,43 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const userStore = useUserStore()
 
-  if (requiresAuth && !authStore.token) {
-    next('/login')
-  } else if (authStore.token && !authStore.user) {
-    try {
-      await authStore.fetchUserProfile()
-      next()
-    } catch (error) {
-      next('/login')
+  const isRootPath = to.path === '/';
+
+  if (isRootPath) {
+
+    if (!userStore.welcomeDone) {
+      next('/welcome');
+    } else {
+      if (!authStore.token) {
+        next('/login');
+      } else {
+        if (!authStore.user) {
+          try {
+            await authStore.fetchUserProfile();
+            next();
+          } catch (error) {
+            next('/login');
+          }
+        } else {
+          next('/home');
+        }
+      }
     }
   } else {
-    next()
+    if (requiresAuth && !authStore.token) {
+      next('/login');
+    } else if (authStore.token && !authStore.user) {
+      try {
+        await authStore.fetchUserProfile();
+        next();
+      } catch (error) {
+        next('/login');
+      }
+    } else {
+      next();
+    }
   }
 })
 
