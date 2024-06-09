@@ -4,7 +4,11 @@
 
     </header>
     <main>
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition name="slide" mode="out-in">
+          <component :is="Component" :key="$route.path"/>
+        </transition>
+      </router-view>
     </main>
     <footer>
       <!-- Navbar here -->
@@ -14,10 +18,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import SignupHeader from "@/components/header/AppDefaultHeader.vue";
 
-const imgUrl = ref(`/static/working.gif`);
 </script>
 
 <style scoped>
@@ -39,6 +40,7 @@ main {
   grid-column: 1 / 3;
   z-index: 1;
   overflow-y: hidden;
+  position: relative;
 }
 
 footer {
@@ -46,4 +48,20 @@ footer {
   z-index: 1;
 }
 
+
+.slide-enter-active, .slide-leave-active {
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide-enter-from {
+  transform: translateX(100%); /* Enter from the right */
+}
+
+.slide-leave-to {
+  transform: translateX(-100%); /* Exit to the left */
+}
+
+.slide-enter-to, .slide-leave-from {
+  transform: translateX(0);
+}
 </style>
