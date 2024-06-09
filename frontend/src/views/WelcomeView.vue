@@ -130,7 +130,7 @@ const handleEmailButton = () => {
   nextTick(() => {
     if (formValid()) {
       // todo: Change setWelcomeDone to true if user did initial focus-settings
-      userStore.setWelcomeDone(true)
+      // userStore.setWelcomeDone(true)
       router.push(mailTaken.value ? '/login' : '/sign-up')
     }
   })
