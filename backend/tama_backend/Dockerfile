@@ -10,7 +10,12 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-RUN apt-get update && apt-get install -y netcat-openbsd && \ apt-get update && \ apt-get install -y ca-certificates && \ update-ca-certificates
+RUN mkdir -p /etc/ssl/certs && \
+    apt-get update && \
+    apt-get install -y ca-certificates && \
+    update-ca-certificates --fresh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY . /app/
 
