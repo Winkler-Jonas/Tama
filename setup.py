@@ -11,7 +11,7 @@ import project_setup as ps
 
 
 production_server: Dict[str, str] = {
-    'domain_ip': '130.61.49.116',
+    'domain_ip': '130.162.57.25',
     'domain_name': 'tamado.app'
 }
 
