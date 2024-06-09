@@ -19,6 +19,7 @@ RUN mkdir -p /etc/ssl/certs && \
 
 COPY requirements.txt /app/
 RUN pip install --upgrade pip
+RUN pip install torch torchvision torchaudio
 
 RUN pip install -r requirements.txt
 
