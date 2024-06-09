@@ -12,7 +12,7 @@ RUN pip install -r requirements.txt
 
 RUN mkdir -p /etc/ssl/certs && \
     apt-get update && \
-    apt-get install -y ca-certificates && \
+    apt-get install -y netcat-openbsd ca-certificates && \
     update-ca-certificates --fresh && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
