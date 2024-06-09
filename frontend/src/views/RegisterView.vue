@@ -69,7 +69,6 @@
         :btn-text="$t('views.register.redirect', {num: countdown})"
     />
   </section>
-
 </template>
 
 <script setup>
