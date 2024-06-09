@@ -8,6 +8,8 @@ import { useAuthStore } from '@/stores/auth'
 import ProfileView from "@/views/ProfileView.vue";
 import ResendActivationView from "@/views/ResendActivationView.vue";
 import WelcomeView from "@/views/WelcomeView.vue";
+import {useUserStore} from '@/stores/userStore'
+
 
 const routes = [
   {
@@ -66,18 +68,27 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const userStore = useUserStore()
 
   if (requiresAuth && !authStore.token) {
-    next('/login')
+    next('/login');
   } else if (authStore.token && !authStore.user) {
     try {
-      await authStore.fetchUserProfile()
-      next()
+      await authStore.fetchUserProfile();
+      if (!userStore.welcomeDone && to.path !== '/welcome') {
+        next('/welcome');  // Redirect to welcome if the welcome process isn't done
+      } else {
+        next();
+      }
     } catch (error) {
-      next('/login')
+      next('/login');
     }
   } else {
-    next()
+    if (!userStore.welcomeDone && to.path !== '/welcome') {
+      next('/welcome');  // Additional check when user is not navigating through auth required paths
+    } else {
+      next();
+    }
   }
 })
 
