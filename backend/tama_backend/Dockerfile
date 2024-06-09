@@ -1,21 +1,26 @@
 # backend/tama_backend/Dockerfile
-FROM python:3.12
+FROM python:3.11
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
-COPY requirements.txt /app/
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-
 RUN mkdir -p /etc/ssl/certs && \
     apt-get update && \
-    apt-get install -y netcat-openbsd ca-certificates && \
+    apt-get install -y \
+        netcat-openbsd \
+        ca-certificates \
+        build-essential \
+        libatlas-base-dev && \
     update-ca-certificates --fresh && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt /app/
+RUN pip install --upgrade pip
+
+RUN pip install -r requirements.txt
 
 COPY . /app/
 
