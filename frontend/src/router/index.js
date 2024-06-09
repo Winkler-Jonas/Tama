@@ -70,22 +70,38 @@ router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const userStore = useUserStore()
 
-  if (requiresAuth && !authStore.token) {
-    next('/login');
-  } else if (authStore.token && !authStore.user) {
-    try {
-      await authStore.fetchUserProfile();
-      if (!userStore.welcomeDone && to.path !== '/welcome') {
-        next('/welcome');  // Redirect to welcome if the welcome process isn't done
+  const isRootPath = to.path === '/';
+
+  if (isRootPath) {
+
+    if (!userStore.welcomeDone) {
+      next('/welcome');
+    } else {
+      if (!authStore.token) {
+        next('/login');
       } else {
-        next();
+        if (!authStore.user) {
+          try {
+            await authStore.fetchUserProfile();
+            next();
+          } catch (error) {
+            next('/login');
+          }
+        } else {
+          next('/home');
+        }
       }
-    } catch (error) {
-      next('/login');
     }
   } else {
-    if (!userStore.welcomeDone && to.path !== '/welcome') {
-      next('/welcome');  // Additional check when user is not navigating through auth required paths
+    if (requiresAuth && !authStore.token) {
+      next('/login');
+    } else if (authStore.token && !authStore.user) {
+      try {
+        await authStore.fetchUserProfile();
+        next();
+      } catch (error) {
+        next('/login');
+      }
     } else {
       next();
     }
