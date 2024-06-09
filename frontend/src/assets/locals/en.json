@@ -61,6 +61,20 @@
         "label": "EMail",
         "btn": "Get started"
       }
+    },
+    "notFound": {
+      "hdr": "Oops",
+      "txt": "This page does not exist",
+      "btn": "Back Home"
+    },
+    "activation": {
+      "hdr": "Account activation",
+      "txtHdr": "Hi {name}",
+      "loading": "One Moment, we are activating your account",
+      "txtSuccess": "Awesome! We activated your account",
+      "txtFail": "Due to technical issues we unfortunately were not able to activate your account. Please try again later",
+      "btnSuccess": "Sign in now",
+      "btnFail": "Back to sign in"
     }
   },
   "error": {

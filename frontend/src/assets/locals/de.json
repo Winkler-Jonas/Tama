@@ -61,6 +61,20 @@
         "label": "E-Mail",
         "btn": "Loslegen"
       }
+    },
+    "notFound": {
+      "hdr": "Oops",
+      "txt": "Diese Seite existiert leider nicht",
+      "btn": "Zurück nach Hause"
+    },
+    "activation": {
+      "hdr": "Konto Aktivierung",
+      "txtHdr": "Hi {name}",
+      "loading": "Einen Moment, wir aktivieren dein Konto",
+      "txtSuccess": "Super! Wir haben dein Konto jetzt aktiviert.",
+      "txtFail": "Leider konnten wir dein Konto aus technischen Gründen nicht aktivieren. Versuch es doch bitte später nochmal",
+      "btnSuccess": "Jetzt anmelden",
+      "btnFail": "Zum Login"
     }
   },
   "error": {
