@@ -105,11 +105,21 @@
       "taken": "Email already taken",
       "verified": "Unfortunately we were not able to verify your Email",
       "empty": "Please enter an email address"
+    },
+    "ai": {
+      "short": "Input required",
+      "long": "Input too long",
+      "extern": "AI currently to accessible",
+      "unexpected": "Unexpected error. Please try again later"
     }
   },
   "components": {
     "horizontalSeparator": {
       "or": "or"
+    },
+    "aiInput": {
+      "inspire": "Inspiration",
+      "ask": "Choose a topic"
     }
   }
 }

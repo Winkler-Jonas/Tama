@@ -105,11 +105,21 @@
       "taken": "Diese E-Mail Adresse ist bereits mit einem Account verlinkt",
       "verified": "Wir konnten Ihr E-Mail Adress bisher leider noch nicht verifizieren",
       "empty": "Bitte geben Sie eine E-Mail Adresse ein"
+    },
+    "ai": {
+      "short": "Eingabe benötigt",
+      "long": "Eingabe zu lang",
+      "extern": "KI derzeit nicht verfügbar",
+      "unexpected": "Ein unerwarteter Fehler ist aufgetreten, versuch es später nochmal."
     }
   },
   "components": {
     "horizontalSeparator": {
       "or": "oder"
+    },
+    "aiInput": {
+      "inspire": "Inspiration",
+      "ask": "Wähle ein Thema"
     }
   }
 }

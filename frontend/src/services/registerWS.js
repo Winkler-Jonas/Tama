@@ -1,19 +1,31 @@
+import { useLanguageStore } from '@/stores/langStore.js';
+import {getAIErrorMessage} from "@/utils/AIerrorHandler.js";
+
 class WebSocketService {
     constructor() {
+        this.routesWithLocale = ['/ws/askAI/', ]
         this.usernameSocket = null;
         this.emailSocket = null;
         this.usernameCallbacks = {};
         this.emailCallbacks = {};
         this.usernameQueue = [];
         this.emailQueue = [];
+        this.askAISocket = null;
+        this.onMessage = null
+        this.onError = null
     }
 
     getWebSocketProtocol() {
         return window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     }
 
-    getWebSocketUrl(endpoint) {
-        return `${this.getWebSocketProtocol()}//${window.location.host}${endpoint}`;
+    getWebSocketUrl = (endpoint) => {
+        const store = useLanguageStore()
+        const locale = store.locale
+        const token = localStorage.getItem('token');
+        const suffix = this.routesWithLocale.includes(endpoint) ? `${locale}/?token=${token}` : ''
+
+        return `${this.getWebSocketProtocol()}//${window.location.host}${endpoint}${suffix}`
     }
 
     connectUsernameSocket() {
@@ -112,6 +124,46 @@ class WebSocketService {
                 this.emailQueue.push(message);
             }
         });
+    }
+
+    createSocket() {
+        this.askAISocket = new WebSocket(this.getWebSocketUrl(`/ws/askAI/`));
+        this.askAISocket.onmessage = (event) => {
+            if (this.onMessage) {
+                const data = JSON.parse(event.data);
+                if (data.error) {
+                    this.onError(getAIErrorMessage(data.error).message)
+                } else {
+                    this.onMessage(Object.values(data.message));
+                }
+            }
+        };
+        this.askAISocket.onopen = () => console.log("WebSocket connected");
+        this.askAISocket.onclose = () => {
+            console.log("WebSocket disconnected");
+            this.askAISocket = null;
+        };
+    }
+
+    send(message) {
+        if (this.askAISocket.readyState === WebSocket.OPEN) {
+            this.askAISocket.send(JSON.stringify(message));
+        } else {
+            console.error("WebSocket is not connected.");
+        }
+    }
+
+    closeSocket() {
+        if (this.askAISocket) {
+            this.askAISocket.close();
+        }
+    }
+
+    setOnMessageHandler(handler) {
+        this.onMessage = handler;
+    }
+    setOnErrorHandler(handler) {
+        this.onError = handler;
     }
 }
 
