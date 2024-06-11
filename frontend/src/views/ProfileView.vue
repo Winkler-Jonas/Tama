@@ -9,32 +9,19 @@
       </div>
       <p v-else>Loading...</p>
     </div>
-    <div>
-      <input v-model="question" placeholder="Ask a question...">
-      <button @click="submitQuestion">Ask AI</button>
-      <div v-if="response && response.len > 1">
-        <p v-for="(suggestion, idx) in response" :key="`sug-${idx}`">
-          {{ suggestion }}
-        </p>
-      </div>
-      <div v-else-if="response && response.len < 1">
-        <p>KI Fehler</p>
-      </div>
-      <div v-else-if="AIError">
-        <p>{{ AIError }}</p>
-      </div>
-    </div>
+    <app-dropdown :menu-items="['Apfel', 'Banane', 'Birne']" @on-select="(value) => selected = value"/>
+    <p>{{ selected }}</p>
+    <app-ai-input />
   </section>
 </template>
 
 <script setup>
-import {computed, onMounted, onUnmounted, ref} from 'vue'
+import {computed, ref} from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import websocketService from "@/services/registerWS.js";
-import {useI18n} from "vue-i18n";
+import AppDropdown from "@/components/generic/input/AppDropdown.vue";
+import AppAiInput from "@/components/generic/input/AppAiInput.vue";
 
-const {t} = useI18n();
 const authStore = useAuthStore()
 const user = computed(() => authStore.user)
 const router = useRouter()
@@ -50,26 +37,8 @@ const deleteAccount = async () => {
   }
 }
 
-const question = ref('');
-const response = ref(null);
-const AIError = ref('')
 
-const submitQuestion = () => {
-  websocketService.send({ question: question.value });
-};
+const selected = ref('')
 
-onMounted(() => {
-  websocketService.createSocket();
-  websocketService.setOnMessageHandler((data) => {
-    response.value = data;
-  });
-  websocketService.setOnErrorHandler(error => {
-    console.log(t(error))
-    AIError.value = t(error);
-  });
-});
 
-onUnmounted(() => {
-  websocketService.closeSocket();
-});
 </script>

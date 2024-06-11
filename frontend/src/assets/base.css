@@ -188,6 +188,15 @@ p {
 /* Apply the font to input placeholders */
 input::placeholder {
     font-family: 'Short Stack', 'Comic Sans MS', cursive, sans-serif;
-    color: #888; /* Optional: Customize the placeholder text color */
-    opacity: 1; /* Ensure full opacity for the placeholder text */
+    color: #888;
+    opacity: 1;
+}
+
+.reset-input {
+    all: unset;
+    width: 100%;
+    padding: 0;
+    border: none;
+    outline: none;
+    background-color: transparent;
 }

@@ -118,8 +118,41 @@
       "or": "or"
     },
     "aiInput": {
+      "label": "AI Inspiration",
       "inspire": "Inspiration",
       "ask": "Choose a topic"
+    },
+    "addTask": {
+      "task": {
+        "label": "Task",
+        "placeholder": "Describe your task"
+      },
+      "repeat": {
+        "label": "Repeat",
+        "day": "Daily",
+        "week": "Weekly",
+        "month": "Monthly",
+        "year": "Yearly",
+        "never": "Never"
+      },
+      "due": {
+        "label": "Due Date",
+        "today": "Today",
+        "tomorrow": "Tomorrow",
+        "week": "This week",
+        "month": "This month",
+        "year": "This year"
+      },
+      "category": {
+        "sport": "Sport",
+        "diet": "Diet",
+        "digital": "Digital Detox",
+        "friends": "Friends",
+        "mental": "Mental Health",
+        "study": "Study",
+        "hobby": "Hobby",
+        "save": "Money saving"
+      }
     }
   }
 }

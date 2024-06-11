@@ -118,8 +118,41 @@
       "or": "oder"
     },
     "aiInput": {
+      "label": "KI Inspiration",
       "inspire": "Inspiration",
       "ask": "Wähle ein Thema"
+    },
+    "addTask": {
+      "task": {
+        "label": "Aufgabe",
+        "placeholder": "Beschreibe deine Aufgabe"
+      },
+      "repeat": {
+        "label": "Wiederholen",
+        "day": "Täglich",
+        "week": "Wöchtentlich",
+        "month": "Monatlich",
+        "year": "Jährlich",
+        "never": "Nie"
+      },
+      "due": {
+        "label": "Fälligkeit",
+        "today": "Heute",
+        "tomorrow": "Morgen",
+        "week": "Diese Woche",
+        "month": "Diesen Monat",
+        "year": "Dieses Jahr"
+      },
+      "category": {
+        "sport": "Sport",
+        "diet": "Ernährung",
+        "digital": "Digital Detox",
+        "friends": "Freunde",
+        "mental": "Mentale Gesundheit",
+        "study": "Lernen",
+        "hobby": "Hobby",
+        "save": "Sparen"
+      }
     }
   }
 }

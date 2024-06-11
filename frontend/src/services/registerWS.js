@@ -126,30 +126,41 @@ class WebSocketService {
         });
     }
 
-    createSocket() {
-        this.askAISocket = new WebSocket(this.getWebSocketUrl(`/ws/askAI/`));
-        this.askAISocket.onmessage = (event) => {
-            if (this.onMessage) {
-                const data = JSON.parse(event.data);
-                if (data.error) {
-                    this.onError(getAIErrorMessage(data.error).message)
-                } else {
-                    this.onMessage(Object.values(data.message));
-                }
+    createSocket = () => {
+        return new Promise((resolve, reject) => {
+            if (this.askAISocket && this.askAISocket.readyState === WebSocket.OPEN) {
+                resolve("open");
+            } else if (this.askAISocket && this.askAISocket.readyState === WebSocket.CONNECTING) {
+                resolve("connecting");
             }
-        };
-        this.askAISocket.onopen = () => console.log("WebSocket connected");
-        this.askAISocket.onclose = () => {
-            console.log("WebSocket disconnected");
-            this.askAISocket = null;
-        };
+
+            this.askAISocket = new WebSocket(this.getWebSocketUrl(`/ws/askAI/`));
+            this.askAISocket.onopen = () => {
+                resolve("open");
+            };
+            this.askAISocket.onerror = (error) => {
+                reject("error");
+            };
+            this.askAISocket.onmessage = (event) => {
+                if (this.onMessage) {
+                    const data = JSON.parse(event.data);
+                    if (data.error) {
+                        if (this.onError) this.onError(getAIErrorMessage(data.error).message);
+                    } else {
+                        if (this.onMessage) this.onMessage(Object.values(data.message));
+                    }
+                }
+            };
+            this.askAISocket.onclose = () => {
+                this.askAISocket = null;
+                reject("closed");
+            };
+        })
     }
 
     send(message) {
         if (this.askAISocket.readyState === WebSocket.OPEN) {
             this.askAISocket.send(JSON.stringify(message));
-        } else {
-            console.error("WebSocket is not connected.");
         }
     }
 

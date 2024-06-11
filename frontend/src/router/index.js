@@ -78,17 +78,21 @@ router.beforeEach(async (to, from, next) => {
       next('/welcome');
     } else {
       if (!authStore.token) {
+        console.log('no token found')
         next('/login');
       } else {
         if (!authStore.user) {
           try {
             await authStore.fetchUserProfile();
+            console.log('fetched user -> next')
             next();
           } catch (error) {
+            console.log('error routing to login')
             next('/login');
           }
         } else {
-          next('/home');
+          console.log('routing to profile')
+          next('/profile');
         }
       }
     }
