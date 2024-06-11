@@ -1,5 +1,9 @@
 /* color palette from <https://github.com/vuejs/theme> */
+@import url('https://fonts.googleapis.com/css2?family=Short+Stack&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Short+Stack&display=swap');
+
 :root {
+  --vh: 100vh;
   --vt-c-white: #ffffff;
   --vt-c-white-soft: #f8f8f8;
   --vt-c-white-mute: #f2f2f2;
@@ -18,7 +22,7 @@
   --vt-c-text-light-1: var(--vt-c-indigo);
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
   --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  --vt-c-text-dark-2: #000000; /* Todo changed font color for dark mode temporarily */
 }
 
 /* semantic color variables for this project */
@@ -34,6 +38,32 @@
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
+}
+
+/* signup + welcome*/
+:root {
+   --tama-color-orange: #FFA976;
+   --tama-color-blue: #83B6C7;
+   --tama-color-gray: #777777;
+
+  --sgn-mi: 2rem;
+  --sgn-mbt: 2rem;
+  --sgn-mt-txt: 2rem;
+
+  /* header (back + context menu) */
+  --h-icon-sz: 2rem;
+  --h-p-rl: .4rem;
+  --h-bg: transparent;
+
+
+  /*--h-bg: rgba(131, 182, 199, 1);*/
+  /* header rounded top*/
+  --greet-f-sz: 2rem;
+  --greet-sz: 70%;
+
+  /* Context Menu */
+  --ctx-ft-sz: 1.5rem;
+  --wlc-txt-sz: 2em;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -55,6 +85,109 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
-  font-weight: normal;
 }
 
+body {
+  height: 100%;
+  color: var(--color-text);
+  background: var(--color-background);
+  transition:
+          color 0.5s,
+          background-color 0.5s;
+  line-height: 1.6;
+  font-family:
+          'Short Stack',
+          'Comic Sans MS',
+          'Josefin Sans',
+          cursive,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          Oxygen,
+          Ubuntu,
+          Cantarell,
+          'Fira Sans',
+          'Droid Sans',
+          'Helvetica Neue',
+          sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.full-height {
+    height: calc(var(--vh, 1vh) * 100);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Apply the font to input fields */
+input {
+    font-family: 'Short Stack', 'Comic Sans MS', cursive, sans-serif;
+}
+
+h1 {
+    font-size: 30px;
+}
+
+h2 {
+    font-family: 'Short Stack', 'Comic Sans MS', cursive, sans-serif;
+    font-size: 20px;
+}
+
+.text-orange {
+    color: var(--tama-color-orange)
+}
+
+.text-blue {
+    color: var(--tama-color-blue)
+}
+
+.text-black {
+    color: black;
+}
+
+.text-gray {
+    color: #777777;
+}
+
+p {
+    font-size: 16px;
+}
+
+.text-sm {
+    font-size: 12px !important;
+}
+
+.text-button {
+    font-size: 20px;
+    color: white;
+}
+
+.btn-remove-default {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    outline: none;
+    text-decoration: none;
+    box-shadow: none;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+
+
+
+/* Apply the font to input placeholders */
+input::placeholder {
+    font-family: 'Short Stack', 'Comic Sans MS', cursive, sans-serif;
+    color: #888; /* Optional: Customize the placeholder text color */
+    opacity: 1; /* Ensure full opacity for the placeholder text */
+}

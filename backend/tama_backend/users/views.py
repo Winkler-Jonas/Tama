@@ -1,8 +1,10 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
-from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.contrib.auth import authenticate, get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.template.loader import render_to_string
@@ -11,12 +13,37 @@ from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser
 from .serializers import UserSerializer
 
 
+# Utility functions
+def encode_email(email_str):
+    return f"{email_str[:3]}{'*'*(len(email_str)-6)}{email_str[-4:]}"
+
+
+def send_activation_email(user, request):
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    domain = request.get_host()
+    locale = request.data.get('locale', 'en') if hasattr(request, 'data') else 'en'
+    message = render_to_string(f'activation_email_{locale}.html', {
+        'user': user,
+        'domain': domain,
+        'uid': uid,
+        'token': token,
+    })
+    email = EmailMessage(
+        'Tamado | Activate your account',
+        message,
+        'register@tamado.app',
+        [user.email],
+    )
+    email.content_subtype = "html"
+    email.send(fail_silently=False)
+
+
+# Views
 @method_decorator(csrf_exempt, name='dispatch')
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -39,7 +66,7 @@ class LoginView(generics.GenericAPIView):
         user = authenticate(username=username, password=password)
         if user is not None:
             if not user.email_verified:
-                return Response({"message": "Email not verified"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"message": "Email not verified", "email": f"{encode_email(user.email)}"}, status=status.HTTP_400_BAD_REQUEST)
             refresh = RefreshToken.for_user(user)
             return Response({
                 'refresh': str(refresh),
@@ -53,12 +80,18 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get_object(self):
-        user = self.request.user
+        return self.request.user
+
+    def retrieve(self, request, *args, **kwargs):
+        user = self.get_object()
         if not user.email_verified:
-            return Response({"message": "Email not verified"}, status=status.HTTP_400_BAD_REQUEST)
-        return user
+            message = "Email not verified"
+            return Response({"message": message, "email": f"{encode_email(user.email)}"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -89,35 +122,15 @@ class DeleteUserView(generics.DestroyAPIView):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ResendActivationEmailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        user = request.user
-        if user.is_authenticated:
-            new_email = request.data.get('email')
-            if new_email:
-                user.email = new_email
-                user.save()
-            send_activation_email(user, request)
-            return Response({"message": "Activation email resent"}, status=status.HTTP_200_OK)
-        return Response({"message": "User not authenticated"}, status=status.HTTP_400_BAD_REQUEST)
+        username = request.data.get('username')
+        if not username:
+            return Response({"message": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        user = get_object_or_404(CustomUser, username=username)
 
-def send_activation_email(user, request):
-    token = default_token_generator.make_token(user)
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
-    domain = request.get_host()
-    message = render_to_string('activation_email.html', {
-        'user': user,
-        'domain': domain,
-        'uid': uid,
-        'token': token,
-    })
-    email = EmailMessage(
-        'Activate your account',
-        message,
-        'from@example.com',
-        [user.email],
-    )
-    email.content_subtype = "html"
-    email.send(fail_silently=False)
+        send_activation_email(user, request)
+        return Response({"message": "Activation email resent"}, status=status.HTTP_200_OK)
+

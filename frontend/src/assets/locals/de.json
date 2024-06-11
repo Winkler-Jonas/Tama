@@ -1,13 +1,115 @@
 {
+  "lang": {
+    "de": "Deutsch",
+    "en": "Englisch"
+  },
+  "placeholder": {
+    "pass": "Passwort eingeben",
+    "passRepeat": "Passwort bestätigen",
+    "user": "Benutzername eingeben",
+    "email": "E-Mail Adresse eingeben"
+  },
   "views": {
     "register": {
+      "inputLabel": {
+        "mail": "E-Mail",
+        "pwd": "Passwort",
+        "usr": "Nutzername",
+        "pwdConf": "Passwort bestätigen"
+      },
+      "hdr": "Neues Konto erstellen",
+      "hdrSend": "Konto Aktivierung",
       "userTaken": "Benutzername bereits vergeben",
-      "emailTaken": "Zu dieser E-Mail besteht bereits ein Account",
+      "userShort": "Benutzername zu kurz",
+      "emailTaken": "Mit dieser E-Mail besteht bereits ein Account",
       "passNoMatch": "Passwörter stimmen nicht überein",
       "mailNoMatch": "E-Mail Adressen stimmen nicht überein",
       "mailNoValid": "Bitte geben Sie eine gültige E-Mail Adresse ein",
       "passInvalid": "Das Passwort beinhalten ungültige Zeichen",
-      "passShort": "Das Passwort ist zu kurz. Min. {min} Zeichen"
+      "passShort": "Das Passwort ist zu kurz. Min. {min} Zeichen",
+      "btnEnter": "Registrieren",
+      "unexpected": "Ein Systemfehler ist aufgetreten. Bitte versuchen Sie es später nochmal.",
+      "mailSent": "Wir schicken dir eine E-Mail mit allen Informationen zur Registrierung",
+      "redirect": "Bearbeite {num}"
+    },
+    "login": {
+      "hdr": "Anmelden",
+      "btn": "Einloggen",
+      "credentials": "Mit diesem Benutzernamen oder Passwort existiert noch kein Account",
+      "userShort": "Benutzername zu kurz",
+      "inputLabel": {
+        "usr": "Benutzername",
+        "pwd": "Passwort"
+      },
+      "notVerified": {
+        "hdr": "Verifizierung",
+        "msg": "Wir konnten Ihr E-Mail Adress bisher leider noch nicht verifizieren",
+        "resend": "E-Mail erneut senden",
+        "newMail": "Deine E-Mail Adresse?",
+        "redirect": "Bearbeite {num}"
+      },
+      "newQ": "Neu bei Tamado?",
+      "newBtn": "Jetzt registrieren"
+    },
+    "welcome": {
+      "greet": "Schön, dass du da bist!",
+      "txt": "Hallo, ich bin Tama! Ich helfe dir deine Ziele zu erreichen und dabei Spaß zu haben",
+      "proceed": "Lass uns loslegen!",
+      "email": {
+        "hdr": "Bereit loszulegen?",
+        "info": "Gib deine E-Mail Adresse ein um dich einzuloggen oder ein neues Konto zu erstellen.",
+        "label": "E-Mail",
+        "btn": "Loslegen"
+      }
+    },
+    "notFound": {
+      "hdr": "Oops",
+      "txt": "Diese Seite existiert leider nicht",
+      "btn": "Zurück nach Hause"
+    },
+    "activation": {
+      "hdr": "Konto Aktivierung",
+      "txtHdr": "Hi {name}",
+      "loading": "Einen Moment, wir aktivieren dein Konto",
+      "txtSuccess": "Super! Wir haben dein Konto jetzt aktiviert.",
+      "txtFail": "Leider konnten wir dein Konto aus technischen Gründen nicht aktivieren. Versuch es doch bitte später nochmal",
+      "btnSuccess": "Jetzt anmelden",
+      "btnFail": "Zum Login"
+    }
+  },
+  "error": {
+    "system": {
+      "unexpected": "Ein Systemfehler ist aufgetreten. Bitte versuchen Sie es später nochmal."
+    },
+    "pass": {
+      "short": "Passwort zu kurz. Min {min} Zeichen!",
+      "invalid": "Das Passwort beinhalten ungültige Zeichen!",
+      "numeric": "Passwort darf nicht ausschließlich Zahlen enthalten!",
+      "similar": "Passwort und Nutzername zu ähnlich!",
+      "common": "Passwort beinhaltet alltägliche Wörter!",
+      "noMatch": "Passwörter stimmen nicht überein!",
+      "empty": "Bitte geben Sie ein Passwort ein"
+    },
+    "user": {
+      "short": "Benutzername zu kurz",
+      "taken": "Benutzername bereits vergeben",
+      "corrupt": "Ungültige Eingabe",
+      "empty": "Bitte geben Sie Ihren Benutzernamen ein"
+    },
+    "credentials": {
+      "mismatch": "Mit diesem Benutzernamen oder Passwort existiert noch kein Account"
+    },
+    "email": {
+      "valid": "Bitte geben Sie eine gültige E-Mail Adresse ein",
+      "noMatch": "E-Mail Adressen stimmen nicht überein",
+      "taken": "Diese E-Mail Adresse ist bereits mit einem Account verlinkt",
+      "verified": "Wir konnten Ihr E-Mail Adress bisher leider noch nicht verifizieren",
+      "empty": "Bitte geben Sie eine E-Mail Adresse ein"
+    }
+  },
+  "components": {
+    "horizontalSeparator": {
+      "or": "oder"
     }
   }
 }
