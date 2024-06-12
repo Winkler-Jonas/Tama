@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="tama-ai-input-container">
     <div class="tama-ai-input-header">
       <label v-if="labelName">
-        {{ lableName }}
+        <span class="tama-ai-header-label">{{ labelName }}</span>
       </label>
       <div v-if="aiOption" class="tama-ai-input-ai-option">
         <p>{{ $t('components.aiInput.label') }}</p>
@@ -59,6 +59,8 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['onInput'])
+
 const userInput = ref('')
 const aiInputEnabled = ref(!props.aiOption)
 const aiGenerating = ref(false)
@@ -66,9 +68,14 @@ const aiError = ref(false)
 const aiGeneratedItems = ref(null)
 const sockedConnected = ref(false);
 
+watch(userInput, (newValue, oldValue) => {
+  emit('onInput', newValue)
+})
+
 const handleRadioButton = () => {
   aiInputEnabled.value = !aiInputEnabled.value
   aiGenerating.value = false
+  aiGeneratedItems.value = null
 }
 
 const handleGenerateAI = () => {
@@ -133,11 +140,21 @@ onUnmounted(() => {
 
 <style scoped>
 
+.tama-ai-input-container {
+  position: relative;
+}
+
 .tama-ai-input-header {
   width: 100%;
   display: flex;
   gap: 1em;
-  padding: 1em;
+  padding: 1em 1em 0.5em 0;
+}
+
+.tama-ai-header-label {
+  font-size: var(--tama-h2-size);
+  font-weight: bolder;
+  filter: drop-shadow(0.25rem 0.25rem 0.5rem #0005);
 }
 
 .tama-ai-input-ai-option {

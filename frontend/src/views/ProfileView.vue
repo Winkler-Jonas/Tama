@@ -9,9 +9,8 @@
       </div>
       <p v-else>Loading...</p>
     </div>
-    <app-dropdown :menu-items="['Apfel', 'Banane', 'Birne']" @on-select="(value) => selected = value"/>
-    <p>{{ selected }}</p>
-    <app-ai-input />
+    <button @click="modalVisible = !modalVisible">Click Me</button>
+    <tama-add-task :is-visible="modalVisible" @on-exit="modalVisible = !modalVisible"/>
   </section>
 </template>
 
@@ -19,12 +18,12 @@
 import {computed, ref} from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import AppDropdown from "@/components/generic/input/AppDropdown.vue";
-import AppAiInput from "@/components/generic/input/AppAiInput.vue";
+import TamaAddTask from "@/components/TamaAddTask.vue";
 
 const authStore = useAuthStore()
 const user = computed(() => authStore.user)
 const router = useRouter()
+const modalVisible = ref(false)
 
 const deleteAccount = async () => {
   if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {

@@ -40,7 +40,7 @@ const handleClick = () => {
   justify-content: center;
   align-items: center;
 
-  padding: calc(var(--w) - 1.5rem);
+  overflow: hidden;
   box-shadow:
       inset 0 10px 20px rgba(255, 255, 255, 0.5),
       inset 0 -10px 20px rgba(0, 0, 0, 0.2),
@@ -53,8 +53,8 @@ const handleClick = () => {
 }
 
 .inner {
-  width: 90%;
-  height: 90%;
+  width: 1.1rem;
+  height: 1.1rem;
   background: radial-gradient(circle, #FFA976, #cc7a5c 70%, #b06028 100%);
   border-radius: 50%;
   box-shadow: inset 0 4px 10px rgba(255, 255, 255, 0.5),

@@ -1,0 +1,223 @@
+<template>
+  <teleport to="main">
+    <Transition name="tama-add-overlay">
+      <div v-if="isVisible" class="tama-add-task-modal-overlay" key="overlay"></div>
+    </Transition>
+    <Transition name="tama-add-modal">
+      <section v-if="isVisible" id="tama-add-task-modal" key="modal">
+        <div class="tama-add-task-menu-container">
+          <app-ai-input
+              :label-name="$t('components.addTask.task.label')"
+              @on-input="handleTaskInput" />
+          <app-dropdown
+              :menu-label="$t('components.addTask.repeat.label')"
+              @on-input-clicked="activeMenu = 2"
+              @on-select="handleRepeatSelect"
+              :menu-items="repeatValues" direction="up"
+              :external-collapse="activeMenu === 2"
+          />
+          <app-dropdown
+              :menu-label="$t('components.addTask.due.label')"
+              @on-input-clicked="activeMenu = 3"
+              @on-select="handleDueSelect"
+              :menu-items="dueValues" direction="up"
+              :external-collapse="activeMenu === 3"
+          />
+          <app-dropdown
+              :menu-label="$t('components.addTask.category.label')"
+              @on-input-clicked="activeMenu = 4"
+              @on-select="handleCategorySelect"
+              :menu-items="categoryValues" direction="up"
+              :external-collapse="activeMenu === 4"
+
+          />
+          <div class="tama-add-task-menu-submit-area">
+            <i @click="handleExitClicked" class="ri-close-line tama-add-task-menu-close"></i>
+            <i @click="handleSubmitClicked" class="ri-check-line tama-add-task-menu-submit"></i>
+          </div>
+        </div>
+      </section>
+    </Transition>
+  </teleport>
+</template>
+
+<script setup>
+import {useI18n} from "vue-i18n";
+import {computed, ref } from "vue";
+import AppAiInput from "@/components/generic/input/AppAiInput.vue";
+import AppDropdown from "@/components/generic/input/AppDropdown.vue";
+
+const { tm } = useI18n()
+
+const props = defineProps({
+  isVisible: {
+    type: Boolean,
+    required: true
+  }
+})
+
+const emit = defineEmits(['onExit', 'onSubmit'])
+
+const contentData = ref(tm(''))
+const activeMenu = ref(0)
+
+const isVisible = computed(() => props.isVisible)
+const repeatValues = computed(() => {
+  const repeatData = contentData.value.components.addTask.repeat || {};
+  return Object.entries(repeatData)
+      .filter(([key, _]) => key !== 'label')
+      .map(([_, value]) => value);
+})
+const dueValues = computed(() => {
+  const repeatData = contentData.value.components.addTask.due || {};
+  return Object.entries(repeatData)
+      .filter(([key, _]) => key !== 'label') // Exclude the key 'label'
+      .map(([_, value]) => value);
+})
+const categoryValues = computed(() => {
+  const repeatData = contentData.value.components.addTask.category || {};
+  return Object.entries(repeatData)
+      .filter(([key, _]) => key !== 'label') // Exclude the key 'label'
+      .map(([_, value]) => value);
+})
+
+const handleTaskInput = (usrInput) => {
+
+}
+
+const handleRepeatSelect = (selected) => {
+
+}
+
+const handleDueSelect = (selected) => {
+
+}
+
+const handleCategorySelect = (selected) => {
+
+}
+
+const handleExitClicked = () => {
+  emit('onExit')
+}
+
+const handleSubmitClicked = () => {
+  // todo: Need server api
+  emit('onSubmit')
+}
+
+</script>
+
+<style scoped>
+
+.tama-add-task-modal-overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+#tama-add-task-modal {
+  height: fit-content;
+  min-height: 60vh;
+  z-index: 101;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--tama-max-w);
+  background-color: white;
+
+  border: 3px solid var(--tama-color-orange);
+  border-radius: 2rem 2rem 0 0;
+  border-bottom: none;
+}
+
+.tama-add-task-menu-container {
+  height: 100%;
+  min-height: 60vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0 var(--sgn-mi)
+}
+
+.tama-add-task-menu-submit-area {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: var(--sgn-mbt);
+}
+
+.tama-add-task-menu-close,
+.tama-add-task-menu-submit {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+
+  font-size: calc(var(--tama-h1-size) + 10px);
+  font-weight: bold;
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tama-add-task-menu-close {
+  background-color: var(--tama-color-orange);
+}
+
+.tama-add-task-menu-submit {
+  background-color: var(--tama-color-green);
+}
+
+
+
+
+
+.tama-add-overlay-enter-active,
+.tama-add-overlay-leave-active {
+  transition: opacity 0.5s ease-out;
+}
+
+.tama-add-overlay-leave-active {
+  transition-delay: .3s;
+  opacity: 1;
+}
+
+.tama-add-overlay-enter-from,
+.tama-add-overlay-leave-to {
+  opacity: 0;
+}
+
+
+.tama-add-modal-enter-active,
+.tama-add-modal-leave-active {
+  transition: all 0.5s ease;
+}
+
+.tama-add-modal-leave-active {
+  transform: translateY(0%);
+
+  /* max-height: 60vh; */
+}
+
+.tama-add-modal-enter-from,
+.tama-add-modal-leave-to {
+  transform: translateY(100%);
+}
+
+
+
+
+</style>

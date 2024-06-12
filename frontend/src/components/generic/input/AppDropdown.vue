@@ -1,5 +1,6 @@
 <template>
-  <div class="tama-dropdown-container">
+  <div class="tama-dropdown-container" :style="menuCollapsed ? 'z-index: 20;' : ''">
+    <h2 v-if="menuLabel">{{ menuLabel }}</h2>
     <div class="tama-dropdown-input-field" :style="tamaInputFieldBorder" @click="handleInputClicked">
       <p>{{ selectedItem }}</p>
       <i :class="['ri-arrow-down-s-line', { 'flipped': menuCollapsed }]" class="icon"></i>
@@ -13,7 +14,7 @@
           <div v-for="(item, idx) in menuItems" :key="`${item}-${idx+1}`"
                class="tama-dropdown-item"
                :style="{ '--animation-order': idx + 1 }"
-               @click="handleItemClick(idx)"
+               @click.stop.prevent="handleItemClick(idx)"
           >
             <p :key="idx" class="tama-dropdown-item-txt">
               {{ item }}
@@ -27,14 +28,23 @@
 
 <script setup>
 
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 
 onMounted(() => {
   const selectIdx = (props.menuItems.length > props.defaultSelect) ? props.defaultSelect : 0
   selectedItem.value = props.menuItems[selectIdx]
 })
 
+onUnmounted( () => {
+  emit('onSelect', selectedItem.value)
+})
+
 const props = defineProps({
+  menuLabel: {
+    type: String,
+    required: false,
+    default: ''
+  },
   defaultSelect: {
     type: Number,
     required: false,
@@ -57,18 +67,30 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false
+  },
+  externalCollapse: {
+    type: Boolean,
+    default: false
   }
 })
-const emit = defineEmits(['onSelect'])
+const emit = defineEmits(['onSelect', 'onInputClicked'])
 
 const collapseDirection = computed(() => props.direction)
 const menuPositionStyle = computed(() => {
   const posStyle = {top: '100%', bottom: ''}
   if (collapseDirection.value === 'up') {
     posStyle.top = ''
-    posStyle.bottom = '100%'
+    posStyle.bottom = 'calc(100% - var(--tama-h2-size) - 0.83em)'
   }
   return posStyle
+})
+const externalCollapse = computed(() => props.externalCollapse)
+
+
+watch(externalCollapse, (newValue, oldValue) => {
+  if (!newValue && oldValue) {
+    menuCollapsed.value = false
+  }
 })
 
 const selectedItem = ref('')
@@ -82,6 +104,7 @@ const handleItemClick = (idx) => {
 
 const handleInputClicked = () => {
   menuCollapsed.value = !menuCollapsed.value
+  emit('onInputClicked')
 }
 
 const tamaInputFieldBorder = computed(() => {
@@ -107,9 +130,12 @@ const tamaInputContainerBorder = computed(() => {
 })
 
 const menuCollapseStyle = computed(() => {
-  return { 'max-height': menuCollapsed.value ? `${props.menuItems.length * 3}rem` : '0', opacity: menuCollapsed.value ? '1' : '0' }
+  return { 'max-height': menuCollapsed.value ? `${props.menuItems.length * 4}rem` : '0', opacity: menuCollapsed.value ? '1' : '0' }
 })
 
+defineExpose({
+  handleInputClicked,
+})
 </script>
 
 <style scoped>
@@ -128,7 +154,7 @@ const menuCollapseStyle = computed(() => {
 
 .tama-dropdown-input-field {
   position: relative;
-  z-index: 100;
+
   height: var(--h);
   width: 100%;
   padding: 0 var(--mlr);
@@ -154,9 +180,8 @@ const menuCollapseStyle = computed(() => {
 .tama-dropdown-items-container {
   position: absolute;
   width: 100%;
-  z-index: 1;
 
-  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
 
   overflow: hidden;
   padding: 0 var(--mlr);
@@ -169,11 +194,11 @@ const menuCollapseStyle = computed(() => {
 
 .tama-dropdown-item {
   height: var(--h);
+  max-height: calc(var(--h) + 1rem);
   display: flex;
   align-items: center;
 
   position: relative;
-  z-index: 1;
   background: linear-gradient(#00000005, #0000), #fff;
 
   opacity: 0;
@@ -212,5 +237,15 @@ const menuCollapseStyle = computed(() => {
 
 .tama-dropdown-input-field .icon.flipped {
   transform: scaleY(-1);
+}
+
+.height-transition-enter-active, .height-transition-leave-active {
+  max-height: 500px;
+  opacity: 1;
+}
+
+.height-transition-enter, .height-transition-leave-to {
+  max-height: 0;
+  opacity: 0;
 }
 </style>
