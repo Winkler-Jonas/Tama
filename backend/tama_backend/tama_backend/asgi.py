@@ -9,6 +9,7 @@ django_asgi_app = get_asgi_application()
 
 # Import after setting the Django settings module
 import users.routing
+import ai.routing
 from users.middleware import TokenAuthMiddlewareStack
 
 application = ProtocolTypeRouter({
@@ -16,7 +17,8 @@ application = ProtocolTypeRouter({
     "websocket": AllowedHostsOriginValidator(
         TokenAuthMiddlewareStack(
             URLRouter(
-                users.routing.websocket_urlpatterns
+                users.routing.websocket_urlpatterns +
+                ai.routing.websocket_urlpatterns
             )
         )
     ),

@@ -1,19 +1,31 @@
+import { useLanguageStore } from '@/stores/langStore.js';
+import {getAIErrorMessage} from "@/utils/AIerrorHandler.js";
+
 class WebSocketService {
     constructor() {
+        this.routesWithLocale = ['/ws/askAI/', ]
         this.usernameSocket = null;
         this.emailSocket = null;
         this.usernameCallbacks = {};
         this.emailCallbacks = {};
         this.usernameQueue = [];
         this.emailQueue = [];
+        this.askAISocket = null;
+        this.onMessage = null
+        this.onError = null
     }
 
     getWebSocketProtocol() {
         return window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     }
 
-    getWebSocketUrl(endpoint) {
-        return `${this.getWebSocketProtocol()}//${window.location.host}${endpoint}`;
+    getWebSocketUrl = (endpoint) => {
+        const store = useLanguageStore()
+        const locale = store.locale
+        const token = localStorage.getItem('token');
+        const suffix = this.routesWithLocale.includes(endpoint) ? `${locale}/?token=${token}` : ''
+
+        return `${this.getWebSocketProtocol()}//${window.location.host}${endpoint}${suffix}`
     }
 
     connectUsernameSocket() {
@@ -112,6 +124,57 @@ class WebSocketService {
                 this.emailQueue.push(message);
             }
         });
+    }
+
+    createSocket = () => {
+        return new Promise((resolve, reject) => {
+            if (this.askAISocket && this.askAISocket.readyState === WebSocket.OPEN) {
+                resolve("open");
+            } else if (this.askAISocket && this.askAISocket.readyState === WebSocket.CONNECTING) {
+                resolve("connecting");
+            }
+
+            this.askAISocket = new WebSocket(this.getWebSocketUrl(`/ws/askAI/`));
+            this.askAISocket.onopen = () => {
+                resolve("open");
+            };
+            this.askAISocket.onerror = (error) => {
+                reject("error");
+            };
+            this.askAISocket.onmessage = (event) => {
+                if (this.onMessage) {
+                    const data = JSON.parse(event.data);
+                    if (data.error) {
+                        if (this.onError) this.onError(getAIErrorMessage(data.error).message);
+                    } else {
+                        if (this.onMessage) this.onMessage(Object.values(data.message));
+                    }
+                }
+            };
+            this.askAISocket.onclose = () => {
+                this.askAISocket = null;
+                reject("closed");
+            };
+        })
+    }
+
+    send(message) {
+        if (this.askAISocket.readyState === WebSocket.OPEN) {
+            this.askAISocket.send(JSON.stringify(message));
+        }
+    }
+
+    closeSocket() {
+        if (this.askAISocket) {
+            this.askAISocket.close();
+        }
+    }
+
+    setOnMessageHandler(handler) {
+        this.onMessage = handler;
+    }
+    setOnErrorHandler(handler) {
+        this.onError = handler;
     }
 }
 

@@ -6,8 +6,12 @@ import {getAPIErrorMessage} from "@/utils/errorHandler.js";
 
 
 export const useAuthStore = defineStore('auth', () => {
-    const user = ref(null)
-    const token = ref(null)
+    const token = ref(localStorage.getItem('token') || null);
+    const user = ref(null);
+
+    if (token.value) {
+        api.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
+    }
 
     const register = async (username, email, password, locale) => {
         try {
@@ -26,15 +30,10 @@ export const useAuthStore = defineStore('auth', () => {
 
     const login = async (username, password) => {
         try {
-            // Perform the login request
             const response = await api.post('/users/login/', { username, password });
-
-            // Store the token and set the authorization header
             token.value = response.data.access;
             localStorage.setItem('token', token.value);
             api.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
-
-            // Fetch the user profile
             await fetchUserProfile();
         } catch (error) {
             throw getAPIErrorMessage(error);
@@ -54,24 +53,20 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const fetchUserProfile = async () => {
+        if (!token.value) return;
+
         try {
             const response = await api.get('/users/me/');
             user.value = response.data;
-            return response.data;
         } catch (error) {
-            const stack = error.stack.split('\n');
-
-            const callerFunction = stack[2].match(/at (\w+)/);
-
-            if (callerFunction && callerFunction[1] === 'login') {
-                // If the caller function is 'login', rethrow the original error
-                throw error;
-            } else {
-                // Otherwise, parse and throw a custom error
-                throw getAPIErrorMessage(error);
-            }
+            logout();
+            throw getAPIErrorMessage(error);
         }
     };
+
+    if (token.value) {
+        fetchUserProfile();
+    }
 
     const resendActivationEmail = async (username, locale) => {
         try {

@@ -105,11 +105,65 @@
       "taken": "Email already taken",
       "verified": "Unfortunately we were not able to verify your Email",
       "empty": "Please enter an email address"
+    },
+    "ai": {
+      "short": "Input required",
+      "long": "Input too long",
+      "extern": "AI currently to accessible",
+      "unexpected": "Unexpected error. Please try again later"
     }
   },
   "components": {
     "horizontalSeparator": {
       "or": "or"
+    },
+    "aiInput": {
+      "label": "AI Inspiration",
+      "inspire": "Inspiration",
+      "ask": "Choose a topic"
+    },
+    "addTask": {
+      "task": {
+        "label": "Task",
+        "placeholder": "Describe your task"
+      },
+      "repeat": {
+        "label": "Repeat",
+        "day": "Daily",
+        "week": "Weekly",
+        "month": "Monthly",
+        "year": "Yearly",
+        "never": "Never"
+      },
+      "due": {
+        "label": "Due Date",
+        "today": "Today",
+        "tomorrow": "Tomorrow",
+        "week": "This week",
+        "month": "This month",
+        "year": "This year"
+      },
+      "category": {
+        "label": "Category",
+        "sport": "Sport",
+        "diet": "Diet",
+        "digital": "Digital Detox",
+        "friends": "Friends",
+        "mental": "Mental Health",
+        "study": "Study",
+        "hobby": "Hobby",
+        "save": "Money saving"
+      }
+    },
+    "editTask": {
+      "inProcess": "In Process",
+      "done": "Done",
+      "stroke": "Cancel",
+      "subTask": "Sub-Task",
+      "edit": "Edit",
+      "move": "Move",
+      "trash": "Delete",
+      "mark": "mark as"
     }
   }
 }

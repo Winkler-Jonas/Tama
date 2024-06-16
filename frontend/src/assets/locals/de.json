@@ -105,11 +105,65 @@
       "taken": "Diese E-Mail Adresse ist bereits mit einem Account verlinkt",
       "verified": "Wir konnten Ihr E-Mail Adress bisher leider noch nicht verifizieren",
       "empty": "Bitte geben Sie eine E-Mail Adresse ein"
+    },
+    "ai": {
+      "short": "Eingabe benötigt",
+      "long": "Eingabe zu lang",
+      "extern": "KI derzeit nicht verfügbar",
+      "unexpected": "Ein unerwarteter Fehler ist aufgetreten, versuch es später nochmal."
     }
   },
   "components": {
     "horizontalSeparator": {
       "or": "oder"
+    },
+    "aiInput": {
+      "label": "KI Inspiration",
+      "inspire": "Inspiration",
+      "ask": "Wähle ein Thema"
+    },
+    "addTask": {
+      "task": {
+        "label": "Aufgabe",
+        "placeholder": "Beschreibe deine Aufgabe"
+      },
+      "repeat": {
+        "label": "Wiederholen",
+        "day": "Täglich",
+        "week": "Wöchtentlich",
+        "month": "Monatlich",
+        "year": "Jährlich",
+        "never": "Nie"
+      },
+      "due": {
+        "label": "Fälligkeit",
+        "today": "Heute",
+        "tomorrow": "Morgen",
+        "week": "Diese Woche",
+        "month": "Diesen Monat",
+        "year": "Dieses Jahr"
+      },
+      "category": {
+        "label": "Kategorie",
+        "sport": "Sport",
+        "diet": "Ernährung",
+        "digital": "Digital Detox",
+        "friends": "Freunde",
+        "mental": "Mentale Gesundheit",
+        "study": "Lernen",
+        "hobby": "Hobby",
+        "save": "Sparen"
+      }
+    },
+    "editTask": {
+      "inProcess": "In Bearbeitung",
+      "done": "Fertig",
+      "stroke": "Streichen",
+      "subTask": "Unteraufgabe",
+      "edit": "Bearbeiten",
+      "move": "Verschieben",
+      "trash": "Löschen",
+      "mark": "markieren als"
     }
   }
 }
