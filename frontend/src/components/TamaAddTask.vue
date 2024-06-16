@@ -1,10 +1,7 @@
 <template>
-  <teleport to="main">
-    <Transition name="tama-add-overlay">
-      <div v-if="isVisible" class="tama-add-task-modal-overlay" key="overlay"></div>
-    </Transition>
-    <Transition name="tama-add-modal">
-      <section v-if="isVisible" id="tama-add-task-modal" key="modal">
+  <tama-slide-up :is-visible="isVisible">
+    <template #slide-up-content>
+      <section id="tama-add-task-modal" key="modal">
         <div class="tama-add-task-menu-container">
           <app-ai-input
               :label-name="$t('components.addTask.task.label')"
@@ -37,8 +34,8 @@
           </div>
         </div>
       </section>
-    </Transition>
-  </teleport>
+    </template>
+  </tama-slide-up>
 </template>
 
 <script setup>
@@ -46,6 +43,8 @@ import {useI18n} from "vue-i18n";
 import {computed, ref } from "vue";
 import AppAiInput from "@/components/generic/input/AppAiInput.vue";
 import AppDropdown from "@/components/generic/input/AppDropdown.vue";
+import TamaSlideUp from "@/components/TamaSlideUp.vue";
+import TamaIcon from "@/components/generic/TamaIcon.vue";
 
 const { tm } = useI18n()
 
@@ -110,6 +109,11 @@ const handleSubmitClicked = () => {
 
 <style scoped>
 
+.icon {
+  width: 37px;
+  height: 37px;
+}
+
 .tama-add-task-modal-overlay {
   position: fixed;
   width: 100%;
@@ -122,21 +126,8 @@ const handleSubmitClicked = () => {
 }
 
 #tama-add-task-modal {
-  height: fit-content;
-  min-height: 60vh;
-  z-index: 101;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
   margin-inline: auto;
   width: 100%;
-  max-width: var(--tama-max-w);
-  background-color: white;
-
-  border: 3px solid var(--tama-color-orange);
-  border-radius: 2rem 2rem 0 0;
-  border-bottom: none;
 }
 
 .tama-add-task-menu-container {
@@ -180,44 +171,4 @@ const handleSubmitClicked = () => {
 .tama-add-task-menu-submit {
   background-color: var(--tama-color-green);
 }
-
-
-
-
-
-.tama-add-overlay-enter-active,
-.tama-add-overlay-leave-active {
-  transition: opacity 0.5s ease-out;
-}
-
-.tama-add-overlay-leave-active {
-  transition-delay: .3s;
-  opacity: 1;
-}
-
-.tama-add-overlay-enter-from,
-.tama-add-overlay-leave-to {
-  opacity: 0;
-}
-
-
-.tama-add-modal-enter-active,
-.tama-add-modal-leave-active {
-  transition: all 0.5s ease;
-}
-
-.tama-add-modal-leave-active {
-  transform: translateY(0%);
-
-  /* max-height: 60vh; */
-}
-
-.tama-add-modal-enter-from,
-.tama-add-modal-leave-to {
-  transform: translateY(100%);
-}
-
-
-
-
 </style>

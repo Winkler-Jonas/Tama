@@ -19,6 +19,20 @@ function setVhProperty() {
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
 
+function addIcons() {
+  fetch('./src/assets/icons/icons.svg')
+      .then(response => response.text())
+      .then(data => {
+        const div = document.createElement('div');
+        div.style.position = 'absolute';
+        div.style.width = 0;
+        div.style.height = 0;
+        div.style.overflow = 'hidden';
+        div.innerHTML = data;
+        document.body.insertBefore(div, document.body.childNodes[0]);
+      });
+}
+
 setVhProperty();
 
 window.addEventListener('resize', setVhProperty);
@@ -26,6 +40,8 @@ window.addEventListener('resize', setVhProperty);
 async function init() {
   const app = createApp(App)
 
+  // Add Icons
+  addIcons();
   // Create Pinia instance
   const pinia = createPinia()
   pinia.use(piniaPersistedstate)

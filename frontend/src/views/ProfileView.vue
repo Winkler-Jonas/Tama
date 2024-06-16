@@ -10,7 +10,10 @@
       <p v-else>Loading...</p>
     </div>
     <button @click="modalVisible = !modalVisible">Click Me</button>
+    <tama-edit-task :is-visible="modalVisible" @on-exit="modalVisible = !modalVisible"/>
+<!--
     <tama-add-task :is-visible="modalVisible" @on-exit="modalVisible = !modalVisible"/>
+-->
   </section>
 </template>
 
@@ -19,6 +22,7 @@ import {computed, ref} from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import TamaAddTask from "@/components/TamaAddTask.vue";
+import TamaEditTask from "@/components/TamaEditTask.vue";
 
 const authStore = useAuthStore()
 const user = computed(() => authStore.user)
