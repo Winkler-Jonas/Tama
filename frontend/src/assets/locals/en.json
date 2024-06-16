@@ -154,6 +154,16 @@
         "hobby": "Hobby",
         "save": "Money saving"
       }
+    },
+    "editTask": {
+      "inProcess": "In Process",
+      "done": "Done",
+      "stroke": "Cancel",
+      "subTask": "Sub-Task",
+      "edit": "Edit",
+      "move": "Move",
+      "trash": "Delete",
+      "mark": "mark as"
     }
   }
 }
