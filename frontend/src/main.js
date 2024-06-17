@@ -51,13 +51,12 @@ async function init() {
   const languageStore = useLanguageStore()
   const i18n = await setupI18n(languageStore.locale)
   app.use(i18n)
-
+  app.use(Vue3TouchEvents)
   app.use(router)
 
   app.directive('click-outside', ClickOutside);
   app.directive('text-animation', vTextAnimation);
-  app.directive('delay', delayDirective)
-  app.use(Vue3TouchEvents)
+  app.directive('delay', delayDirective);
   app.mount('#app')
 
   // Register the service worker

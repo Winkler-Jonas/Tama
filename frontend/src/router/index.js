@@ -9,6 +9,7 @@ import ProfileView from "@/views/ProfileView.vue";
 import ResendActivationView from "@/views/ResendActivationView.vue";
 import WelcomeView from "@/views/WelcomeView.vue";
 import {useUserStore} from '@/stores/userStore'
+import FocusView from "@/views/FocusView.vue";
 
 
 const routes = [
@@ -45,10 +46,15 @@ const routes = [
     component: ActivationView
   },
   {
+    path: '/focus',
+    name: 'focus',
+    component: FocusView,
+    meta: {requiresAuth: true}
+  },
+  {
     path: '/resend-activation',
     name: 'resendActivation',
     component: ResendActivationView },
-
   {
     path: '/404Error',
     name: 'NotFound',
