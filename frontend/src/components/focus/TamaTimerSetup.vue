@@ -46,7 +46,7 @@ const values = reactive({
   }
 })
 
-const emit = defineEmits(['onInput'])
+const emit = defineEmits(['onInput', 'onFontSizeChange'])
 const showDots = ref(true)
 const digitContainer = ref(null)
 
@@ -72,6 +72,7 @@ const updateHeight = () => {
       const fontSize = digitContainer.value.clientHeight * value;
       digitContainer.value.style.setProperty(`--container-font-size-${key}`, `${fontSize}px`);
     })
+    emit('onFontSizeChange', `${sizes.l * digitContainer.value.clientHeight}px`)
   }
 }
 
@@ -151,6 +152,7 @@ const vTouchDrag = {
     };
 
     const handleTouchEnd = event => {
+      // todo add momentum
       console.log('Touch ended');
     };
 

@@ -4,29 +4,25 @@
       <img src="@/assets/pet.png" alt="tama-pet"/>
     </div>
     <div class="tama-focus-components">
-      <transition name="slide-in" mode="out-in">
-        <keep-alive>
-          <component :is="setupOrTimer"
-                     @on-input="handleTimerInput"
-                     @on-timer-over="handleTimerDone"
-                     :timer-hours="timer.hours"
-                     :timer-minutes="timer.minutes"
-                     :timer-seconds="timer.seconds"
-                     :focus-task="taskDescription"
-                     :key="setupOrTimer"
-          />
-        </keep-alive>
-      </transition>
-<!--      <tama-timer-setup v-if="timerSetup" @on-input="handleTimerInput"/>
-      <tama-timer-animation v-else @on-timer-over="handleTimerDone"
-                            :timer-hours="timer.hours"
-                            :timer-minutes="timer.minutes"
-                            :timer-seconds="timer.seconds"
-                            :focus-task="taskDescription"/>-->
+
+        <component :is="setupOrTimer"
+                   @on-input="(h, m, s) => setTimer([h,m,s])"
+                   @on-timer-done="timerDone = true"
+                   @on-font-size-change="(value) => middleFontSize = value"
+                   :timer-hours="timer.hours"
+                   :timer-minutes="timer.minutes"
+                   :timer-seconds="timer.seconds"
+                   :focus-task="props.taskID"
+                   :font-size="middleFontSize"
+                   :key="setupOrTimer"
+        />
+
     </div>
     <div class="tama-focus-bottom-area">
-      <i v-if="timerSetup" @click="handleTimerStart" class="ri-play-large-line tama-timer-start-button"></i>
-      <i v-else-if="timerDone" @click="handleExitClicked" class="ri-close-line tama-timer-focus-exit"></i>
+      <transition name="tama-focus-fade">
+        <i v-if="showStartButton" @click="handleTimerStart" class="ri-play-large-line tama-timer-start-button"></i>
+        <i v-else-if="showExitButton" @click="handleExitClicked" class="ri-close-line tama-timer-focus-exit"></i>
+      </transition>
     </div>
   </section>
 </template>
@@ -34,19 +30,18 @@
 <script setup>
 import TamaTimerAnimation from "@/components/focus/TamaTimerAnimation.vue";
 import TamaTimerSetup from "@/components/focus/TamaTimerSetup.vue";
-import {computed, onMounted, reactive, ref} from "vue";
-import { useRoute } from "vue-router";
+import {computed, onMounted, reactive, ref, watch, watchEffect} from "vue";
+import {useUserStore} from "@/stores/userStore.js";
 
-const route = useRoute();
+const userStore = useUserStore()
 
-const taskDescription = ref('')
-
-const timerDone = ref(false)
-const timerSetup = ref(true)
-const timer = reactive({
-  hours: 0,
-  minutes: 0,
-  seconds: 0
+onMounted(() => {
+  const timeLeft = userStore.getTaskFocus(props.taskID)
+  if (timeLeft) {
+    timerSetup.value = false
+    setTimer(timeLeft.split(':').map(Number))
+  }
+  console.log(timer)
 })
 
 const timerTabs = {
@@ -54,28 +49,36 @@ const timerTabs = {
   TamaTimerAnimation
 }
 
-const setupOrTimer = computed(() => timerDone.value ? timerTabs.TamaTimerSetup : timerTabs.TamaTimerAnimation);
+const props = defineProps({
+  taskID: {
+    type: String,
+    required: true
+  }
+})
 
-const resetTimer = () => {
-  Object.keys(timer).forEach(key => {
-    timer[key] = 0;
-  });
-}
+const timerSetup = ref(true)
+const timerDone = ref(false)
+const timer = reactive({
+  hours: 0,
+  minutes: 0,
+  seconds: 0
+})
+const middleFontSize = ref('')
 
-const handleExitClicked = () => {
-  timerSetup.value = true
-  resetTimer()
-}
+const setupOrTimer = computed(() => {
+  if (!timerSetup.value) {
+    // Timer was cancelled previously
+    return timerTabs.TamaTimerAnimation
+  } else if (timerSetup.value) {
+    // Normal mount - show timerSetup
+    return timerTabs.TamaTimerSetup
+  }
+})
 
-const handleTimerDone = () => {
-  timerDone.value = true
-}
+const showStartButton = computed(() => Object.values(timer).some(value => value !== 0) && timerSetup.value)
+const showExitButton = computed(() => timerDone.value && !timerSetup.value)
 
-const handleTimerInput = (hours, minutes, seconds) => {
-  timer.hours = hours
-  timer.minutes = minutes
-  timer.seconds = seconds
-}
+/* Events / Button Action */
 
 const handleTimerStart = (hours, minutes, seconds) => {
   if (Object.values(timer).some(value => value !== 0)) {
@@ -84,9 +87,32 @@ const handleTimerStart = (hours, minutes, seconds) => {
   }
 }
 
-onMounted(() => {
-  taskDescription.value = route.params.id
-})
+const handleExitClicked = () => {
+  resetTimer()
+  timerSetup.value = true
+  timerDone.value = true
+}
+
+
+const handleTimerDone = () => {
+  resetTimer()
+}
+
+
+
+
+
+/* Helper functions */
+const setTimer = (hmsArray) => {
+  hmsArray.forEach((value, index) => {
+    timer[Object.keys(timer)[index]] = value;
+  });
+}
+const resetTimer = () => {
+  Object.keys(timer).forEach(key => {
+    timer[key] = 0;
+  });
+}
 </script>
 
 <style scoped>
@@ -193,6 +219,20 @@ onMounted(() => {
 
 .slide-leave-active {
   transform: translateX(-100%);
+}
+
+
+.tama-focus-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.tama-focus-fade-leave-active {
+  transition: all 0.8s ease;
+}
+
+.tama-focus-fade-enter-from,
+.tama-focus-fade-leave-to {
+  opacity: 0;
 }
 
 </style>

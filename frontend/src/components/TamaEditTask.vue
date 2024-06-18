@@ -69,7 +69,7 @@ const handleExitClicked = () => {
 }
 
 const handleFocusClicked = () => {
-  router.push({name: 'focus', params: { id: props.taskName }})
+  router.push({name: 'focus', params: { taskID: props.taskName }})
 }
 </script>
 

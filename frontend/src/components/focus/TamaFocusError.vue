@@ -33,30 +33,28 @@ const showError = ref(false);
 const submitTask = async () => {
   if (sockedConnected.value) {
     await websocketService.send({ task: props.focusTask });
-  } else {
-    console.error('WebSocket is not connected. Cannot send task.');
   }
 };
 
 const errorTrigger = computed(() => props.errorTrigger);
 
-watch(errorTrigger, async (newValue) => {
-  if (newValue) {
+watch(errorTrigger, async (newValue, oldValue) => {
+  if (oldValue && !newValue) {
     await submitTask();
+  } else if (!oldValue && newValue) {
+    showError.value = true;
+    setTimeout(() => {
+      showError.value = false;
+      emit('onDone')
+    }, 5000);
   }
 });
 
 const handleResponse = (data) => {
-  showError.value = true;
-  setTimeout(() => {
-    showError.value = false;
-    aiResponse.value = ''
-    emit('onDone')
-  }, 5000);
-  if (data.every(item => item.trim() === '')) {
+  if (data === '') {
     aiResponse.value = t('components.timer.earlyLeave');
   } else {
-    aiResponse.value = data[0];
+    aiResponse.value = data;
   }
 };
 
@@ -71,6 +69,7 @@ async function connectWebSocket() {
       sockedConnected.value = true;
       websocketService.setOnMessageHandler(handleResponse);
       websocketService.setOnErrorHandler(handleError);
+      await submitTask()
     }
   } catch (error) {
     sockedConnected.value = false;

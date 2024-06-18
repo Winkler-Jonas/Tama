@@ -46,9 +46,10 @@ const routes = [
     component: ActivationView
   },
   {
-    path: '/focus/:id',
+    path: '/focus/:taskID',
     name: 'focus',
     component: FocusView,
+    props: true,
     meta: {requiresAuth: true}
   },
   {

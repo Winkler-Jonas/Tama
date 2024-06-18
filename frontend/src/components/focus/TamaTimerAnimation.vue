@@ -1,5 +1,6 @@
 <template>
-  <div class="timer-container">
+  <div class="timer-container" >
+    <transition name="fade-timer" v-if="showRing">
     <svg viewBox="0 0 200 200">
       <!-- Static base circle, thinner stroke -->
       <circle cx="100" cy="100" r="90" fill="none" stroke="black" stroke-width="2"/>
@@ -10,7 +11,8 @@
               stroke-linecap="round"
               transform="rotate(-90 100 100)"/>
     </svg>
-    <div class="timer-label">{{ timeLabel }}</div>
+    </transition>
+    <div :style="`font-size: ${currentFontSize}`" class="timer-label">{{ timeLabel }}</div>
   </div>
   <div>
     <tama-focus-error @on-done="userError = false" :focus-task="focusTask" :error-trigger="userError" />
@@ -20,10 +22,12 @@
 <script setup>
 import {ref, computed, onMounted, onUnmounted, watch} from 'vue';
 import {useRouter} from "vue-router";
-import TamaSlideUp from "@/components/TamaSlideUp.vue";
 import TamaFocusError from "@/components/focus/TamaFocusError.vue";
+import {useUserStore} from "@/stores/userStore.js";
 
+const userStore = useUserStore()
 const router = useRouter()
+const showRing = ref(false)
 
 const props = defineProps({
   timerHours: {
@@ -45,9 +49,14 @@ const props = defineProps({
   focusTask: {
     type: String,
     required: true
+  },
+  fontSize: {
+    type: String,
+    default: '25px',
   }
 })
-const emit = defineEmits(['onTimerOver'])
+const emit = defineEmits(['onInput', 'onTimerDone', 'onFontSizeChange'])
+const currentFontSize = ref(props.fontSize)
 
 const userError = ref(false)
 const totalSeconds = computed(() =>
@@ -76,7 +85,7 @@ const timeLabel = computed(() => {
 
 const canLeave = computed(() => {
   if (totalSeconds.value - millisecondsElapsed.value / 1000 === 0) {
-    emit('onTimerOver')
+    emit('onTimerDone')
     return true
   }
 })
@@ -88,34 +97,51 @@ watch(canLeave, (newValue, oldValue) => {
         next(false)
         userError.value = true
       } else {
-        // todo need proper route!!
-        next('/profile');
+        next();
       }
     });
   }
 }, {immediate: true})
 
+const handleBeforeUnload = () => {
+  console.log('inside handler')
+  if (totalSeconds.value - millisecondsElapsed.value / 1000 !== 0) {
+    userStore.setNewFocusTask({key: props.focusTask, value: timeLabel.value})
+  } else {
+    userStore.removeFocusTask(props.focusTask)
+  }
+}
+
+
+
 onMounted(() => {
+  window.addEventListener('beforeunload', handleBeforeUnload);
   timerInterval.value = setInterval(() => {
     if (millisecondsElapsed.value < totalSeconds.value * 1000) {
-      millisecondsElapsed.value += 100;  // Increment every 100 milliseconds
+      millisecondsElapsed.value += 100;
     } else {
       clearInterval(timerInterval.value);
     }
   }, 100);
+  setTimeout(() => {
+    showRing.value = true
+    currentFontSize.value = 'var(--tama-h1-size)';
+  }, 300);
 });
 
 onUnmounted(() => {
+  window.removeEventListener('beforeunload', handleBeforeUnload);
   clearInterval(timerInterval.value);
 });
 </script>
 
 <style scoped>
 .timer-container {
+  height: 100%;
+
   position: relative;
   margin-inline: 5%;
   width: 90%;
-  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -126,7 +152,7 @@ onUnmounted(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: var(--tama-h1-size);
+  transition: font-size 0.3s ease;
 }
 
 .elapsed-circle {
@@ -137,4 +163,16 @@ onUnmounted(() => {
   padding-top: 1em;
   text-align: center;
 }
+
+
+.fade-timer-enter-active,
+.fade-timer-leave-active {
+  transition: opacity 0.8s ease-out;
+}
+
+.fade-timer-enter-from,
+.fade-timer-leave-to {
+  opacity: 0;
+}
+
 </style>
