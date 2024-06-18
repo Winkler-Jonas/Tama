@@ -100,7 +100,7 @@ const submitQuestion = () => {
 
 async function connectWebSocket() {
   try {
-    const status = await websocketService.createSocket();
+    const status = await websocketService.createSocket('/ws/askAI/');
     if (status === "open") {
       sockedConnected.value = true;
 

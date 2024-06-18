@@ -13,17 +13,7 @@
     <div class="timer-label">{{ timeLabel }}</div>
   </div>
   <div>
-    <tama-slide-up :is-visible="userError" :slide-height="10">
-      <template #slide-up-content>
-        <div class="tama-focus-user-error">
-          <h2>{{ $t('components.timer.earlyLeave') }}</h2>
-        </div>
-      </template>
-    </tama-slide-up>
-  </div>
-  <div v-if="canLeave" class="tama-focus-exit-section">
-    <i @click="handleExitClicked" class="ri-close-line tama-focus-exit"></i>
-
+    <tama-focus-error @on-done="userError = false" :focus-task="focusTask" :error-trigger="userError" />
   </div>
 </template>
 
@@ -31,6 +21,7 @@
 import {ref, computed, onMounted, onUnmounted, watch} from 'vue';
 import {useRouter} from "vue-router";
 import TamaSlideUp from "@/components/TamaSlideUp.vue";
+import TamaFocusError from "@/components/focus/TamaFocusError.vue";
 
 const router = useRouter()
 
@@ -46,8 +37,17 @@ const props = defineProps({
   timerSeconds: {
     type: Number,
     required: true
+  },
+  canLeave: {
+    type: Boolean,
+    default: false
+  },
+  focusTask: {
+    type: String,
+    required: true
   }
 })
+const emit = defineEmits(['onTimerOver'])
 
 const userError = ref(false)
 const totalSeconds = computed(() =>
@@ -75,7 +75,10 @@ const timeLabel = computed(() => {
 });
 
 const canLeave = computed(() => {
-  return totalSeconds.value - millisecondsElapsed.value / 1000 === 0
+  if (totalSeconds.value - millisecondsElapsed.value / 1000 === 0) {
+    emit('onTimerOver')
+    return true
+  }
 })
 
 watch(canLeave, (newValue, oldValue) => {
@@ -84,12 +87,9 @@ watch(canLeave, (newValue, oldValue) => {
       if (!canLeave.value) {
         next(false)
         userError.value = true
-        setTimeout(() => {
-          userError.value = false
-        }, 5000)
       } else {
         // todo need proper route!!
-        next();
+        next('/profile');
       }
     });
   }
@@ -112,10 +112,10 @@ onUnmounted(() => {
 
 <style scoped>
 .timer-container {
-  align-self: center;
   position: relative;
-  width: 100%;
-  height: 100%;
+  margin-inline: 5%;
+  width: 90%;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,7 +123,10 @@ onUnmounted(() => {
 
 .timer-label {
   position: absolute;
-  font-size: 1.5rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--tama-h1-size);
 }
 
 .elapsed-circle {
@@ -133,26 +136,5 @@ onUnmounted(() => {
 .tama-focus-user-error {
   padding-top: 1em;
   text-align: center;
-}
-
-.tama-focus-exit-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.tama-focus-exit {
-  height: 50px;
-  width: 50px;
-  border-radius: 50%;
-
-  font-size: calc(var(--tama-h1-size) + 10px);
-  font-weight: bold;
-  color: white;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--tama-color-orange);
 }
 </style>

@@ -1,41 +1,32 @@
 <template>
-  <section id="tama-timer-setup">
-    <div class="tama-timer-setup-digit-container">
-      <div v-touch-drag="{target: 'hour'}"
-           class="tama-time-setup-slide-able">
-        <p v-for="value in values.hour.array.slice(values.hour.sliceFrom, values.hour.sliceTo)" :key="`hour-${value}`">
-          {{ value >= 0 ? value : '' }}
-        </p>
-      </div>
-      <p v-if="showDots" class="tama-timer-divider">:</p>
-      <div v-touch-drag="{target: 'minutes'}"
-           class="tama-time-setup-slide-able">
-        <p v-for="value in values.minutes.array.slice(values.minutes.sliceFrom, values.minutes.sliceTo)" :key="`minute-${value}`">
-          {{ value >= 0 ? value : '' }}
-        </p>
-      </div>
-      <p v-if="showDots" class="tama-timer-divider">:</p>
-      <div v-touch-drag="{target: 'seconds'}"
-           class="tama-time-setup-slide-able">
-        <p v-for="value in values.seconds.array.slice(values.seconds.sliceFrom, values.seconds.sliceTo)" :key="`seconds-${value}`">
-          {{ value >= 0 ? value : '' }}
-        </p>
-      </div>
+  <section id="tama-timer-setup" ref="digitContainer">
+    <div v-touch-drag="{target: 'hours'}" class="tama-time-setup-slide-able">
+      <span v-for="(value, idx) in displayHours" :key="`hour-${idx}`">
+        {{ value >= 0 ? value : '' }}
+      </span>
     </div>
-    <div class="tama-timer-start-container">
-      <i @click="handleStart" class="ri-play-large-line tama-timer-start-button"></i>
+    <p class="tama-timer-divider">:</p>
+    <div v-touch-drag="{target: 'minutes'}" class="tama-time-setup-slide-able">
+      <span v-for="(value, idx) in displayMinutes" :key="`minute-${idx}`">
+        {{ value >= 0 ? value : '' }}
+      </span>
+    </div>
+    <p class="tama-timer-divider">:</p>
+    <div v-touch-drag="{target: 'seconds'}" class="tama-time-setup-slide-able">
+      <span v-for="(value, idx) in displaySeconds" :key="`second-${idx}`">
+        {{ value >= 0 ? value : '' }}
+      </span>
     </div>
   </section>
 </template>
 
 <script setup>
-
-import {onMounted, onUnmounted, reactive, ref} from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 
 const values = reactive({
-  padding: 0,
+  padding: 3,
   center: 4,
-  hour: {
+  hours: {
     array: [...Array(3).fill(-1), ...Array(100).keys(), ...Array(3).fill(-1)],
     sliceFrom: 0,
     sliceTo: 7,
@@ -55,113 +46,126 @@ const values = reactive({
   }
 })
 
-const emit = defineEmits(['onStart'])
+const emit = defineEmits(['onInput'])
 const showDots = ref(true)
+const digitContainer = ref(null)
+
+const getFontSize = (index) => {
+  if (index === 1 || index === 7) {
+    return {'font-size': 'var(--container-font-size-xs)'}
+  } else if (index === 2 || index === 6) {
+    return {'font-size': 'var(--container-font-size-s)'}
+  } else if (index === 3 || index === 5) {
+    return {'font-size': 'var(--container-font-size-m)'}
+  } else if (index === 4) {
+    return {'font-size': 'var(--container-font-size-l)'}
+  }
+}
 
 const updateHeight = () => {
   if (window.innerWidth < 800) {
     showDots.value = window.innerHeight >= 750;
   }
+  if (digitContainer.value){
+    const sizes = {'xs': 0.025, 's': 0.05, 'm': 0.075, 'l': 0.15};
+    Object.entries(sizes).forEach(([key, value]) => {
+      const fontSize = digitContainer.value.clientHeight * value;
+      digitContainer.value.style.setProperty(`--container-font-size-${key}`, `${fontSize}px`);
+    })
+  }
 }
 
 onMounted(() => {
-  updateHeight();  // Set initial height
-  window.addEventListener('resize', updateHeight);  // Add resize listener
+  updateHeight();
+  window.addEventListener('resize', updateHeight);
 });
 
 onUnmounted(() => {
   window.removeEventListener('resize', updateHeight);  // Clean up listener
 });
 
-const handleStart = () => {
-  emit('onStart', values.hour.value, values.minutes.value, values.seconds.value)
-}
-
 /* Touching */
-
-const startY = ref(0);
-let lastMoveTime = Date.now();
-let speed = 0;
-
 function throttle(func, limit) {
-  let inThrottle;
+  let lastFunc;
+  let lastRan;
   return function() {
-    const args = arguments;
     const context = this;
-    if (!inThrottle) {
+    const args = arguments;
+    if (!lastRan) {
       func.apply(context, args);
-      inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(function() {
+        if ((Date.now() - lastRan) >= limit) {
+          func.apply(context, args);
+          lastRan = Date.now();
+        }
+      }, limit - (Date.now() - lastRan));
     }
-  };
+  }
 }
 
-const handleTouchMove = throttle((event) => {
-  event.preventDefault();
-  const currentY = event.touches[0].clientY;
-  const deltaY = startY.value - currentY;
-  const currentTime = Date.now();
-  const timeDiff = currentTime - lastMoveTime;
+const displayHours = computed(() => {
+  return values.hours.array.slice(values.hours.sliceFrom, values.hours.sliceTo)
+})
 
-  if (Math.abs(deltaY) > 5) {
-    const key = event.currentTarget.dataset.target;
-    speed = deltaY / timeDiff; // Speed in pixels per millisecond
-    lastMoveTime = currentTime;
-    moveItems(deltaY, key);
-    startY.value = currentY;
-  }
-}, 50);
+const displayMinutes = computed(() => {
+  return values.minutes.array.slice(values.minutes.sliceFrom, values.minutes.sliceTo)
+})
+
+const displaySeconds = computed(() => {
+  return values.seconds.array.slice(values.seconds.sliceFrom, values.seconds.sliceTo)
+})
 
 function moveItems(deltaY, key) {
-  if (deltaY > 0) {
-    if (values[key].sliceTo < (values[key].array.length + values.padding)) {
-      values[key].sliceTo++;
-      values[key].sliceFrom++;
-    }
-  } else {
-    if (values[key].sliceFrom > 0) {
-      values[key].sliceTo--;
-      values[key].sliceFrom--;
-    }
+  const item = values[key];
+  if (deltaY > 0 && item.sliceTo < item.array.length) {
+    values[key].sliceTo++;
+    values[key].sliceFrom++;
+  } else if (deltaY < 0 && item.sliceFrom > 0){
+    values[key].sliceTo--;
+    values[key].sliceFrom--;
   }
-  values[key].value = values[key].array[values[key].sliceFrom + 3];
-}
-
-function applyMomentum(key) {
-  const decay = 0.8;
-  const minSpeed = 0.1;
-
-  function momentumStep() {
-    if (Math.abs(speed) > minSpeed) {
-      moveItems(speed, key);
-      speed *= decay;
-      requestAnimationFrame(momentumStep);
-    } else {
-      speed = 0;
-    }
-  }
-  requestAnimationFrame(momentumStep);
+  values[key].value = values[key].array[values[key].sliceFrom + values.padding];
+  emit('onInput', values.hours.value, values.minutes.value, values.seconds.value)
 }
 
 const vTouchDrag = {
   mounted(el, binding) {
-    el.dataset.target = binding.value.target;
-    el.addEventListener('touchstart', (event) => {
-      startY.value = event.touches[0].clientY;
+    let startY = 0;
+
+    const handleTouchStart = event => {
       event.preventDefault();
-    }, { passive: false });
+      startY = event.touches[0].clientY;
+    };
 
+    const handleTouchMove = event => {
+      const currentY = event.touches[0].clientY;
+      const deltaY = startY - currentY;
+
+      if (Math.abs(deltaY) > 30) {
+        moveItems(deltaY, binding.value.target);
+        startY = currentY;
+      }
+    };
+
+    const handleTouchEnd = event => {
+      console.log('Touch ended');
+    };
+
+    el.addEventListener('touchstart', handleTouchStart, { passive: false });
     el.addEventListener('touchmove', handleTouchMove, { passive: false });
+    el.addEventListener('touchend', handleTouchEnd, { passive: false });
 
-    el.addEventListener('touchend', () => {
-      const key = el.dataset.target;
-      applyMomentum(key);
-    }, { passive: false });
+    el._handleTouchStart = handleTouchStart;
+    el._handleTouchMove = handleTouchMove;
+    el._handleTouchEnd = handleTouchEnd;
   },
   unmounted(el) {
-    el.removeEventListener('touchstart', handleTouchMove);
-    el.removeEventListener('touchmove', handleTouchMove);
-    el.removeEventListener('touchend', handleTouchMove);
+    el.removeEventListener('touchstart', el._handleTouchStart);
+    el.removeEventListener('touchmove', el._handleTouchMove);
+    el.removeEventListener('touchend', el._handleTouchEnd);
   }
 };
 </script>
@@ -170,91 +174,83 @@ const vTouchDrag = {
 
 #tama-timer-setup {
   height: 100%;
-  width: 100%;
+
+  display: grid;
+  grid-template-columns: [hour-start] 1fr [hour-end sep-a-start] min-content [sep-a-end minute-start] 1fr [minute-end sep-b-start] min-content [sep-b-end second-start] 1fr;
+  grid-template-rows: 1fr;
+
+  margin-inline: var(--sgn-mi);
+
+  --container-font-size-xs: 16px;
+  --container-font-size-s: 20px;
+  --container-font-size-m: 22px;
+  --container-font-size-l: 25px;
+
+  text-align: center;
+}
+
+#tama-timer-setup div:nth-child(1) {
+  grid-column: hour-start / hour-end;
+  grid-row: 1 / -1;
+}
+
+#tama-timer-setup p:nth-child(2) {
+  grid-column: sep-a-start / sep-a-end;
+  grid-row: 1 / -1;
+}
+
+#tama-timer-setup div:nth-child(3) {
+  grid-column: minute-start / minute-end;
+  grid-row: 1 / -1;
+}
+
+#tama-timer-setup p:nth-child(4) {
+  grid-column: sep-b-start / sep-b-end;
+  grid-row: 1 / -1;
+}
+
+#tama-timer-setup div:nth-child(5) {
+  grid-column: second-start / 6;
+  grid-row: 1 / -1;
+}
+
+.tama-time-setup-slide-able span.font-transition {
+  transition: font-size 3s ease;
+}
+
+#tama-timer-setup p,
+.tama-time-setup-slide-able {
+  line-height: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-}
-
-.tama-timer-setup-digit-container {
-  width: 100%;
-  height: 90%;
-  max-height: 50vh;
-  padding-bottom: 2rem;
-
-  display: flex;
   justify-content: center;
-  align-items: flex-start;
-  overflow: hidden;
 }
 
-.tama-time-setup-slide-able {
-  width: 30%;
-  height: 30%;
+#tama-timer-setup p {
+  font-size: var(--container-font-size-l);
 }
 
-.tama-timer-divider {
-  align-self: center;
-  font-size: 3rem;
+.tama-time-setup-slide-able span:nth-child(1),
+.tama-time-setup-slide-able span:nth-child(7) {
+  height: var(--container-font-size-xs);
+  font-size: var(--container-font-size-xs);
 }
 
-.tama-timer-start-container {
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.tama-time-setup-slide-able span:nth-child(2),
+.tama-time-setup-slide-able span:nth-child(6) {
+  height: var(--container-font-size-s);
+  font-size: var(--container-font-size-s);
 }
 
-.tama-timer-start-button {
-  height: 50px;
-  width: 50px;
-  border-radius: 50%;
-
-  font-size: calc(var(--tama-h1-size));
-  font-weight: bold;
-  color: white;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--tama-color-green);
+.tama-time-setup-slide-able span:nth-child(3),
+.tama-time-setup-slide-able span:nth-child(5) {
+  height: var(--container-font-size-m);
+  font-size: var(--container-font-size-m);
 }
 
-.tama-time-setup-slide-able p {
-  text-align: center;
-  transition: font-size 0.2s ease;
-}
-
-.tama-time-setup-slide-able p:nth-child(1),
-.tama-time-setup-slide-able p:nth-child(7) {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 2em;
-  font-size: 1em;
-}
-
-.tama-time-setup-slide-able p:nth-child(2),
-.tama-time-setup-slide-able p:nth-child(6) {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 2.5em;
-  font-size: 1.5em;
-}
-
-.tama-time-setup-slide-able p:nth-child(3),
-.tama-time-setup-slide-able p:nth-child(5) {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 3em;
-  font-size: 2em;
-}
-
-.tama-time-setup-slide-able p:nth-child(4) {
-  font-size: 3rem;
+.tama-time-setup-slide-able span:nth-child(4) {
+  height: var(--container-font-size-l);
+  font-size: var(--container-font-size-l);
 }
 
 </style>
