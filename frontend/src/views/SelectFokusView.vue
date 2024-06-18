@@ -6,7 +6,6 @@ import FokusBoxes from '@/components/FokusBoxes.vue'
 <template>
   <Header :selectHeader="selectHeader"/>
   <FokusBoxes />
-  <button @click="redirectToHome">Fertig</button>
 </template>
 
 <script>
@@ -16,11 +15,6 @@ export default {
       selectHeader: 'fokus'
     }
   },
-methods: {
-  redirectToHome() {
-    this.$router.push({ name: 'home'})
-  }
-},
 }
 </script>
 

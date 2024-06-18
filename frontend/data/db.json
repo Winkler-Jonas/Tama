@@ -1,0 +1,60 @@
+{
+  "tasks": [
+  ],
+  "dailys": [
+    {
+      "category": "Sport",
+      "description": "30 Minuten Joggen im Park",
+      "selected": true,
+      "id": "1002"
+    },
+    {
+      "category": "Sport",
+      "description": "15 Minuten Joggen im Park",
+      "selected": true,
+      "id": "dab7"
+    },
+    {
+      "category": "Ernährung",
+      "description": "Ein gesundes Mittagessen zubereiten",
+      "selected": false,
+      "id": "995e"
+    },
+    {
+      "category": "Digital Detox",
+      "description": "Eine Stunde ohne Handy verbringen",
+      "selected": false,
+      "id": "f674"
+    },
+    {
+      "category": "Freunde",
+      "description": "Einem Freund eine Nachricht schreiben oder anrufen",
+      "selected": false,
+      "id": "6096"
+    },
+    {
+      "category": "Mentale Gesundheit",
+      "description": "10 Minuten Meditation oder Entspannungsübungen machen",
+      "selected": false,
+      "id": "08ac"
+    },
+    {
+      "category": "Lernen",
+      "description": "Ein neues Thema recherchieren und Notizen machen",
+      "selected": false,
+      "id": "3ff2"
+    },
+    {
+      "category": "Hobby",
+      "description": "Eine Stunde an einem persönlichen Projekt arbeiten",
+      "selected": false,
+      "id": "1913"
+    },
+    {
+      "category": "Sparen",
+      "description": "Eine Liste der Ausgaben für diesen Monat überprüfen und Einsparungen identifizieren",
+      "selected": false,
+      "id": "c30b"
+    }
+  ]
+}

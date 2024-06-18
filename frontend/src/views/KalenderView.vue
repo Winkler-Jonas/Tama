@@ -3,28 +3,39 @@ import Header from '@/components/Header.vue';
 import Kalender from '@/components/Kalender.vue';
 import Daily from '@/components/Task/Daily.vue';
 import Aufgabe from '@/components/Task/Aufgabe.vue';
+import AddTaskForm from '@/components/AddTaskForm.vue';
+import EditTask from '@/components/EditTask.vue';
 </script>
 
 <template>
   <Header :selectHeader="selectHeader" />
-  <Kalender />
-  <h1>Aufgaben heute</h1>
-  <Aufgabe />
-  <div class="color-box">
-    <Daily />
-    <div class="datum-box">
-      <p id="datum">Datum</p>
-      <p id="Uhrzeit">Uhrzeit</p>
-    </div>
+  <Kalender @handleDayClicked="handleDayClicked" />
+  <h1 class="subheadlineBlack">Aufgaben heute</h1>
+  <Aufgabe @openEditTask="toggleEditTask" />
+  <Daily :showDate="true"/>
 
-  </div>
+  <Transition>
+    <EditTask v-if="showEditTaskComp" @backdropClicked="toggleEditTask" />
+  </Transition>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      selectHeader: 'calender'
+      selectHeader: 'calender',
+      showAddTaskForm: false,
+      showEditTaskComp: false,
+      selectedDateForTask: null,
+    }
+  },
+  methods: {
+    handleDayClicked(day, month, year) {
+      this.selectedDateForTask = day + ' ' + month + ' ' + year;
+      console.log(this.selectedDateForTask);
+    },
+    toggleEditTask() {
+      this.showEditTaskComp = !this.showEditTaskComp;
     }
   },
 }
@@ -43,11 +54,14 @@ export default {
   /* Schatteneffekt */
 }
 
-.datum-box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 10px 0px;
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

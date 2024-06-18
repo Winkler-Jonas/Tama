@@ -4,15 +4,19 @@ import Aufgabe from '@/components/Task/Aufgabe.vue';
 </script>
 
 <template>
-  <h1>Aufgaben</h1>
-  <Aufgabe />
-  <h1>Daily</h1>
+  <h2 class="subheadlineBlue">Aufgaben</h2>
+  <Aufgabe @openEditTask="openEditTask()"/>
+  <h2 class="subheadlineOrange">Daily</h2>
   <Daily />
 </template>
 
 <script>
 export default {
-
+  methods: {
+    openEditTask() {
+      this.$emit('openEditTask');
+    }
+  },
 }
 </script>
 

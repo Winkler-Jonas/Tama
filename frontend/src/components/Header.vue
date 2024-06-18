@@ -1,11 +1,11 @@
 <template>
   <div class="header-wrapper">
+    <div class="headline-container">
+      <img  id="back-arrow" v-if="showBackArrow" src="../assets/arrow.png" alt="" @click="goToHome">
+      <h1 class="headline" v-if="showHeadline"> {{ headline }}</h1>
+    </div>
     <div class="image-container">
-      <div class="headline-container">
-        <img  id="back-arrow" v-if="showBackArrow" src="../assets/arrow.png" alt="" @click="goToHome">
-        <h1 id="headline" v-if="showHeadline"> {{ headline }}</h1>
-      </div>
-      <img id="tama" src="../assets/tama.png" alt="tama" v-if="showTama">
+      <img id="tama" src="../assets/animation/tama_idle.gif" alt="tama" v-if="showTama">
     </div>
   </div>
 </template>
@@ -78,14 +78,16 @@ export default {
 }
 
 .header-wrapper {
+  position: sticky;
+  top: 0;
   clip-path: ellipse(100% 100% at 50% 0%);
-  background-color: #83b6c7;
+  background-color: var(--tama-color-blue);
   text-align: center;
   min-width: 150px;
 }
 
 #tama {
-  width: 50%;
+  width: 100%;
   max-width: 400px;
   min-width: 150px;
 }
@@ -97,6 +99,10 @@ export default {
   width: 20%;
   max-width: 100px;
   min-width: 50px;
+}
+.image-container {
+  overflow: hidden;
+  max-height: 220px ;
 }
 
 </style>

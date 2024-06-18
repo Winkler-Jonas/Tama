@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <button @click="handleClickOnAddTask">+</button>
+    <button class="normaltext" @click="handleClickOnAddTask">+</button>
     <div class="icon_wrapper" >
       <img src="../assets/Kalender.png" alt="" @click="goToCalender">
       <img src="../assets/Ziel.png" alt=""  @click="goToFocus">
@@ -20,7 +20,7 @@ export default {
   props: ['AddTask'],
   methods: {
     handleClickOnAddTask() {
-      this.$emit('openAddTask', this.openAddTask);
+      this.$emit('openAddTask');
     },
     goToCalender() {
       this.$router.push({ name: 'Kalender'})
@@ -37,11 +37,21 @@ export default {
 
 <style scoped>
 button {
-  margin: 5%;
+  padding: 5px;
+  border-radius: 50%;
+  width: 45px;
+  aspect-ratio: 1 / 1;
+  border: none;
+  color: var(--tama-color-white);
+  background-color: var(--tama-color-black);
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 35px;
+
 }
 
 .footer {
-  text-align: center;
+  height: fit-content;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -49,7 +59,8 @@ button {
 }
 
 .icon_wrapper {
-  background-color: #f7ede2;
+  background-color: var(--tama-color-beige);
+  box-shadow: 0px -4px 4px rgba(0, 0, 0, 25%);
 
 }
 

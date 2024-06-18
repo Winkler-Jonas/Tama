@@ -5,7 +5,9 @@ import FokusBoxes from '@/components/FokusBoxes.vue'
 
 <template>
   <Header :selectHeader="selectHeader" />
-  <p>Um deinen Fokus zu ändern wähle einen neuen Fokus aus</p>
+  <div class="normaltext">
+    <p>Um deinen Fokus zu ändern wähle einen neuen Fokus aus</p>
+  </div>
   <FokusBoxes />
 </template>
 
@@ -19,6 +21,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
