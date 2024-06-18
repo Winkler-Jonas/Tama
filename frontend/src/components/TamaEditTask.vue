@@ -29,6 +29,7 @@
 import TamaIconContainer from "@/components/icons/TamaIconContainer.vue";
 import TamaSlideUp from "@/components/TamaSlideUp.vue";
 import {onMounted, onUnmounted, ref} from "vue";
+import router from "@/router/index.js";
 
 const updateHeight = () => {
   if (window.innerWidth < 800) {
@@ -36,7 +37,6 @@ const updateHeight = () => {
   } else {
     slideHeight.value = 40
   }
-
 }
 
 onMounted(() => {
@@ -69,7 +69,7 @@ const handleExitClicked = () => {
 }
 
 const handleFocusClicked = () => {
-
+  router.push({name: 'focus', params: { taskID: props.taskName }})
 }
 </script>
 

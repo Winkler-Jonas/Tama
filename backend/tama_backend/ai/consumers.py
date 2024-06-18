@@ -6,6 +6,7 @@ from decouple import config
 import regex as re
 
 response_pattern = re.compile(r"\*\*(?P<issue>.+?)\*\*", re.DOTALL | re.MULTILINE)
+response_focus = re.compile(r"\"(?P<focus>.+?)\"", re.DOTALL | re.MULTILINE)
 
 # Configure the AI model
 genai.configure(api_key=config('DJANGO_GEMINI_AI_KEY'))
@@ -22,6 +23,53 @@ model = genai.GenerativeModel(
     model_name="gemini-1.5-flash",
     generation_config=generation_config,
 )
+
+
+class FocusUpConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.locale = self.scope['url_route']['kwargs'].get('locale', 'en')
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        pass
+
+    async def receive(self, text_data):
+        try:
+            text_data_json = json.loads(text_data)
+            user_question = text_data_json['task']
+            modified_question = await self.modify_input(user_question)
+            response = await self.ask_google_gemini(modified_question)
+            await self.send(text_data=json.dumps({'message': response.strip("\'*\" \n")}))
+        except json.JSONDecodeError:
+            # frontend error
+            await self.send(text_data=json.dumps({'error': 'Invalid JSON format.'}))
+        except ValueError as e:
+            # user error / frontend error
+            await self.send(text_data=json.dumps({'error': str(e)}))
+        except Exception as e:
+            # who knows
+            await self.send(text_data=json.dumps({'error': 'An unexpected error occurred.'}))
+
+    @sync_to_async
+    def modify_input(self, input_text):
+        if not input_text.strip():
+            raise ValueError("Input text is empty.")
+
+        return (f"I need to focus on a task. "
+                f"Can you provide me an inspiring sentence for me to focus on my task."
+                f"The sentence must not be longer that 10 words."
+                f"The answer must not contain text highlighting."
+                f"Answer in this language [{self.locale}]. "
+                f"This is what I want to focus on: [{input_text}]")
+
+    @sync_to_async
+    def ask_google_gemini(self, input_text):
+        try:
+            chat_session = model.start_chat(history=[])
+            response = chat_session.send_message(input_text)
+            return response.text
+        except Exception as e:
+            raise ValueError("Gemini-Error")
 
 
 class AskAIConsumer(AsyncWebsocketConsumer):
@@ -77,7 +125,6 @@ class AskAIConsumer(AsyncWebsocketConsumer):
         try:
             chat_session = model.start_chat(history=[])
             response = chat_session.send_message(input_text)
-            print(response)
             return response.text
         except Exception as e:
             raise ValueError("Gemini-Error")

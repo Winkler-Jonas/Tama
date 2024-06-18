@@ -3,14 +3,14 @@ import {getAIErrorMessage} from "@/utils/AIerrorHandler.js";
 
 class WebSocketService {
     constructor() {
-        this.routesWithLocale = ['/ws/askAI/', ]
+        this.routesWithLocale = ['/ws/askAI/', '/ws/focusUP/']
         this.usernameSocket = null;
         this.emailSocket = null;
         this.usernameCallbacks = {};
         this.emailCallbacks = {};
         this.usernameQueue = [];
         this.emailQueue = [];
-        this.askAISocket = null;
+        this.AISocket = null;
         this.onMessage = null
         this.onError = null
     }
@@ -126,53 +126,61 @@ class WebSocketService {
         });
     }
 
-    createSocket = () => {
-        return new Promise((resolve, reject) => {
-            if (this.askAISocket && this.askAISocket.readyState === WebSocket.OPEN) {
-                resolve("open");
-            } else if (this.askAISocket && this.askAISocket.readyState === WebSocket.CONNECTING) {
-                resolve("connecting");
+    async createSocket(urlPath) {
+        if (this.AISocket) {
+            if (this.AISocket.readyState === WebSocket.OPEN) {
+                return Promise.resolve("open");
+            } else if (this.AISocket.readyState === WebSocket.CONNECTING) {
+                return Promise.resolve("connecting");
             }
+        }
 
-            this.askAISocket = new WebSocket(this.getWebSocketUrl(`/ws/askAI/`));
-            this.askAISocket.onopen = () => {
+        return new Promise((resolve, reject) => {
+            this.AISocket = new WebSocket(this.getWebSocketUrl(urlPath));
+            this.AISocket.onopen = () => {
                 resolve("open");
             };
-            this.askAISocket.onerror = (error) => {
+            this.AISocket.onerror = (error) => {
                 reject("error");
             };
-            this.askAISocket.onmessage = (event) => {
+            this.AISocket.onmessage = (event) => {
                 if (this.onMessage) {
                     const data = JSON.parse(event.data);
                     if (data.error) {
-                        if (this.onError) this.onError(getAIErrorMessage(data.error).message);
+                        if (this.onError) {
+                            this.onError(getAIErrorMessage(data.error).message);
+                        }
                     } else {
-                        if (this.onMessage) this.onMessage(Object.values(data.message));
+                        this.onMessage(Object.values(data.message));
                     }
                 }
             };
-            this.askAISocket.onclose = () => {
-                this.askAISocket = null;
+            this.AISocket.onclose = () => {
+                this.AISocket = null;
                 reject("closed");
             };
-        })
+        });
     }
 
-    send(message) {
-        if (this.askAISocket.readyState === WebSocket.OPEN) {
-            this.askAISocket.send(JSON.stringify(message));
+    async send(message) {
+        if (this.AISocket && this.AISocket.readyState === WebSocket.OPEN) {
+            this.AISocket.send(JSON.stringify(message));
+        } else {
+            console.error('WebSocket is not open. Cannot send message.');
         }
     }
 
     closeSocket() {
-        if (this.askAISocket) {
-            this.askAISocket.close();
+        if (this.AISocket) {
+            this.AISocket.close();
+            this.AISocket = null;
         }
     }
 
     setOnMessageHandler(handler) {
         this.onMessage = handler;
     }
+
     setOnErrorHandler(handler) {
         this.onError = handler;
     }

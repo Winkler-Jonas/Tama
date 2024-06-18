@@ -164,6 +164,9 @@
       "move": "Verschieben",
       "trash": "Löschen",
       "mark": "markieren als"
+    },
+    "timer": {
+      "earlyLeave": "Lass uns fokusieren ..."
     }
   }
 }

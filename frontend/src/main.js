@@ -40,8 +40,6 @@ window.addEventListener('resize', setVhProperty);
 async function init() {
   const app = createApp(App)
 
-  // Add Icons
-  addIcons();
   // Create Pinia instance
   const pinia = createPinia()
   pinia.use(piniaPersistedstate)
@@ -51,14 +49,16 @@ async function init() {
   const languageStore = useLanguageStore()
   const i18n = await setupI18n(languageStore.locale)
   app.use(i18n)
-
+  app.use(Vue3TouchEvents)
   app.use(router)
 
   app.directive('click-outside', ClickOutside);
   app.directive('text-animation', vTextAnimation);
-  app.directive('delay', delayDirective)
-  app.use(Vue3TouchEvents)
+  app.directive('delay', delayDirective);
   app.mount('#app')
+
+  // Add Icons
+  addIcons();
 
   // Register the service worker
   if ('serviceWorker' in navigator) {

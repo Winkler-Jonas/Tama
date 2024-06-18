@@ -164,6 +164,9 @@
       "move": "Move",
       "trash": "Delete",
       "mark": "mark as"
+    },
+    "timer": {
+      "earlyLeave": "Let's focus ..."
     }
   }
 }
