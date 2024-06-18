@@ -1,19 +1,19 @@
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-module.exports = {
-    mode: {
-        symbol: {
-            dest: '.',
-            sprite: 'src/assets/icons/sprite.svg'
-        }
-    },
-    shape: {
-        id: {
-            generator: function(name, file) {
-                // Extract the file name without extension
-                const fileName = path.basename(file, path.extname(file));
-                return `icon-${fileName}`;
-            }
-        }
+const srcDir = path.join(process.cwd(), 'src', 'assets', 'icons');
+const tempDir = path.join(process.cwd(), 'temp-icons');
+
+// Ensure the temporary directory exists
+if (!fs.existsSync(tempDir)){
+    fs.mkdirSync(tempDir);
+}
+
+// Copy and rename SVG files
+fs.readdirSync(srcDir).forEach(file => {
+    const extname = path.extname(file);
+    const basename = path.basename(file, extname);
+    if (extname === '.svg') {
+        fs.copyFileSync(path.join(srcDir, file), path.join(tempDir, file));
     }
-};
+});
