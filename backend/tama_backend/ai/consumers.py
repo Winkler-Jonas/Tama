@@ -39,8 +39,7 @@ class FocusUpConsumer(AsyncWebsocketConsumer):
             user_question = text_data_json['task']
             modified_question = await self.modify_input(user_question)
             response = await self.ask_google_gemini(modified_question)
-            final_response = self.process_response(response)
-            await self.send(text_data=json.dumps({'message': final_response}))
+            await self.send(text_data=json.dumps({'message': response.strip("\'*\" \n")}))
         except json.JSONDecodeError:
             # frontend error
             await self.send(text_data=json.dumps({'error': 'Invalid JSON format.'}))
@@ -62,15 +61,6 @@ class FocusUpConsumer(AsyncWebsocketConsumer):
                 f"The answer must not contain text highlighting."
                 f"Answer in this language [{self.locale}]. "
                 f"This is what I want to focus on: [{input_text}]")
-
-    def process_response(self, response):
-        formatted_response = {
-            'inspire': '',
-        }
-        print(response)
-        if match := response_focus.search(response):
-            formatted_response['inspire'] = match.group('focus')
-        return formatted_response
 
     @sync_to_async
     def ask_google_gemini(self, input_text):
