@@ -46,7 +46,7 @@ const routes = [
     component: ActivationView
   },
   {
-    path: '/focus',
+    path: '/focus/:id',
     name: 'focus',
     component: FocusView,
     meta: {requiresAuth: true}
@@ -72,50 +72,44 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const authStore = useAuthStore()
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const userStore = useUserStore()
-
+  const authStore = useAuthStore();
+  const userStore = useUserStore();
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const isRootPath = to.path === '/';
 
   if (isRootPath) {
-
     if (!userStore.welcomeDone) {
-      next('/welcome');
-    } else {
-      if (!authStore.token) {
-        console.log('no token found')
-        next('/login');
-      } else {
-        if (!authStore.user) {
-          try {
-            await authStore.fetchUserProfile();
-            console.log('fetched user -> next')
-            next();
-          } catch (error) {
-            console.log('error routing to login')
-            next('/login');
-          }
-        } else {
-          console.log('routing to profile')
-          next('/profile');
-        }
+      return next('/welcome');
+    }
+    if (!authStore.token) {
+      return next('/login');
+    }
+    if (!authStore.user) {
+      try {
+        await authStore.fetchUserProfile();
+        return next('/profile');
+      } catch (error) {
+        return next('/login');
       }
     }
-  } else {
-    if (requiresAuth && !authStore.token) {
-      next('/login');
-    } else if (authStore.token && !authStore.user) {
+    return next('/profile');
+  }
+
+  if (requiresAuth) {
+    if (!authStore.token) {
+      return next('/login');
+    }
+    if (!authStore.user) {
       try {
         await authStore.fetchUserProfile();
         next();
+        return;
       } catch (error) {
-        next('/login');
+        return next('/login');
       }
-    } else {
-      next();
     }
   }
-})
+  next();
+});
 
 export default router
