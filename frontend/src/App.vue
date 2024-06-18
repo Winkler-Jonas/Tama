@@ -11,33 +11,35 @@
       </router-view>
     </main>
     <footer>
-      <!-- Navbar here -->
+      <tama-nav-bar v-if="authStore.user"/>
     </footer>
   </section>
 
 </template>
 
 <script setup>
+import TamaNavBar from "@/components/TamaNavBar.vue";
+import {useAuthStore} from "@/stores/auth.js";
 
+const authStore = useAuthStore()
 </script>
 
 <style scoped>
 
 #tama-app {
   display: grid;
-  grid:
-    [header-start]  "header" min-content
-    [content-start] "main"   auto
-    [footer-start]  "footer" min-content;
+  grid-template-rows: [header-start] min-content [header-end content-start] auto [content-end footer-start] min-content;
+  grid-template-columns: 1fr;
+  grid-template-areas: "header" "content" "footer";
 }
 
 header {
-  grid-column: 1 / 2;
+  grid-area: header;
   z-index: 2;
 }
 
 main {
-  grid-column: 1 / 3;
+  grid-area: content;
   z-index: 1;
   overflow-y: hidden;
   position: relative;
