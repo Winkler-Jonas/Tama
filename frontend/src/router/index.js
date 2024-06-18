@@ -9,6 +9,7 @@ import ProfileView from "@/views/ProfileView.vue";
 import ResendActivationView from "@/views/ResendActivationView.vue";
 import WelcomeView from "@/views/WelcomeView.vue";
 import {useUserStore} from '@/stores/userStore'
+import FocusView from "@/views/FocusView.vue";
 
 import OpeningView from '@/views/OpeningView.vue'
 import AboutView from '@/views/AboutView.vue'
@@ -51,10 +52,16 @@ const routes = [
     component: ActivationView
   },
   {
+    path: '/focus/:taskID',
+    name: 'focus',
+    component: FocusView,
+    props: true,
+    meta: {requiresAuth: true}
+  },
+  {
     path: '/resend-activation',
     name: 'resendActivation',
     component: ResendActivationView },
-
   {
     path: '/404Error',
     name: 'NotFound',
@@ -102,46 +109,44 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const authStore = useAuthStore()
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const userStore = useUserStore()
-
+  const authStore = useAuthStore();
+  const userStore = useUserStore();
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const isRootPath = to.path === '/';
 
   if (isRootPath) {
-
     if (!userStore.welcomeDone) {
-      next('/welcome');
-    } else {
-      if (!authStore.token) {
-        next('/login');
-      } else {
-        if (!authStore.user) {
-          try {
-            await authStore.fetchUserProfile();
-            next();
-          } catch (error) {
-            next('/login');
-          }
-        } else {
-          next('/home');
-        }
+      return next('/welcome');
+    }
+    if (!authStore.token) {
+      return next('/login');
+    }
+    if (!authStore.user) {
+      try {
+        await authStore.fetchUserProfile();
+        return next('/profile');
+      } catch (error) {
+        return next('/login');
       }
     }
-  } else {
-    if (requiresAuth && !authStore.token) {
-      next('/login');
-    } else if (authStore.token && !authStore.user) {
+    return next('/profile');
+  }
+
+  if (requiresAuth) {
+    if (!authStore.token) {
+      return next('/login');
+    }
+    if (!authStore.user) {
       try {
         await authStore.fetchUserProfile();
         next();
+        return;
       } catch (error) {
-        next('/login');
+        return next('/login');
       }
-    } else {
-      next();
     }
   }
-})
+  next();
+});
 
 export default router

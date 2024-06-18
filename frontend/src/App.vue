@@ -5,9 +5,9 @@
     </header>
     <main>
       <router-view v-slot="{ Component }">
-        <transition name="slide" mode="out-in">
-          <component :is="Component" :key="$route.path"/>
-        </transition>
+
+          <component :is="Component" :key="$route.fullPath"/>
+
       </router-view>
     </main>
     <footer>

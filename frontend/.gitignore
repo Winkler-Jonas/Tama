@@ -15,6 +15,9 @@ coverage
 *.local
 dev-dist
 dev-dist/*
+temp
+public/icons.svg
+src/assets/icons/icons.svg
 
 /cypress/videos/
 /cypress/screenshots/

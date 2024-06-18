@@ -8,3 +8,5 @@ python-decouple
 djangorestframework
 djangorestframework-simplejwt
 django-cors-headers
+google-generativeai
+regex

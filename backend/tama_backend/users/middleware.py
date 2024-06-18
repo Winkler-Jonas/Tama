@@ -42,15 +42,19 @@ WSS
 def get_user(token):
     try:
         UntypedToken(token)
+        print('found user')
     except (InvalidToken, TokenError):
+        print('did not find user')
         return AnonymousUser()
 
     try:
         decoded_data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         user_id = decoded_data.get("user_id")
+        print(f"user id: {user_id}")
         from django.contrib.auth import get_user_model  # Import here
         user = get_user_model().objects.get(id=user_id)
-    except Exception:
+    except Exception as e:
+        print(f'exception caught {e}')
         return AnonymousUser()
 
     return user
@@ -60,12 +64,13 @@ class TokenAuthMiddleware(BaseMiddleware):
     async def __call__(self, scope, receive, send):
         query_string = parse_qs(scope["query_string"].decode())
         token = query_string.get("token", [None])[0]
-
+        print(f"got token {token}")
         # Allow public access to these paths without a token
         public_paths = ['/ws/check_username/', '/ws/check_email/']
         if scope['path'] in public_paths:
             scope["user"] = AnonymousUser()
         else:
+            print('else')
             scope["user"] = await get_user(token) if token else AnonymousUser()
 
         return await super().__call__(scope, receive, send)
