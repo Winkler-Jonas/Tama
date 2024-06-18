@@ -1,6 +1,6 @@
 <template>
-  <svg class="tama-icon" viewBox="0 0 37 37">
-    <use class="tama-icon" :xlink:href="`#${iconName}`"></use>
+  <svg class="tama-icon" :style="`background-color: ${backGroundColor};`" viewBox="0 0 37 37">
+    <use class="tama-icon" :xlink:href="`#icon-${iconName}`"></use>
   </svg>
 </template>
 
@@ -10,6 +10,11 @@ const props = defineProps({
   iconName: {
     type: String,
     required: true
+  },
+  backGroundColor: {
+    type: String,
+    required: false,
+    default: 'none'
   }
 })
 
@@ -22,6 +27,7 @@ const props = defineProps({
   width: 100%;
   height: auto;
   aspect-ratio: 1 / 1;
+  object-fit: contain;
 }
 
 </style>

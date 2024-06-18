@@ -1,5 +1,5 @@
 <template>
-  <section id="tama-profile-view">
+  <section id="tama-profile-view" class="main-gl-view">
     <div>
       <h1>User Profile</h1>
       <div v-if="user">
@@ -14,6 +14,7 @@
 <!--
     <tama-add-task :is-visible="modalVisible" @on-exit="modalVisible = !modalVisible"/>
 -->
+
   </section>
 </template>
 
@@ -23,6 +24,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import TamaAddTask from "@/components/TamaAddTask.vue";
 import TamaEditTask from "@/components/TamaEditTask.vue";
+import TamaNavBar from "@/components/TamaNavBar.vue";
 
 const authStore = useAuthStore()
 const user = computed(() => authStore.user)

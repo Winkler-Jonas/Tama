@@ -4,10 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm run generate-icons && vite",
-    "build": "npm run generate-icons && vite build",
+    "dev": "npm run preprocess-svg && npm run generate-icons && vite",
+    "build": "npm run preprocess-svg && npm run generate-icons && vite build",
     "preview": "vite preview",
-    "generate-icons": "svg-sprite --config=sprite.config.json temp/*.svg"
+    "generate-icons": "svg-sprite --config=sprite.config.json temp-icons/*.svg",
+    "preprocess-svg": "node preprocess-svg.js"
   },
   "dependencies": {
     "axios": "^1.7.2",

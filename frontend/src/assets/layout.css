@@ -86,3 +86,26 @@
             rgba(255, 255, 255, 0.9) 50%
     );
 }
+
+.main-gl-view {
+    max-height: 100%;
+    height: 100%;
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: [header-start] min-content [header-end content-start] auto [content-end button-row] min-content;
+    grid-template-areas: "header" "content" "nav";
+}
+
+.main-gl-header {
+    grid-area: header;
+}
+
+.main-gl-content {
+    grid-area: content;
+}
+
+.main-gl-nav {
+    grid-area: nav;
+}

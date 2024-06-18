@@ -10,6 +10,8 @@ import ResendActivationView from "@/views/ResendActivationView.vue";
 import WelcomeView from "@/views/WelcomeView.vue";
 import {useUserStore} from '@/stores/userStore'
 import FocusView from "@/views/FocusView.vue";
+import CalendarView from "@/views/CalendarView.vue";
+import SettingsView from "@/views/SettingsView.vue";
 
 
 const routes = [
@@ -51,6 +53,18 @@ const routes = [
     component: FocusView,
     props: true,
     meta: {requiresAuth: true}
+  },
+  {
+    path: '/calendar',
+    name: 'calendar',
+    component: CalendarView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: SettingsView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/resend-activation',
