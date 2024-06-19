@@ -75,6 +75,20 @@
       "txtFail": "Leider konnten wir dein Konto aus technischen Gründen nicht aktivieren. Versuch es doch bitte später nochmal",
       "btnSuccess": "Jetzt anmelden",
       "btnFail": "Zum Login"
+    },
+    "settings": {
+      "language": "Sprache",
+      "weekStart": {
+        "label": "WochenStart",
+        "monday": "Montag",
+        "sunday": "Sonntag"
+      },
+      "notification": {
+        "label": "Benachrichtigungen",
+        "on": "An",
+        "off": "Aus"
+      },
+      "feedback": "Feedback"
     }
   },
   "error": {

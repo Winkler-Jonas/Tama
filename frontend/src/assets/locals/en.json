@@ -75,6 +75,20 @@
       "txtFail": "Due to technical issues we unfortunately were not able to activate your account. Please try again later",
       "btnSuccess": "Sign in now",
       "btnFail": "Back to sign in"
+    },
+    "settings": {
+      "language": "Language",
+      "weekStart": {
+        "label": "Week start",
+        "monday": "Monday",
+        "sunday": "Sunday"
+      },
+      "notification": {
+        "label": "Notifications",
+        "on": "On",
+        "off": "Off"
+      },
+      "feedback": "Feedback"
     }
   },
   "error": {
