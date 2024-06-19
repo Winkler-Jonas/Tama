@@ -4,36 +4,58 @@
         :dropdown-label="$t('views.settings.language')"
         dropdown-icon="language"
         :dropdown-items="langValues"
+        @on-input-clicked="activeMenu = 1"
+        :external-collapse="activeMenu === 1"
         :dropdown-default="langValues.findIndex(obj => obj.key === languageStore.locale)"
     />
    <tama-settings-dropdown
         :dropdown-label="$t('views.settings.weekStart.label')"
         dropdown-icon="week"
         :dropdown-items="weekStartValues"
+        @on-input-clicked="activeMenu = 2"
+        :external-collapse="activeMenu === 2"
         :dropdown-default="weekStartValues.findIndex(obj => obj.value === (userStore.weekStart ? $t('views.settings.weekStart.monday') : $t('views.settings.weekStart.sunday')))"
     />
     <tama-settings-dropdown
         :dropdown-label="$t('views.settings.notification.label')"
         dropdown-icon="notification"
         :dropdown-items="notificationValues"
+        @on-input-clicked="activeMenu = 3"
+        :external-collapse="activeMenu === 3"
         :dropdown-default="notificationValues.findIndex(obj => obj.value === (userStore.notification ? $t('views.settings.notification.on') : $t('views.settings.notification.off')))"
     />
+    <tama-settings-button
+        button-icon="feedback"
+        :button-label="$t('views.settings.feedback.label')"
+        :button-sub-label="$t('views.settings.feedback.subLabel')"
+        @on-click="handleFeedbackClicked"
+    />
+    <tama-slide-up :is-visible="showMessageBox">
+      <template #slide-up-content>
+        <tama-feedback @on-close="showMessageBox = false"/>
+      </template>
+    </tama-slide-up>
   </section>
 </template>
 
 <script setup>
 import TamaSettingsDropdown from "@/components/settings/TamaSettingsDropdown.vue";
 import { useI18n } from "vue-i18n";
-import {computed, onBeforeMount, onMounted} from "vue";
+import { computed, ref } from "vue";
 import { useLanguageStore } from "@/stores/langStore.js";
-import {useUserStore} from "@/stores/userStore.js";
+import { useUserStore } from "@/stores/userStore.js";
+import TamaSettingsButton from "@/components/settings/TamaSettingsButton.vue";
+import TamaSlideUp from "@/components/TamaSlideUp.vue";
+import TamaFeedback from "@/components/settings/TamaFeedback.vue";
 
-const { tm, t } = useI18n()
+const { tm } = useI18n()
 
 const userStore = useUserStore()
 const languageStore = useLanguageStore()
 const contentData = computed(() => tm(''))
 
+const showMessageBox = ref(false)
+const activeMenu = ref(0)
 const langValues = computed(() => createDropdownArgument(contentData.value.lang || {}, changeLanguage))
 const weekStartValues = computed(() => createDropdownArgument(Object.fromEntries(Object.entries(contentData.value.views.settings.weekStart || {}).filter(([key, value]) => key !== 'label')), changeWeekStart))
 const notificationValues = computed(() => createDropdownArgument(Object.fromEntries(Object.entries(contentData.value.views.settings.notification || {}).filter(([key, value]) => key !== 'label')), changeNotificationSetting))
@@ -48,6 +70,11 @@ const changeWeekStart = () => {
 
 const changeNotificationSetting = () => {
   userStore.setNotification(!userStore.notification)
+}
+
+const handleFeedbackClicked = () => {
+  activeMenu.value = 0
+  showMessageBox.value = true
 }
 
 const createDropdownArgument = (obj, callback) => {
