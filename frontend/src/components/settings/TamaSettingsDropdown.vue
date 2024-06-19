@@ -60,11 +60,16 @@ const props = defineProps({
     validator(value, props) {
       return ['up', 'down'].includes(value)
     }
+  },
+  externalCollapse: {
+    type: Boolean,
+    default: false
   }
 })
 
 const emit = defineEmits([
-    'onSelect'
+    'onSelect',
+    'onInputClicked'
 ])
 
 const showSelected = ref(true)
@@ -72,17 +77,24 @@ const showDropdown = ref(false)
 const dropdownSelected = computed(() => props.dropdownDefault)
 const currentDropdownItems = computed(() => props.dropdownItems)
 const currentSelectedItem = computed(() => currentDropdownItems.value[dropdownSelected.value].value)
-
+const externalCollapse = computed(() => props.externalCollapse)
 
 const currentDropdownLabel = computed(() => props.dropdownLabel)
 const collapseDirection = computed(() => props.collapseDirection)
 
+watch(externalCollapse, (newValue, oldValue) => {
+  if (!newValue && oldValue) {
+    showDropdown.value = false
+  }
+})
+
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value
+  emit('onInputClicked')
 }
 
 const handleItemClicked = (dropDownItem) => {
-  toggleDropdown()
+  showDropdown.value = false
 
   if (dropDownItem.value !== currentSelectedItem.value) {
     dropDownItem.callback()
