@@ -11,7 +11,7 @@
       </router-view>
     </main>
     <footer>
-      <tama-nav-bar v-if="authStore.user"/>
+      <tama-nav-bar v-if="authStore.user && $route.meta.nav"/>
     </footer>
   </section>
 

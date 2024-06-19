@@ -13,6 +13,9 @@ import App from './App.vue'
 import router from './router'
 import { registerSW } from "virtual:pwa-register"
 import Vue3TouchEvents from "vue3-touch-events";
+import {useAuthStore} from "@/stores/auth.js";
+import { emitter } from '@/eventEmitter.js'
+
 
 function setVhProperty() {
   let vh = window.innerHeight * 0.01;
@@ -34,16 +37,22 @@ function addIcons() {
 }
 
 setVhProperty();
-
 window.addEventListener('resize', setVhProperty);
+
+emitter.on('auth:expired', () => {
+    router.push('/login');
+});
 
 async function init() {
   const app = createApp(App)
+
 
   // Create Pinia instance
   const pinia = createPinia()
   pinia.use(piniaPersistedstate)
   app.use(pinia)
+  const authStore = useAuthStore();
+  authStore.initAuth();
 
   // Access the store after the Pinia instance is created
   const languageStore = useLanguageStore()

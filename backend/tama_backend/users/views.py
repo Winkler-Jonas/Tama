@@ -68,9 +68,11 @@ class LoginView(generics.GenericAPIView):
             if not user.email_verified:
                 return Response({"message": "Email not verified", "email": f"{encode_email(user.email)}"}, status=status.HTTP_400_BAD_REQUEST)
             refresh = RefreshToken.for_user(user)
+            user_data = UserSerializer(user).data
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
+                'user': user_data
             }, status=status.HTTP_200_OK)
         return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
