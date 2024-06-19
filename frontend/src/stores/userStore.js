@@ -7,6 +7,8 @@ export const useUserStore = defineStore('user', () => {
     const password = ref('')
     const welcomeDone = ref(false)
     const focusTasks = ref({})
+    const notification = ref(false)
+    const weekStart = ref(true)
 
     function setEmail(newEmail) {
         email.value = newEmail
@@ -38,6 +40,14 @@ export const useUserStore = defineStore('user', () => {
         }
     }
 
+    function setNotification(value) {
+        notification.value = value
+    }
+
+    function setWeekStart(value) {
+        weekStart.value = value
+    }
+
     function clearUserInfo() {
         email.value = ''
         username.value = ''
@@ -52,6 +62,8 @@ export const useUserStore = defineStore('user', () => {
         password,
         welcomeDone,
         focusTasks,
+        notification,
+        weekStart,
         setEmail,
         setUsername,
         setPassword,
@@ -59,6 +71,8 @@ export const useUserStore = defineStore('user', () => {
         setNewFocusTask,
         getTaskFocus,
         removeFocusTask,
+        setWeekStart,
+        setNotification,
         clearUserInfo
     }
 }, {
