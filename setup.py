@@ -34,6 +34,10 @@ def create_global_env(env, api_key: str, local_ip: str):
     # Django email (prod-password)
     g_env.add_variable('django_mail_pwd', '')
 
+    g_env.add_variable("django_admin_usr", 'admin')
+    g_env.add_variable("django_admin_pwd", 'Enter your own pwd')
+    g_env.add_variable("django_admin_mail", 'Enter your own email')
+
     # Django asgi settings
     g_env.add_variable('django_settings_module', 'tama_backend.settings')
 
