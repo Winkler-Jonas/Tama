@@ -88,7 +88,12 @@
         "on": "On",
         "off": "Off"
       },
-      "feedback": "Feedback"
+      "feedback": {
+        "label": "Feedback",
+        "subLabel": "Anonymous feedback",
+        "placeholder": "We look forward to your feedback \uD83D\uDE0A",
+        "thankYou": "Thank you for your feedback \uD83D\uDE0A"
+      }
     }
   },
   "error": {
