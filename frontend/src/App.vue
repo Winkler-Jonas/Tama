@@ -1,17 +1,15 @@
 <template>
   <section id="tama-app" class="full-height">
     <header class="tama-header">
-
+      <app-tama-area v-if="$route.meta.tama" :tama-area-height="$route.meta.tama" />
     </header>
     <main>
       <router-view v-slot="{ Component }">
-
-          <component :is="Component" :key="$route.fullPath"/>
-
+        <component :is="Component" :key="$route.fullPath"/>
       </router-view>
     </main>
     <footer>
-      <tama-nav-bar v-if="authStore.user && $route.meta.nav"/>
+      <tama-nav-bar v-if="$route.meta.nav"/>
     </footer>
   </section>
 
@@ -20,6 +18,7 @@
 <script setup>
 import TamaNavBar from "@/components/TamaNavBar.vue";
 import {useAuthStore} from "@/stores/auth.js";
+import AppTamaArea from "@/components/generic/AppTamaArea.vue";
 
 const authStore = useAuthStore()
 </script>
