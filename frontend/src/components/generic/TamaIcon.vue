@@ -1,6 +1,6 @@
 <template>
   <svg class="tama-icon" :style="`background-color: ${backGroundColor};`" viewBox="0 0 37 37">
-    <use class="tama-icon" :xlink:href="`#icon-${iconName}`"></use>
+    <use class="tama-icon" :xlink:href="`#${iconName}`"></use>
   </svg>
 </template>
 
