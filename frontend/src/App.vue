@@ -35,6 +35,7 @@ const authStore = useAuthStore()
 header {
   grid-area: header;
   position: sticky;
+  height: fit-content;
   top: 0;
   z-index: 2;
 }
@@ -43,6 +44,7 @@ main {
   grid-row: 1 / 3;
   grid-column: 1 / -1;
   z-index: 1;
+  height: 100%;
   overflow-y: visible;
 }
 

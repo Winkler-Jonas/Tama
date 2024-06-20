@@ -147,7 +147,7 @@ const deleteFeedback = async (id) => {
 textarea {
   all: unset;
   width: 100%;
-  height: 200px;
+  height: 100%;
   resize: none;
 }
 
@@ -158,6 +158,8 @@ textarea::placeholder {
 .tama-feedback-text {
   border: 1px solid black;
   border-radius: 10px;
+  height: 50%;
+  max-height: 50%;
 }
 
 .tama-feedback-buttons {

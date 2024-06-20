@@ -81,11 +81,9 @@ const slideUps = {
 const feedbackOrUser = computed(() => {
   if (showMessageBox.value && feedbackActive.value) {
     // Show Feedback
-    console.log('feedback -')
     return slideUps.TamaFeedback
   } else if (showMessageBox.value && !feedbackActive.value) {
     // Show Delete User
-    console.log('deleteUser -')
     return slideUps.TamaDeleteUser
   }
 })
