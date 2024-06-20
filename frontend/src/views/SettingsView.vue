@@ -1,8 +1,9 @@
 <template>
-  <section id="tama-settings-view">
+  <section id="tama-settings-view" class="no-scrollbar">
     <tama-settings-dropdown
         :dropdown-label="$t('views.settings.language')"
         dropdown-icon="language"
+        collapse-direction="down"
         :dropdown-items="langValues"
         @on-input-clicked="activeMenu = 1"
         :external-collapse="activeMenu === 1"
@@ -11,6 +12,7 @@
    <tama-settings-dropdown
         :dropdown-label="$t('views.settings.weekStart.label')"
         dropdown-icon="week"
+        collapse-direction="down"
         :dropdown-items="weekStartValues"
         @on-input-clicked="activeMenu = 2"
         :external-collapse="activeMenu === 2"
@@ -30,7 +32,7 @@
         :button-sub-label="$t('views.settings.feedback.subLabel')"
         @on-click="handleFeedbackClicked"
     />
-    <tama-slide-up :is-visible="showMessageBox">
+    <tama-slide-up :is-visible="showMessageBox" :slide-height="50">
       <template #slide-up-content>
         <tama-feedback @on-close="showMessageBox = false"/>
       </template>
@@ -95,6 +97,11 @@ const createDropdownArgument = (obj, callback) => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: min(2em, 5vh);
+
+  overflow-y: auto;
+  padding-top: calc(10rem - 11vh);
+  padding-bottom: min(10vh, 3rem);
 }
 
 </style>

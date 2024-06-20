@@ -34,7 +34,7 @@ const authStore = useAuthStore()
 
 header {
   grid-area: header;
-  z-index: 2;
+  z-index: 0;
 }
 
 main {
