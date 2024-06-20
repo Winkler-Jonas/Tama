@@ -93,6 +93,13 @@
         "subLabel": "Anonymes Feedback",
         "placeholder": "Wir freuen uns auf dein Feedback \uD83D\uDE0A",
         "thankYou": "Vielen Dank für dein Feedback \uD83D\uDE0A"
+      },
+      "user": {
+        "label": "Account",
+        "subLabel": "Löschen",
+        "hdr": "Account löschen?",
+        "reAsk": "Bist du dir sicher? Alle Tasks und Erfolge werden unwiederruflich gelöscht.",
+        "error": "Ein Fehler ist aufgetreten, wir konnten deinen Account nicht löschen! Versuche es später erneut."
       }
     }
   },
