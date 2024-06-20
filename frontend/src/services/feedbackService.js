@@ -10,7 +10,6 @@ class FeedbackService {
     }
 
     createFeedback(data) {
-        console.log(data)
         return api.post('/feedback/', data);
     }
 

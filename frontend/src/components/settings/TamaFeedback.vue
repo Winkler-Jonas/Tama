@@ -51,8 +51,7 @@ const showThankYou = ref(false)
 const feedbackList = ref([]);
 
 const handleExitClicked = () => {
-  console.log('exit clicked')
-  emit('onClose')
+  emit('onClose', 'feedback')
 }
 
 const handleSubmitClicked = async () => {
