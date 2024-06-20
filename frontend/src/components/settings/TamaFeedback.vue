@@ -121,7 +121,7 @@ const deleteFeedback = async (id) => {
   grid-row: 1 / 4;
 
   width: 100%;
-  padding: 6rem var(--sgn-mi);
+  padding: 5rem var(--sgn-mi);
 
   overflow-y: auto;
 }

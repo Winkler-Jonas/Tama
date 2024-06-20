@@ -1,5 +1,5 @@
 <template>
-  <section id="tama-settings-view">
+  <section id="tama-settings-view" :style="`padding-top: ${$route.meta.tama}vh`">
     <tama-settings-dropdown
         :dropdown-label="$t('views.settings.language')"
         dropdown-icon="language"
@@ -44,7 +44,6 @@
             :is="feedbackOrUser"
             @on-close="handleSlidableClose"
         />
-        <tama-feedback @on-close="showMessageBox = false"/>
       </template>
     </tama-slide-up>
   </section>
@@ -142,8 +141,6 @@ const createDropdownArgument = (obj, callback) => {
   justify-content: center;
   gap: min(2em, 5vh);
 
-  overflow-y: auto;
-  padding-top: calc(19rem - 5vh);
   padding-bottom: min(10vh, 3rem);
 }
 
