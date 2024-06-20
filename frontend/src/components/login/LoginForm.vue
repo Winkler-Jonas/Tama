@@ -1,6 +1,6 @@
 <template>
   <form @keydown.enter.stop.prevent="handleEnter"
-        class="no-scrollbar tama-login-form-scroll tama-login-form-fade"
+        class="tama-login-form-scroll tama-login-form-fade"
   >
     <app-input-username
         :username-label="$t('views.login.inputLabel.usr')"

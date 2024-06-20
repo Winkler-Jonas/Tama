@@ -7,7 +7,7 @@
           <span class="text-sm text-gray">{{ $t('components.editTask.mark') }}</span>
         </div>
         <div class="tama-tasks-container">
-          <tama-icon-container icon-name="in-progress" :icon-text="$t('components.editTask.inProcess')"/>
+          <tama-icon-container icon-name="inProgress" :icon-text="$t('components.editTask.inProcess')"/>
           <tama-icon-container icon-name="done" :icon-text="$t('components.editTask.done')"/>
           <tama-icon-container icon-name="stroke" :icon-text="$t('components.editTask.stroke')"/>
           <tama-icon-container icon-name="sub-task" :icon-text="$t('components.editTask.subTask')"/>

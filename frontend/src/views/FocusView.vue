@@ -1,29 +1,31 @@
 <template>
   <section id="tama-focus-view">
-    <div class="tama-focus-pet-container">
-      <img src="@/assets/pet.png" alt="tama-pet"/>
-    </div>
+    <teleport to="header">
+      <div class="tama-focus-pet-container">
+        <img src="@/assets/pet.png" alt="tama-pet"/>
+      </div>
+    </teleport>
     <div class="tama-focus-components">
-
-        <component :is="setupOrTimer"
-                   @on-input="(h, m, s) => setTimer([h,m,s])"
-                   @on-timer-done="timerDone = true"
-                   @on-font-size-change="(value) => middleFontSize = value"
-                   :timer-hours="timer.hours"
-                   :timer-minutes="timer.minutes"
-                   :timer-seconds="timer.seconds"
-                   :focus-task="props.taskID"
-                   :font-size="middleFontSize"
-                   :key="setupOrTimer"
-        />
-
+      <component :is="setupOrTimer"
+                 @on-input="(h, m, s) => setTimer([h,m,s])"
+                 @on-timer-done="timerDone = true"
+                 @on-font-size-change="(value) => middleFontSize = value"
+                 :timer-hours="timer.hours"
+                 :timer-minutes="timer.minutes"
+                 :timer-seconds="timer.seconds"
+                 :focus-task="props.taskID"
+                 :font-size="middleFontSize"
+                 :key="setupOrTimer"
+      />
     </div>
-    <div class="tama-focus-bottom-area">
-      <transition name="tama-focus-fade">
-        <i v-if="showStartButton" @click="handleTimerStart" class="ri-play-large-line tama-timer-start-button"></i>
-        <i v-else-if="showExitButton" @click="handleExitClicked" class="ri-close-line tama-timer-focus-exit"></i>
-      </transition>
-    </div>
+    <teleport to="footer">
+      <div class="tama-focus-bottom-area">
+        <transition name="tama-focus-fade">
+          <i v-if="showStartButton" @click="handleTimerStart" class="ri-play-large-line tama-timer-start-button"></i>
+          <i v-else-if="showExitButton" @click="handleExitClicked" class="ri-close-line tama-timer-focus-exit"></i>
+        </transition>
+      </div>
+    </teleport>
   </section>
 </template>
 
@@ -118,21 +120,35 @@ const resetTimer = () => {
 <style scoped>
 
 #tama-focus-view {
-  max-height: 100%;
   height: 100%;
+  max-height: 100%;
   width: 100%;
   background-color: var(--tama-color-blue);
 
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
 
-  grid-template-rows: [tama-start] minmax(auto, 35%) [tama-end timer-start] auto [timer-end bottom-start] max-content;
-  grid-template-columns: 1fr;
-  grid-row-gap: min(1em, 1vh);
+.tama-focus-components {
+  height: calc(70vh - var(--sgn-mbt));
+  width: 90%;
+  margin-inline: auto;
+
+  position: relative;
+
+  overflow: hidden;
+  z-index: 4;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .tama-focus-pet-container {
-  grid-column: 1 / 2;
-  grid-row: tama-start / tama-end;
+  height: 30vh;
+  width: auto;
+  overflow-y: hidden;
 
   display: flex;
   justify-content: center;
@@ -146,21 +162,17 @@ const resetTimer = () => {
   object-fit: contain;
 }
 
-.tama-focus-components {
-  grid-column: 1 / 2;
-  grid-row: timer-start / timer-end;
-  position: relative;
-}
+
 
 .tama-focus-bottom-area {
-  grid-column: 1 / 2;
-  grid-row: bottom-start / -1;
+  background-color: var(--tama-color-blue);
+
+  display: flex;
+  justify-content: center;
 
   padding-bottom: var(--sgn-mbt);
   min-height: calc(50px + var(--sgn-mbt));
   height: fit-content;
-  justify-self: center;
-  align-self: end;
 }
 
 .tama-timer-start-button,

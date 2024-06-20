@@ -67,7 +67,7 @@ const updateHeight = () => {
     showDots.value = window.innerHeight >= 750;
   }
   if (digitContainer.value){
-    const sizes = {'xs': 0.025, 's': 0.05, 'm': 0.075, 'l': 0.15};
+    const sizes = {'xs': 0.025, 's': 0.05, 'm': 0.075, 'l': 0.125};
     Object.entries(sizes).forEach(([key, value]) => {
       const fontSize = digitContainer.value.clientHeight * value;
       digitContainer.value.style.setProperty(`--container-font-size-${key}`, `${fontSize}px`);
@@ -176,12 +176,13 @@ const vTouchDrag = {
 
 #tama-timer-setup {
   height: 100%;
+  width: 100%;
 
   display: grid;
   grid-template-columns: [hour-start] 1fr [hour-end sep-a-start] min-content [sep-a-end minute-start] 1fr [minute-end sep-b-start] min-content [sep-b-end second-start] 1fr;
   grid-template-rows: 1fr;
 
-  margin-inline: var(--sgn-mi);
+  align-items: center;
 
   --container-font-size-xs: 16px;
   --container-font-size-s: 20px;

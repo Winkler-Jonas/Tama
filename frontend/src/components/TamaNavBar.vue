@@ -3,10 +3,11 @@
     <section id="Tama-nav-bar" class="main-gl-nav" v-if="showNav">
       <div v-for="key in navRoutes" :key="key"
            class="tama-nav-icon-container"
-           :class="{ 'tama-nav-active-tab': isRouteActive(key.route) }">
+           :class="{ 'tama-nav-active-tab': isRouteActive(key.route) }"
+           @click="handleNavigation(key.route)"
+      >
         <tama-icon
              :icon-name="key.icon"
-             @click="handleNavigation(key.route)"
              class="tama-nav-icon"
         />
       </div>

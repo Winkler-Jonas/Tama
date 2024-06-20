@@ -26,6 +26,7 @@ COPY . /app/
 
 # Copy the wait-for-it script
 COPY wait-for-db.sh /wait-for-db.sh
+COPY create_superuser.py /app/create_superuser.py
 
 # Ensure the script is executable
 RUN chmod +x /wait-for-db.sh
@@ -34,5 +35,5 @@ RUN chmod +x /wait-for-db.sh
 RUN mkdir -p /app/staticfiles
 
 # Run migrations and collect static files before starting the server
-CMD ["/wait-for-db.sh", "db:5432", "--", "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && daphne -b 0.0.0.0 -p 8000 tama_backend.asgi:application"]
+CMD ["/wait-for-db.sh", "db:5432", "--", "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python create_superuser.py && python manage.py collectstatic --noinput && daphne -b 0.0.0.0 -p 8000 tama_backend.asgi:application"]
 # CMD ["/wait-for-db.sh", "db:5432", "--", "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && daphne -e ssl:port=443:privateKey=/etc/ssl/tamado.app.key.pem:certKey=/etc/ssl/tamado.app.cert.pem --http_timeout 600 tama_backend.asgi:application"]

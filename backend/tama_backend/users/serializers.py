@@ -4,13 +4,18 @@ from django.contrib.auth.password_validation import validate_password
 
 
 class UserSerializer(serializers.ModelSerializer):
+    is_admin = serializers.SerializerMethodField()
+
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'email_verified']
+        fields = ['id', 'username', 'email', 'password', 'email_verified', 'is_admin']
         extra_kwargs = {
             'password': {'write_only': True},
             'email_verified': {'read_only': True}
         }
+
+    def get_is_admin(self, obj):
+        return obj.is_staff or obj.is_superuser
 
     def validate_email(self, value):
         if CustomUser.objects.filter(email=value).exists():

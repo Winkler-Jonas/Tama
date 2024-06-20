@@ -2,15 +2,73 @@ import {defineStore} from 'pinia'
 import {ref} from 'vue'
 import api from '@/services/api.js'
 import {getAPIErrorMessage} from "@/utils/errorHandler.js";
+import { emitter } from '@/eventEmitter.js'
 
 
 
 export const useAuthStore = defineStore('auth', () => {
-    const token = ref(localStorage.getItem('token') || null);
-    const user = ref(null);
+    const token = ref(localStorage.getItem('accessToken') || null);
+    const refreshToken = ref(localStorage.getItem('refreshToken') || null);
+    const expiresAt = ref(localStorage.getItem('expiresAt') || null);
+    const user = ref(JSON.parse(localStorage.getItem('user')) || null);
+
+    const initAuth = () => {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (accessToken && refreshToken) {
+            setAuthData(accessToken, refreshToken);
+        }
+    };
+
+    const setAuthData = (accessToken, refreshTokenValue) => {
+        const now = new Date();
+        expiresAt.value = new Date(now.getTime() + 60 * 60 * 1000).toISOString(); // Assuming token expires in 60 minutes
+
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshTokenValue);
+        localStorage.setItem('expiresAt', expiresAt.value);
+
+        token.value = accessToken;
+        refreshToken.value = refreshTokenValue;
+
+        api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        scheduleTokenRefresh();
+    };
+
+    const clearAuthData = () => {
+        token.value = null;
+        refreshToken.value = null;
+        expiresAt.value = null;
+        user.value = null;
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('expiresAt');
+        localStorage.removeItem('user');
+        delete api.defaults.headers.common['Authorization'];
+    };
+
+
+    const refreshTokenFn = async () => {
+        try {
+            const response = await api.post('/api/token/refresh/', { refresh: refreshToken.value });
+            setAuthData(response.data.access, refreshToken.value);
+        } catch (error) {
+            clearAuthData();
+            emitter.emit('auth:expired');
+        }
+    };
+
+    const scheduleTokenRefresh = () => {
+        const now = new Date();
+        const expirationTime = new Date(expiresAt.value);
+        const delay = expirationTime.getTime() - now.getTime() - 5 * 60 * 1000; // Refresh 5 minutes before token expires
+
+        setTimeout(refreshTokenFn, delay > 0 ? delay : 0);
+    };
 
     if (token.value) {
         api.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
+        scheduleTokenRefresh();
     }
 
     const register = async (username, email, password, locale) => {
@@ -31,20 +89,19 @@ export const useAuthStore = defineStore('auth', () => {
     const login = async (username, password) => {
         try {
             const response = await api.post('/users/login/', { username, password });
-            token.value = response.data.access;
-            localStorage.setItem('token', token.value);
+            setAuthData(response.data.access, response.data.refresh);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
             api.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
+            user.value = response.data.user;
             await fetchUserProfile();
         } catch (error) {
+            clearAuthData();
             throw getAPIErrorMessage(error);
         }
     };
 
     const logout = () => {
-        user.value = null
-        token.value = null
-        localStorage.removeItem('token')
-        delete api.defaults.headers.common['Authorization']
+        clearAuthData();
     }
 
     const deleteUser = async () => {
@@ -80,11 +137,13 @@ export const useAuthStore = defineStore('auth', () => {
     return {
         user,
         token,
-        register,
         login,
         logout,
+        initAuth,
+        register,
         deleteUser,
         fetchUserProfile,
         resendActivationEmail,
+        refreshToken: refreshTokenFn,
     }
 })

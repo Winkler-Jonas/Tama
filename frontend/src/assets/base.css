@@ -75,9 +75,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
+    --color-background: white;
+    --color-background-soft: white;
+    --color-background-mute: white;
 
     --color-border: var(--vt-c-divider-dark-2);
     --color-border-hover: var(--vt-c-divider-dark-1);
@@ -92,6 +92,12 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+*::-webkit-scrollbar {
+    display: none;
 }
 
 body {

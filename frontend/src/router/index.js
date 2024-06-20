@@ -25,55 +25,62 @@ const routes = [
     path: '/welcome',
     name: 'welcome',
     component: WelcomeView,
+    meta: { nav: false }
   },
   {
     path: '/profile',
     name: 'profile',
     component: ProfileView,
-    meta: {requiresAuth: true}
+    meta: {requiresAuth: true, nav: true, tama: 40}
   },
   {
     path: '/sign-up',
     name: 'signUp',
-    component: RegisterView
+    component: RegisterView,
+    meta: { nav: false }
   },
   {
     path: '/login',
     name: 'login',
-    component: LoginView
+    component: LoginView,
+    meta: { nav: false }
   },
   {
     path: '/activate/:uidb64/:token',
     name: 'activate',
-    component: ActivationView
+    component: ActivationView,
+    meta: { nav: false }
   },
   {
     path: '/focus/:taskID',
     name: 'focus',
     component: FocusView,
     props: true,
-    meta: {requiresAuth: true}
+    meta: { requiresAuth: true, nav: false }
   },
   {
     path: '/calendar',
     name: 'calendar',
     component: CalendarView,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, nav: true, tama: 40 }
   },
   {
     path: '/settings',
     name: 'settings',
     component: SettingsView,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, nav: true, tama: 30 }
   },
   {
     path: '/resend-activation',
     name: 'resendActivation',
-    component: ResendActivationView },
+    component: ResendActivationView,
+    meta: {nav: false},
+  },
   {
     path: '/404Error',
     name: 'NotFound',
-    component: NotFoundView
+    component: NotFoundView,
+    meta: {nav: false},
   },
   {
     path: '/:catchAll(.*)',

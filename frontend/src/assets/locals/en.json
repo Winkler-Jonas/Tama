@@ -75,6 +75,32 @@
       "txtFail": "Due to technical issues we unfortunately were not able to activate your account. Please try again later",
       "btnSuccess": "Sign in now",
       "btnFail": "Back to sign in"
+    },
+    "settings": {
+      "language": "Language",
+      "weekStart": {
+        "label": "Week start",
+        "monday": "Monday",
+        "sunday": "Sunday"
+      },
+      "notification": {
+        "label": "Notifications",
+        "on": "On",
+        "off": "Off"
+      },
+      "feedback": {
+        "label": "Feedback",
+        "subLabel": "Anonymous feedback",
+        "placeholder": "We look forward to your feedback \uD83D\uDE0A",
+        "thankYou": "Thank you for your feedback \uD83D\uDE0A"
+      },
+      "user": {
+        "label": "Account",
+        "subLabel": "Delete",
+        "hdr": "Delete Account?",
+        "reAsk": "Are you sure? Tasks and achievements cannot be restored!",
+        "error": "An error occurred, we were not able to delete your account! Please try again later."
+      }
     }
   },
   "error": {
