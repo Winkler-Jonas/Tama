@@ -1,5 +1,5 @@
 <template>
-  <teleport to="main">
+  <teleport to="footer">
     <Transition name="tama-slide-up-overlay">
       <div v-if="isVisibleCmp" class="tama-slide-up-overlay-cls" key="overlay"></div>
     </Transition>

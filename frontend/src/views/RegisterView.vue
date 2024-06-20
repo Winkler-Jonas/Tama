@@ -4,7 +4,7 @@
     <app-tama-area class="gl-tama" :tama-area-text="inputScreen ? $t('views.register.hdr') : $t('views.register.hdrSend')" :tama-area-height="35"/>
     <transition name="slide-down" mode="out-in">
       <section v-if="inputScreen" class="tama-register-view-content gl-content-underflow">
-          <form @keydown.enter.stop.prevent="handleEnter" class="tama-register-view-content-scroll tama-register-view-content-fade no-scrollbar">
+          <form @keydown.enter.stop.prevent="handleEnter" class="tama-register-view-content-scroll tama-register-view-content-fade">
             <app-input-email
                 :email-label="$t('views.register.inputLabel.mail')"
                 :extern-error="email.error"

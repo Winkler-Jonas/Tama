@@ -34,19 +34,23 @@ const authStore = useAuthStore()
 
 header {
   grid-area: header;
-  z-index: 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 main {
-  grid-area: content;
+  grid-row: 1 / 3;
+  grid-column: 1 / -1;
   z-index: 1;
-  overflow-y: hidden;
-  position: relative;
+  overflow-y: visible;
 }
 
 footer {
   grid-area: footer;
-  z-index: 1;
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
 }
 
 

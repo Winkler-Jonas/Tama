@@ -1,5 +1,5 @@
 <template>
-  <section id="tama-settings-view" class="no-scrollbar">
+  <section id="tama-settings-view">
     <tama-settings-dropdown
         :dropdown-label="$t('views.settings.language')"
         dropdown-icon="language"
@@ -9,7 +9,7 @@
         :external-collapse="activeMenu === 1"
         :dropdown-default="langValues.findIndex(obj => obj.key === languageStore.locale)"
     />
-   <tama-settings-dropdown
+    <tama-settings-dropdown
         :dropdown-label="$t('views.settings.weekStart.label')"
         dropdown-icon="week"
         collapse-direction="down"
@@ -38,7 +38,6 @@
         :button-sub-label="$t('views.settings.user.subLabel')"
         @on-click="handleUserDeleteClicked"
     />
-    
     <tama-slide-up :is-visible="showMessageBox" :slide-height="!feedbackActive ? 40 : 50">
       <template #slide-up-content>
         <component
@@ -144,7 +143,7 @@ const createDropdownArgument = (obj, callback) => {
   gap: min(2em, 5vh);
 
   overflow-y: auto;
-  padding-top: calc(19rem - 11vh);
+  padding-top: calc(19rem - 5vh);
   padding-bottom: min(10vh, 3rem);
 }
 
