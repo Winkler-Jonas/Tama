@@ -36,6 +36,7 @@ const weekDays = ref([])
 const currentSelected = ref(8)
 let touchStartX = 0;
 let touchEndX = 0;
+let isSwiping = false;
 
 const findIndexOfToday = (array) => {
   const today = new Date()
@@ -55,21 +56,28 @@ onMounted(() => {
 
 const handleTouchStart = (event) => {
   touchStartX = event.changedTouches[0].clientX;
+  isSwiping = false;
 };
 
 const handleTouchMove = (event) => {
   touchEndX = event.changedTouches[0].clientX;
+  if (!isSwiping) {
+    console.log(Math.abs(touchStartX - touchEndX) > 100)
+    isSwiping = Math.abs(touchStartX - touchEndX) > 100;
+  }
 };
 
 const handleTouchEnd = () => {
-  if (touchStartX - touchEndX > 50) {
-    // swipe Left
-    weekDays.value = getNextWeek(++weekDays.value.at(-1).year_day, weekDays.value.at(-1).year, userStore.weekStart ? 1: 0)
-  } else if (touchEndX - touchStartX > 50) {
-    // swipe right
-    weekDays.value = getPreviousWeek(--weekDays.value.at(0).year_day, weekDays.value.at(0).year, userStore.weekStart ? 1: 0)
+  if (isSwiping) {
+    if (touchStartX - touchEndX > 100) {
+      // swipe Left
+      weekDays.value = getNextWeek(++weekDays.value.at(-1).year_day, weekDays.value.at(-1).year, userStore.weekStart ? 1 : 0)
+    } else if (touchEndX - touchStartX > 100) {
+      // swipe right
+      weekDays.value = getPreviousWeek(--weekDays.value.at(0).year_day, weekDays.value.at(0).year, userStore.weekStart ? 1 : 0)
+    }
+    currentSelected.value = findIndexOfToday(weekDays.value)
   }
-  currentSelected.value = findIndexOfToday(weekDays.value)
 };
 
 const getCurrentMonth = computed(() => {
