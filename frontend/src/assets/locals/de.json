@@ -3,6 +3,10 @@
     "de": "Deutsch",
     "en": "Englisch"
   },
+  "jLocals": {
+    "de": "de-DE",
+    "en": "en-US"
+  },
   "placeholder": {
     "pass": "Passwort eingeben",
     "passRepeat": "Passwort bestätigen",
@@ -193,6 +197,21 @@
     },
     "timer": {
       "earlyLeave": "Lass uns fokusieren ..."
+    },
+    "calendar": {
+      "weekdays": {
+        "mon": "Montag",
+        "tue": "Dienstag",
+        "wed": "Mittwoch",
+        "thu": "Donnerstag",
+        "fri": "Freitag",
+        "sat": "Samstag",
+        "sun": "Sonntag"
+      }
+    },
+    "task": {
+      "task": "Aufgaben",
+      "daily": "Heutige Aufgaben"
     }
   }
 }
