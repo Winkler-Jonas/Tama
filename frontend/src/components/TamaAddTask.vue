@@ -1,41 +1,37 @@
 <template>
-  <tama-slide-up :is-visible="isVisible">
-    <template #slide-up-content>
-      <section id="tama-add-task-modal" key="modal">
-        <div class="tama-add-task-menu-container">
-          <app-ai-input
-              :label-name="$t('components.addTask.task.label')"
-              @on-input="handleTaskInput" />
-          <app-dropdown
-              :menu-label="$t('components.addTask.repeat.label')"
-              @on-input-clicked="activeMenu = 2"
-              @on-select="handleRepeatSelect"
-              :menu-items="repeatValues" direction="up"
-              :external-collapse="activeMenu === 2"
-          />
-          <app-dropdown
-              :menu-label="$t('components.addTask.due.label')"
-              @on-input-clicked="activeMenu = 3"
-              @on-select="handleDueSelect"
-              :menu-items="dueValues" direction="up"
-              :external-collapse="activeMenu === 3"
-          />
-          <app-dropdown
-              :menu-label="$t('components.addTask.category.label')"
-              @on-input-clicked="activeMenu = 4"
-              @on-select="handleCategorySelect"
-              :menu-items="categoryValues" direction="up"
-              :external-collapse="activeMenu === 4"
+  <section id="tama-add-task-modal" key="modal">
+    <div class="tama-add-task-menu-container">
+      <app-ai-input
+          :label-name="$t('components.addTask.task.label')"
+          @on-input="handleTaskInput" />
+      <app-dropdown
+          :menu-label="$t('components.addTask.repeat.label')"
+          @on-input-clicked="activeMenu = 2"
+          @on-select="handleRepeatSelect"
+          :menu-items="repeatValues" direction="up"
+          :external-collapse="activeMenu === 2"
+      />
+      <app-dropdown
+          :menu-label="$t('components.addTask.due.label')"
+          @on-input-clicked="activeMenu = 3"
+          @on-select="handleDueSelect"
+          :menu-items="dueValues" direction="up"
+          :external-collapse="activeMenu === 3"
+      />
+      <app-dropdown
+          :menu-label="$t('components.addTask.category.label')"
+          @on-input-clicked="activeMenu = 4"
+          @on-select="handleCategorySelect"
+          :menu-items="categoryValues" direction="up"
+          :external-collapse="activeMenu === 4"
 
-          />
-          <div class="tama-add-task-menu-submit-area">
-            <i @click="handleExitClicked" class="ri-close-line tama-add-task-menu-close"></i>
-            <i @click="handleSubmitClicked" class="ri-check-line tama-add-task-menu-submit"></i>
-          </div>
-        </div>
-      </section>
-    </template>
-  </tama-slide-up>
+      />
+      <div class="tama-add-task-menu-submit-area">
+        <i @click="handleExitClicked" class="ri-close-line tama-add-task-menu-close"></i>
+        <i @click="handleSubmitClicked" class="ri-check-line tama-add-task-menu-submit"></i>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
@@ -43,17 +39,7 @@ import {useI18n} from "vue-i18n";
 import {computed, ref } from "vue";
 import AppAiInput from "@/components/generic/input/AppAiInput.vue";
 import AppDropdown from "@/components/generic/input/AppDropdown.vue";
-import TamaSlideUp from "@/components/TamaSlideUp.vue";
-import TamaIcon from "@/components/generic/TamaIcon.vue";
-
 const { tm } = useI18n()
-
-const props = defineProps({
-  isVisible: {
-    type: Boolean,
-    required: true
-  }
-})
 
 const emit = defineEmits(['onExit', 'onSubmit'])
 

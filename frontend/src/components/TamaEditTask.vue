@@ -1,33 +1,27 @@
 <template>
-  <tama-slide-up :slide-height="slideHeight" :is-visible="isVisible">
-    <template #slide-up-content>
-      <section id="tama-edit-task">
-        <div class="tama-edit-task-header">
-          <h2>{{ taskName }}</h2>
-          <span class="text-sm text-gray">{{ $t('components.editTask.mark') }}</span>
-        </div>
-        <div class="tama-tasks-container">
-          <tama-icon-container icon-name="inProgress" :icon-text="$t('components.editTask.inProcess')"/>
-          <tama-icon-container icon-name="done" :icon-text="$t('components.editTask.done')"/>
-          <tama-icon-container icon-name="stroke" :icon-text="$t('components.editTask.stroke')"/>
-          <tama-icon-container icon-name="sub-task" :icon-text="$t('components.editTask.subTask')"/>
-          <tama-icon-container icon-name="edit" :icon-text="$t('components.editTask.edit')"/>
-          <tama-icon-container icon-name="move" :icon-text="$t('components.editTask.move')"/>
-          <tama-icon-container icon-name="trash" :icon-text="$t('components.editTask.trash')"/>
-        </div>
-        <div class="tama-edit-task-bottom-area">
-          <i @click="handleExitClicked" class="ri-close-line tama-edit-task-menu-close"></i>
-          <i @click="handleFocusClicked" class="ri-timer-line tama-edit-task-menu-focus"></i>
-        </div>
-      </section>
-    </template>
-  </tama-slide-up>
+  <section id="tama-edit-task">
+    <div class="tama-edit-task-header">
+      <h2>{{ taskName }}</h2>
+      <span class="text-sm text-gray">{{ $t('components.editTask.mark') }}</span>
+    </div>
+    <div class="tama-tasks-container">
+      <tama-icon-container icon-name="inProgress" :icon-text="$t('components.editTask.inProcess')"/>
+      <tama-icon-container icon-name="done" :icon-text="$t('components.editTask.done')"/>
+      <tama-icon-container icon-name="stroke" :icon-text="$t('components.editTask.stroke')"/>
+      <tama-icon-container icon-name="subTask" :icon-text="$t('components.editTask.subTask')"/>
+      <tama-icon-container icon-name="edit" :icon-text="$t('components.editTask.edit')"/>
+      <tama-icon-container icon-name="move" :icon-text="$t('components.editTask.move')"/>
+      <tama-icon-container icon-name="trash" :icon-text="$t('components.editTask.trash')"/>
+    </div>
+    <div class="tama-edit-task-bottom-area">
+      <i @click="handleExitClicked" class="ri-close-line tama-edit-task-menu-close"></i>
+      <i @click="handleFocusClicked" class="ri-timer-line tama-edit-task-menu-focus"></i>
+    </div>
+  </section>
 </template>
 
 <script setup>
-
 import TamaIconContainer from "@/components/icons/TamaIconContainer.vue";
-import TamaSlideUp from "@/components/TamaSlideUp.vue";
 import {onMounted, onUnmounted, ref} from "vue";
 import router from "@/router/index.js";
 
@@ -49,10 +43,6 @@ onUnmounted(() => {
 });
 
 const props = defineProps({
-  isVisible: {
-    type: Boolean,
-    required: true
-  },
   taskName: {
     type: String,
     required: false,
