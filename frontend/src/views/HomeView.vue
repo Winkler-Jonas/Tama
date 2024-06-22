@@ -17,10 +17,10 @@ import Aufgabe from '@/components/Task/Aufgabe.vue';
   <Daily />
   <Footer @openAddTask="toggleAddTask" />
   <Transition>
-    <AddTaskForm v-if="showAddTaskForm" @backdropClicked="toggleAddTask" />
+    <AddTaskForm v-if="showAddTaskForm" @backdropClicked="toggleAddTask" @rerender="rerender"/>
   </Transition>
   <Transition>
-    <EditTask v-if="showEditTaskComp" @backdropClicked="toggleEditTask" :taskName="taskName"/>
+    <EditTask v-if="showEditTaskComp" @backdropClicked="toggleEditTask"  @rerender="rerender" :task="task"/>
   </Transition>
 </template>
 
@@ -32,27 +32,33 @@ export default {
     return {
       showAddTaskForm: false,
       showEditTaskComp: false,
-      taskName: null,
+      task: null,
       renderKey: 0,
     }
   },
   components: { Task: TaskOverview, Footer, AddTaskForm },
   methods: {
     toggleAddTask() {
-      this.renderKey++;
       this.showAddTaskForm = !this.showAddTaskForm;
     },
     toggleEditTask(task) {
       if(!this.showEditTaskComp) {
-        this.taskName = task.description;
+        this.task = task;
       }
       this.showEditTaskComp = !this.showEditTaskComp;
+    },
+    rerender() {
+      this.renderKey++;
     }
   },
 }
 </script>
 
 <style scoped>
+.subheadlineOrange,  .subheadlineBlue{
+  margin-top: 10px;
+}
+
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;

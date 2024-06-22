@@ -16,8 +16,8 @@
       <!-- Leere Elemente für die Tage vor dem ersten Tag des Monats -->
       <div v-for="n in emptyDays" :key="n" class="empty"></div>
       <!-- Tage des aktuellen Monats -->
-      <div v-for="day in daysInMonth" :key="day" class="day"
-        @click="$emit('handleDayClicked', day, monthNames[currentMonth], currentYear)" :class="{ today: isToday(day) }">
+      <div v-for="(day, index) in daysInMonth" :key="day" class="day"
+        @click="handleDayClicked(day, currentMonth, currentYear, index)" :class="{ today: isToday(day), selecedDay: index === selectedDay}" >
         <span>{{ day }}</span>
       </div>
     </div>
@@ -27,6 +27,7 @@
 <script>
 export default {
   data() {
+    const currentDate = new Date();
     return {
       // Aktuelles Jahr und Monat
       currentYear: new Date().getFullYear(),
@@ -38,7 +39,8 @@ export default {
       ],
       // Namen der Wochentage
       // weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-      weekdays: ["S", "M", "T", "W", "T", "F", "S"]
+      weekdays: ["S", "M", "T", "W", "T", "F", "S"],
+      selectedDay: currentDate.getDate() - 1,
     };
   },
   computed: {
@@ -79,9 +81,20 @@ export default {
         this.currentMonth === currentDate.getMonth() &&
         day === currentDate.getDate()
       );
+    },
+    isTomorow(day) {
+      const currentDate = new Date();
+      return (
+        this.currentYear === currentDate.getFullYear() &&
+        this.currentMonth === currentDate.getMonth() &&
+        day === currentDate.getDate() +1
+      );
+    },
+    handleDayClicked(day, currentMonth, currentYear, index) {
+      this.$emit('handleDayClicked', day, this.monthNames[currentMonth], currentYear, this.isToday(day), this.isTomorow(day))
+      this.selectedDay = index;
     }
-
-  }
+  },
 };
 </script>
 
@@ -102,6 +115,11 @@ export default {
   padding: 10px;
   /* background-color: #f5f5f5; */
   /* border-bottom: 1px solid #ddd; */
+}
+
+.day {
+  box-sizing: border-box;
+
 }
 
 .weekdays,
@@ -136,10 +154,17 @@ button {
 }
 
 .today span{
-  padding: 25%;
   color: var(--tama-color-orange);
-  border: 2px solid var(--tama-color-orange);
-  border-radius: 50%;
+}
 
+.selecedDay {
+  padding-left: 4px;
+}
+
+.selecedDay span{
+  border: 2px solid var(--tama-color-orange);
+  padding: 25%;
+  /* padding-left: 0%; */
+  border-radius: 50%;
 }
 </style>

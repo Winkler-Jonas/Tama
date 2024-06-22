@@ -3,7 +3,7 @@
     <div id="placeholder" @click.self="handleCloseBackdrop"></div>
     <div class="tileWrapper">
       <div class="textWrapper">
-        <h1 class="subheadlineBlack"> {{ taskName }}</h1>
+        <h1 class="subheadlineBlack"> {{ task.description }}</h1>
         <p class="normaltextInfo">markieren als</p>
       </div>
       <div v-for="tile in tiles" :key="tile.id" class="box normaltext selectionbox" @click="handleTileClick(tile.id)">
@@ -23,9 +23,9 @@
 
 export default {
   props: {
-    taskName: {
-      type: String,
-      default: ''
+    task: {
+      type: Object,
+      required: true
     },
   },
   data() {
@@ -42,20 +42,56 @@ export default {
     handleCloseBackdrop() {
       this.$emit('backdropClicked')
     },
+    rerender() {
+      this.$emit('rerender')
+      this.handleCloseBackdrop();
+    },
     handleTileClick(id) {
       const tile = this.tiles.find(tile => tile.id === id);
       if (tile) {
-        handleTileFunktion(tile);
+        this.handleTileFunktion(tile, this.task);
       }
     },
-
-  },
-}
-
-function handleTileFunktion(tile) {
-  switch (tile.id) {
+    updateTasks(task) {
+      const taskId = task.id;
+      fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(task)
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          this.rerender();
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    },
+    deleteTasks(task) {
+      const taskId = task.id;
+      fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: 'DELETE'
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          console.log('Task wurde erfolgreich gelöscht.');
+          this.rerender();
+        })
+        .catch((error) => {
+          console.error('Fehler beim Löschen des Tasks:', error);
+        });
+    },
+    handleTileFunktion(tile) {
+      switch (tile.id) {
         case 1:
           console.log(tile.name);
+          this.task.completed = true;
+          this.updateTasks(this.task);
           break;
         case 2:
           console.log(tile.name);
@@ -65,12 +101,16 @@ function handleTileFunktion(tile) {
           break;
         case 4:
           console.log(tile.name);
+          this.deleteTasks(this.task);
           break;
 
         default:
           break;
       }
+    }
+  },
 }
+
 </script>
 
 <style scoped>

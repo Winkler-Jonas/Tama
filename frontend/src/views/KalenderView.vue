@@ -10,12 +10,14 @@ import EditTask from '@/components/EditTask.vue';
 <template>
   <Header :selectHeader="selectHeader" />
   <Kalender @handleDayClicked="handleDayClicked" />
-  <h1 class="subheadlineBlack">Aufgaben heute</h1>
-  <Aufgabe @openEditTask="toggleEditTask" />
-  <Daily :showDate="true"/>
+
+  <h1 class="subheadlineBlack">Aufgaben {{ selectedDateForTask }}</h1>
+  <Aufgabe :key="renderKey" @openEditTask="toggleEditTask"/>
+  <Daily :showDate="true" />
+
 
   <Transition>
-    <EditTask v-if="showEditTaskComp" @backdropClicked="toggleEditTask" />
+    <EditTask v-if="showEditTaskComp" @backdropClicked="toggleEditTask"  @rerender="rerender" :task="task"/>
   </Transition>
 </template>
 
@@ -26,26 +28,45 @@ export default {
       selectHeader: 'calender',
       showAddTaskForm: false,
       showEditTaskComp: false,
-      selectedDateForTask: null,
+      selectedDateForTask: 'heute',
+      task: null,
+      renderKey: 0,
     }
   },
   methods: {
-    handleDayClicked(day, month, year) {
-      this.selectedDateForTask = day + ' ' + month + ' ' + year;
+    handleDayClicked(day, month, year, isToday, isTomorow) {
+      if(isToday) {
+        this.selectedDateForTask = 'heute';
+      } else if(isTomorow) {
+        this.selectedDateForTask = 'morgen';
+      } else {
+        this.selectedDateForTask = day + ' ' + month + ' ' + year;
+      }
       console.log(this.selectedDateForTask);
     },
-    toggleEditTask() {
+    toggleEditTask(task) {
+      if(!this.showEditTaskComp) {
+        this.task = task;
+      }
       this.showEditTaskComp = !this.showEditTaskComp;
+    },
+    rerender() {
+      this.renderKey++;
     }
   },
 }
 </script>
 
 <style scoped>
-.color-box {
+.stick {
+  position: sticky;
+}
 
-  background-color: #4CAF50;
-  /* Grüne Farbe */
+.subheadlineBlack {
+  margin-top: 10px;
+}
+
+.color-box {
   border: 2px solid #000;
   /* Schwarzer Rand */
   border-radius: 10px;

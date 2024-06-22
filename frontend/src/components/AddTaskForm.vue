@@ -55,6 +55,9 @@ export default {
     handleCloseBackdrop() {
       this.$emit('backdropClicked')
     },
+    rerender() {
+      this.$emit('rerender')
+    },
     async addTask() {
       try {
         const response = await fetch('http://localhost:3000/tasks', {
@@ -74,6 +77,7 @@ export default {
         console.log(this.message);
         this.resetForm();
         this.handleCloseBackdrop();
+        this.rerender();
       } catch (error) {
         this.message = 'Fehler: ' + error.message;
         console.log(this.message);

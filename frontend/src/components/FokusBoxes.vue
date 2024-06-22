@@ -66,7 +66,7 @@ export default {
   flex-wrap: wrap;
   padding: 10px;
   justify-content: center;
-  align-items: first baseline;
+  align-items: center;
   overflow: hidden;
   /* width: 80%; */
   /* margin: 0 auto; */

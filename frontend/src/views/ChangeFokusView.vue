@@ -21,4 +21,13 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.normaltext {
+  margin-top: 10px;
+}
+.normaltext p {
+  width: 80%;
+  margin: auto;
+}
+</style>
