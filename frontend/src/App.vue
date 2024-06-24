@@ -45,6 +45,7 @@ main {
   grid-column: 1 / -1;
   z-index: 1;
   height: 100%;
+  overflow-x: hidden;
   overflow-y: visible;
 }
 
