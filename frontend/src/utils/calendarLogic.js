@@ -1,14 +1,3 @@
-
-const week = {
-    'sun': 0,
-    'mon': 1,
-    'tue': 2,
-    'wed': 3,
-    'thu': 4,
-    'fri': 5,
-    'sat': 6
-}
-
 /**
  * @param date Date()
  *
@@ -40,7 +29,8 @@ const buildWeek = (start) => {
             year_day: current.day,
             date_str: formatDate(date),
             date: date,
-            year: current.year
+            year: current.year,
+            month: date.getMonth()
         })
     }
     return retValue
@@ -55,10 +45,10 @@ const wrapYearDays = (num, year) => {
     const range = ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)) ? 366 : 365;
 
     if (num > range) {
-        return {day: num % range || range, year: year++}
+        return {day: num % range || range, year: ++year}
     }
     else if (num < 1) {
-        return {day: num +range, year: year--};
+        return {day: num + range, year: --year};
     }
     return {day: num, year: year};
 }
@@ -71,10 +61,15 @@ const wrapYearDays = (num, year) => {
  * @return {Date}
  */
 const getNthDayOfYear = (year, n) => {
-    const startDate = new Date(year, 0);
-    startDate.setDate(startDate.getDate() + n - 1);
-    return startDate;
-}
+    let cumDays = 0;
+    for (let monthIdx = 0; monthIdx < 12; monthIdx++) {
+        const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
+        if (cumDays + daysInMonth >= n) {
+            return new Date(year, monthIdx, n - cumDays);
+        }
+        cumDays += daysInMonth;
+    }
+};
 
 /**
  * Convert Date() to dayOfTheYearNr.
@@ -82,10 +77,9 @@ const getNthDayOfYear = (year, n) => {
  * @return {number}
  */
 const getCurrentDayNumber = (date = new Date()) => {
-    const startOfYear = new Date(date.getFullYear(), 0, 1);
-    const diff = date - startOfYear;
-    const oneDay = 1000 * 60 * 60 * 24;
-    return Math.floor(diff / oneDay) + 1;  // Use Math.floor to round down
+    return  Array.from({length: date.getMonth()}, (_, i) =>
+        new Date(date.getFullYear(), i + 1, 0).getDate()
+    ).reduce((partial, a) => partial + a, date.getDate())
 }
 
 /**
@@ -101,17 +95,79 @@ const getCurrentWeek = (today = new Date, weekStart) => {
 }
 
 const getNextWeek = (dayOfTheYear, year, weekStart) => {
-    return getCurrentWeek(getNthDayOfYear(year, dayOfTheYear), weekStart)
+    const correctedNumber = wrapYearDays(dayOfTheYear + 2, year)
+    return getCurrentWeek(getNthDayOfYear(correctedNumber.year, correctedNumber.day), weekStart)
 }
 
 const getPreviousWeek = (dayOfTheYear, year, weekStart) => {
-    return getCurrentWeek(getNthDayOfYear(year, dayOfTheYear), weekStart)
+    const correctedNumber = wrapYearDays(dayOfTheYear - 2, year)
+    return getCurrentWeek(getNthDayOfYear(correctedNumber.year, correctedNumber.day), weekStart)
 }
 
+function getCurrentMonth(date = new Date(), weekStart) {
+    const weeks = [];
+    date.setDate(1);
+    date = new Date(date);
+
+    let previousWeek = getPreviousWeek(getCurrentDayNumber(date), date.getFullYear(), weekStart)
+
+    weeks.push(previousWeek);
+
+    for (let i = 0; i < 5; i++) {
+        let lastDayOfCurrentWeek = previousWeek[previousWeek.length - 1];
+        let nextWeek = getNextWeek(lastDayOfCurrentWeek.year_day + 1, lastDayOfCurrentWeek.year, weekStart);
+        weeks.push(nextWeek);
+        previousWeek = nextWeek;
+    }
+    return weeks;
+}
+
+const getNextMonth = (dayOfTheYear, year, weekStart) => {
+    const correctedNumber = wrapYearDays(dayOfTheYear + 2, year)
+    return getCurrentMonth(getNthDayOfYear(correctedNumber.year, correctedNumber.day), weekStart)
+}
+
+const getPreviousMonth = (dayOfTheYear, year, weekStart) => {
+    const correctedNumber = wrapYearDays(dayOfTheYear - 2, year)
+    return getCurrentMonth(getNthDayOfYear(correctedNumber.year, correctedNumber.day), weekStart)
+}
+
+class DateMonitor {
+    constructor() {
+        this.currentDate = new Date().toDateString();
+        this.listeners = [];
+    }
+
+    checkDateChange() {
+        const newDate = new Date().toDateString();
+        if (this.currentDate !== newDate) {
+            this.currentDate = newDate;
+            this.listeners.forEach(listener => listener(this.currentDate));
+        }
+    }
+
+    start() {
+        this.checkDateChange();
+        this.interval = setInterval(() => this.checkDateChange(), 60000);
+    }
+
+    stop() {
+        clearInterval(this.interval);
+    }
+
+    onDateChange(callback) {
+        this.listeners.push(callback);
+    }
+}
+
+const dateMonitor = new DateMonitor();
+
 export {
-    getNthDayOfYear,
-    getCurrentDayNumber,
+    formatDate,
     getNextWeek,
     getCurrentWeek,
     getPreviousWeek,
+    getCurrentMonth,
+    getNextMonth,
+    getPreviousMonth
 }

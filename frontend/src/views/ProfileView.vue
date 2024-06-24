@@ -1,6 +1,6 @@
 <template>
   <section id="tama-profile-view" :style="`padding-top: ${$route.meta.tama}vh`" class="main-gl-view">
-    <tama-calender-row />
+    <tama-calendar-row />
     <div class="tama-target-content">
       <h2 class="tama-target-task-header">
         {{ $t('components.task.task') }}
@@ -14,12 +14,13 @@
         <h2 class="tama-target-daily-header">
           {{ $t('components.task.daily') }}
         </h2>
-        <div @click="handleEditClicked" class="tama-target-daily-task-container">
+        <tama-daily-task />
+<!--        <div @click="handleEditClicked" class="tama-target-daily-task-container">
           <div class="round-circle"></div>
           <p class="tama-target-daily-txt">
             Esse mindestens 3 verschiedene Arten Obst
           </p>
-        </div>
+        </div>-->
       </div>
     </div>
     <div @click="handleAddClicked" class="tama-target-add-container">
@@ -35,10 +36,11 @@
 
 <script setup>
 import {computed, ref} from 'vue'
-import TamaCalenderRow from "@/components/calendar/TamaCalenderRow.vue";
+import TamaCalendarRow from "@/components/calendar/TamaCalendarRow.vue";
 import TamaAddTask from "@/components/TamaAddTask.vue";
 import TamaEditTask from "@/components/TamaEditTask.vue";
 import TamaSlideUp from "@/components/TamaSlideUp.vue";
+import TamaDailyTask from "@/components/task/TamaDailyTask.vue";
 
 
 const daySelected = ref(false)
