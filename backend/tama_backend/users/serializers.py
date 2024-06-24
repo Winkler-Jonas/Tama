@@ -8,10 +8,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'email_verified', 'is_admin']
+        fields = ['id', 'username', 'email', 'password', 'email_verified', 'is_admin', 'last_run_date']
         extra_kwargs = {
             'password': {'write_only': True},
-            'email_verified': {'read_only': True}
+            'email_verified': {'read_only': True},
+            'last_run_date': {'read_only': True}
         }
 
     def get_is_admin(self, obj):
