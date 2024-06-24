@@ -1,5 +1,7 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import {defineStore} from 'pinia'
+import {ref, watchEffect, toRaw} from 'vue'
+import {formatDate} from "@/utils/calendarLogic.js";
+import websocketService from "@/services/registerWS.js";
 
 export const useUserStore = defineStore('user', () => {
     const email = ref('')
@@ -9,6 +11,77 @@ export const useUserStore = defineStore('user', () => {
     const focusTasks = ref({})
     const notification = ref(false)
     const weekStart = ref(true)
+    const dailyTasks = ref(JSON.parse(localStorage.getItem('dailyTasks')) || {});
+    const dailySelected = ref(0)
+    const userFocus = ref('Studieren')
+
+    function setDailySelected (idx) {
+        dailySelected.value = idx
+    }
+
+    function addDailies(allDailies) {
+        const currentDate = formatDate(new Date())
+        if (!dailyTasks.value[currentDate]) {
+            dailyTasks.value[currentDate] = allDailies.map(str => ({
+                desc: str,
+                status: false
+            }));
+            updateLocalStorage();
+        }
+    }
+
+    function updateLocalStorage() {
+        const rawData = toRaw(dailyTasks.value);
+        const simpleData = Object.entries(rawData).reduce((acc, [key, value]) => {
+            acc[key] = value.map(item => ({ desc: item.desc, status: item.status }));
+            return acc;
+        }, {});
+
+        const serializedData = JSON.stringify(simpleData);
+        localStorage.setItem('dailyTasks', serializedData);
+    }
+
+    watchEffect(updateLocalStorage);
+
+    function removeDailyByDate(date) {
+        const formattedDate = formatDate(date);
+        if (dailyTasks.value[formattedDate]) {
+            delete dailyTasks.value[formattedDate];
+            updateLocalStorage();
+        }
+    }
+
+    async function getDailies() {
+        const todayFormatted = formatDate(new Date());
+        if (dailyTasks.value[todayFormatted]) {
+            return dailyTasks.value[todayFormatted];
+        } else {
+            try {
+                const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                const socketConnected = await websocketService.createSocket('daily', '/ws/getDaily/');
+                websocketService.setHandler('daily', {
+                    onMessage: (data) => {
+                        const dataArray = Object.values(data)
+                        if (dataArray.every(item => item.trim() === '')) {
+                            console.log('Error parsing daily-response')
+                        } else {
+                            addDailies(dataArray)
+                        }
+                        return getDailies()
+                    },
+                    onError: (data) => {
+                        console.log('Error creating dailies')
+                    },
+                })
+                if (socketConnected) {
+                    websocketService.send('daily', { focus: userFocus.value, user_time_zone: timeZone });
+                }
+            } catch (error) {
+                console.error('Failed to connect:', error);
+            }
+
+        }
+    }
 
     function setEmail(newEmail) {
         email.value = newEmail
@@ -57,23 +130,27 @@ export const useUserStore = defineStore('user', () => {
     }
 
     return {
-        email,
-        username,
-        password,
+        dailySelected,
+        notification,
         welcomeDone,
         focusTasks,
-        notification,
+        dailyTasks,
         weekStart,
+        username,
+        password,
+        email,
         setEmail,
-        setUsername,
+        getDailies,
         setPassword,
-        setWelcomeDone,
-        setNewFocusTask,
-        getTaskFocus,
-        removeFocusTask,
+        setUsername,
         setWeekStart,
+        getTaskFocus,
+        clearUserInfo,
+        setWelcomeDone,
         setNotification,
-        clearUserInfo
+        removeFocusTask,
+        setNewFocusTask,
+        setDailySelected
     }
 }, {
     persist: {

@@ -6,7 +6,7 @@
       id="tama-calendar-row">
     <div class="tama-calendar-row-header">
       <h2 v-if="weekDays && weekDays.length > 0">
-        {{ getCurrentMonth }}
+        {{ getCurrentMonthName }}
       </h2>
     </div>
     <div class="tama-calendar-row-container">
@@ -51,7 +51,6 @@ const findIndexOfToday = (array) => {
 onMounted(() => {
   weekDays.value = getCurrentWeek(new Date(), userStore.weekStart ? 1 : 0)
   currentSelected.value = findIndexOfToday(weekDays.value)
-
 })
 
 const handleTouchStart = (event) => {
@@ -62,25 +61,28 @@ const handleTouchStart = (event) => {
 const handleTouchMove = (event) => {
   touchEndX = event.changedTouches[0].clientX;
   if (!isSwiping) {
-    console.log(Math.abs(touchStartX - touchEndX) > 100)
     isSwiping = Math.abs(touchStartX - touchEndX) > 100;
   }
 };
 
 const handleTouchEnd = () => {
   if (isSwiping) {
+    const weekStart = userStore.weekStart ? 1 : 0
     if (touchStartX - touchEndX > 100) {
       // swipe Left
-      weekDays.value = getNextWeek(++weekDays.value.at(-1).year_day, weekDays.value.at(-1).year, userStore.weekStart ? 1 : 0)
+      const currentLastDay = weekDays.value.at(-1)
+      weekDays.value = getNextWeek(currentLastDay.year_day, currentLastDay.year, weekStart)
     } else if (touchEndX - touchStartX > 100) {
       // swipe right
-      weekDays.value = getPreviousWeek(--weekDays.value.at(0).year_day, weekDays.value.at(0).year, userStore.weekStart ? 1 : 0)
+      const currentFirstDay = weekDays.value.at(0)
+      weekDays.value = getPreviousWeek(currentFirstDay.year_day, currentFirstDay.year, weekStart)
     }
+    console.log(weekDays.value)
     currentSelected.value = findIndexOfToday(weekDays.value)
   }
 };
 
-const getCurrentMonth = computed(() => {
+const getCurrentMonthName = computed(() => {
   return weekDays.value[0].date.toLocaleDateString(t(`jLocals.${locale.value}`), {month: 'long'})
 })
 

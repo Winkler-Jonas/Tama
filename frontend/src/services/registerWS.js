@@ -3,14 +3,15 @@ import {getAIErrorMessage} from "@/utils/AIerrorHandler.js";
 
 class WebSocketService {
     constructor() {
-        this.routesWithLocale = ['/ws/askAI/', '/ws/focusUP/']
+        this.routesWithLocale = ['/ws/askAI/', '/ws/focusUP/', '/ws/getDaily/']
         this.usernameSocket = null;
         this.emailSocket = null;
         this.usernameCallbacks = {};
         this.emailCallbacks = {};
         this.usernameQueue = [];
         this.emailQueue = [];
-        this.AISocket = null;
+        this.sockets = {};
+        this.handlers = {};
         this.onMessage = null
         this.onError = null
     }
@@ -20,12 +21,11 @@ class WebSocketService {
     }
 
     getWebSocketUrl = (endpoint) => {
-        const store = useLanguageStore()
-        const locale = store.locale
-        const token = localStorage.getItem('token');
+        const store = useLanguageStore();
+        const locale = store.locale;
+        const token = localStorage.getItem('accessToken');
         const suffix = this.routesWithLocale.includes(endpoint) ? `${locale}/?token=${token}` : ''
-
-        return `${this.getWebSocketProtocol()}//${window.location.host}${endpoint}${suffix}`
+        return `${this.getWebSocketProtocol()}//${window.location.host}${endpoint}${suffix}`;
     }
 
     connectUsernameSocket() {
@@ -126,63 +126,88 @@ class WebSocketService {
         });
     }
 
-    async createSocket(urlPath) {
-        if (this.AISocket) {
-            if (this.AISocket.readyState === WebSocket.OPEN) {
-                return Promise.resolve("open");
-            } else if (this.AISocket.readyState === WebSocket.CONNECTING) {
-                return Promise.resolve("connecting");
+    async createSocket(key, urlPath) {
+        const store = useLanguageStore();
+        const currentLocale = store.locale;
+        const existingSocket = this.sockets[key];
+
+        if (existingSocket) {
+            const url = new URL(existingSocket.url);
+            const urlLocale = url.searchParams.get('locale');
+
+            if (existingSocket.readyState < WebSocket.CLOSING && currentLocale === urlLocale) {
+                switch (existingSocket.readyState) {
+                    case WebSocket.OPEN:
+                        return "open";
+                    case WebSocket.CONNECTING:
+                        return "connecting";
+                }
+            } else {
+                this.closeSocket(key);
             }
         }
 
         return new Promise((resolve, reject) => {
-            this.AISocket = new WebSocket(this.getWebSocketUrl(urlPath));
-            this.AISocket.onopen = () => {
-                resolve("open");
-            };
-            this.AISocket.onerror = (error) => {
-                reject("error");
-            };
-            this.AISocket.onmessage = (event) => {
-                if (this.onMessage) {
-                    const data = JSON.parse(event.data);
-                    if (data.error) {
-                        if (this.onError) {
-                            this.onError(getAIErrorMessage(data.error).message);
-                        }
-                    } else {
-                        this.onMessage(Object.values(data.message));
-                    }
-                }
-            };
-            this.AISocket.onclose = () => {
-                this.AISocket = null;
-                reject("closed");
-            };
+            const socket = new WebSocket(this.getWebSocketUrl(urlPath));
+            this.setupSocketHandlers(socket, key, resolve, reject);
         });
     }
 
-    async send(message) {
-        if (this.AISocket && this.AISocket.readyState === WebSocket.OPEN) {
-            this.AISocket.send(JSON.stringify(message));
+    setupSocketHandlers(socket, key, resolve, reject) {
+        socket.onopen = () => {
+            resolve("open");
+        };
+        socket.onerror = (error) => {
+            reject("error");
+        };
+        socket.onclose = () => {
+            this.sockets[key] = null;
+            reject("closed");
+        };
+        socket.onmessage = (event) => {
+            const handler = this.handlers[key];
+            if (handler && handler.onMessage) {
+                const data = JSON.parse(event.data);
+                if (data.error) {
+                    if (handler.onError) {
+                        handler.onError(getAIErrorMessage(data.error).message);
+                    }
+                } else {
+                    handler.onMessage(data.message);
+                }
+            }
+        };
+        this.sockets[key] = socket;
+    }
+
+
+    send(key, message) {
+        const store = useLanguageStore(); // Fetch the store here to get the latest locale
+        const socket = this.sockets[key];
+        if (socket) {
+            if (socket.readyState === WebSocket.OPEN) {
+                const locale = store.locale;
+                const messageWithLocale = {...message, locale};
+                socket.send(JSON.stringify(messageWithLocale));
+            } else {
+                // todo: no connection
+            }
         } else {
-            console.error('WebSocket is not open. Cannot send message.');
+            // todo: no connection
         }
     }
 
-    closeSocket() {
-        if (this.AISocket) {
-            this.AISocket.close();
-            this.AISocket = null;
+
+    closeSocket(key) {
+        const socket = this.sockets[key];
+        if (socket) {
+            socket.close();
+            this.sockets[key] = null;
         }
     }
 
-    setOnMessageHandler(handler) {
-        this.onMessage = handler;
-    }
-
-    setOnErrorHandler(handler) {
-        this.onError = handler;
+    setHandler(key, handler) {
+        this.handlers[key] = handler;
     }
 }
 

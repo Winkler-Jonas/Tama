@@ -1,12 +1,12 @@
 <template>
   <div @click="toggleSelected" class="tama-calendar-digit-container">
-    <span class="tama-calendar-digit" :style="digitOnSelect">
+    <span class="tama-calendar-digit" :style="digitOnSelect" :class="{'tama-calendar-digit-today': styleToday}">
       {{ calendarDigit }}
     </span>
     <transition name="day-selected" appear>
-      <div v-if="isSelected" class="tama-calendar-select-img-container">
-        <svg class="tama-calendar-select-svg" viewBox="0 0 551.97 543.91">
-          <use class="tama-calendar-select-svg" xlink:href="#calendarCircle"></use>
+      <div v-if="isSelected || isToday" class="tama-calendar-select-img-container">
+        <svg class="tama-calendar-select-svg" :class="{'tama-calendar-digit-today': styleToday && !isSelected}" viewBox="0 0 551.97 543.91">
+          <use class="tama-calendar-select-svg" :class="{'tama-calendar-digit-today': styleToday && !isSelected}" xlink:href="#calendarCircle"></use>
         </svg>
       </div>
     </transition>
@@ -25,17 +25,25 @@ const props = defineProps({
   isSelected: {
     type: Boolean,
     required: true
+  },
+  isToday: {
+    type: Boolean,
+    required: false,
+    default: false
   }
 })
 const emit = defineEmits(['onSelect'])
 
 const digitOnSelect = computed(() => {
-  const currentColor = isSelected.value ? 'var(--tama-color-orange)' : ''
+  const currentColor = isSelected.value ? 'var(--tama-color-orange) !important' : ''
   return {color: currentColor}
 })
 
+const isToday = computed(() => props.isToday)
 const isSelected = computed(() => props.isSelected)
 
+
+const styleToday = computed(() => !!isToday.value)
 
 const toggleSelected = () => {
   emit('onSelect')
@@ -73,12 +81,19 @@ const toggleSelected = () => {
 }
 
 .tama-calendar-select-svg {
+  stroke: var(--tama-color-orange);
+  color: var(--tama-color-orange);
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 1 / 1;
   object-fit: contain;
   transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+.tama-calendar-digit-today {
+  color: var(--tama-color-blue);
+  stroke: var(--tama-color-blue);
 }
 
 .day-selected-enter-active {
