@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, onUnmounted, ref, watch, watchEffect} from 'vue';
+import {computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect} from 'vue';
 
 const props = defineProps({
   currentIndex: {
@@ -22,12 +22,17 @@ const props = defineProps({
   amountItems: {
     type: Number,
     required: true
+  },
+  isCircular: {
+    type: Boolean,
+    required: false,
+    default: false
   }
 })
 
 const amountItems = computed(() => props.amountItems)
 const currentIndex = computed(() => props.currentIndex)
-const emit = defineEmits(['onSwipeLeft', 'onSwipeRight', 'onResize'])
+const emit = defineEmits(['onSwipeLeft', 'onSwipeRight', 'onResize', 'onLocked'])
 const wrapperRef = ref(null)
 const startPosition = ref(0)
 const currentTranslate = ref(0)
@@ -38,15 +43,24 @@ const containerWidth = ref(0)
 const wrapperStyle = computed(() => ({width: `${amountItems.value * 100}%`}))
 
 
-watch(currentIndex, (newValue) => {
+watch(currentIndex, (newValue, oldValue) => {
   currentTranslate.value = -newValue * containerWidth.value;
-  wrapperRef.value.style.transition = 'transform 0.5s ease';
-  wrapperRef.value.style.transform = `translateX(${currentTranslate.value}px)`;
+  if (props.isCircular && oldValue === 2 || oldValue === 0) {
+      wrapperRef.value.style.transition = 'none';
+      wrapperRef.value.style.transform = `translateX(${currentTranslate.value}px)`
+  } else {
+    wrapperRef.value.style.transition = 'transform 0.5s ease';
+    wrapperRef.value.style.transform = `translateX(${currentTranslate.value}px)`;
+
+    setTimeout(() => {
+      emit('onLocked')
+    }, 550)
+  }
 })
 
 const handleTouchStart = (event) => {
   startPosition.value = event.touches[0].clientX;
-  currentTranslate.value = -currentIndex.value * containerWidth.value; // Use actual pixels
+  currentTranslate.value = -currentIndex.value * containerWidth.value;
   wrapperRef.value.style.transition = 'none';
 };
 
