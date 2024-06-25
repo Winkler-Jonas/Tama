@@ -58,9 +58,7 @@ watch(currentIndex, (newValue, oldValue) => {
 
 const handleTransitionEnd = (event) => {
   if (event && event.propertyName === 'transform') {
-    console.log('onLocked triggered')
     emit('onLocked')
-
     wrapperRef.value.removeEventListener('transitionend', handleTransitionEnd)
   }
 }

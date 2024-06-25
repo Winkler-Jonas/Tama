@@ -17,7 +17,7 @@
         @on-swipe-right="handleSwipeRight"
         @on-swipe-left="handleSwipeLeft"
         @on-resize="handleSwipeContainerResize"
-        @on-locked="currentIndex = 1"
+        @on-locked="handleSliderLock"
     >
       <template #slider-content>
         <div v-for="(week, weekIdx) in prevCurNextWeek" :key="`week-slider-${weekIdx}`"
@@ -29,7 +29,6 @@
                 :is-selected="(currentSelected === dayIdx)"
                 :calendar-digit="day.day_date"
                 @on-select="currentSelected = dayIdx"
-
             />
           </div>
         </div>
@@ -56,6 +55,19 @@ const slideContainerWidth = ref(0)
 const currentIndex = ref(1)
 const currentWeek = ref({})
 
+
+const handleSliderLock = () => {
+
+  if (currentIndex.value === 0) {
+    currentIndex.value++
+    createWeekArray(null, 'prev')
+
+
+  } else if (currentIndex.value === 2) {
+    currentIndex.value--
+    createWeekArray(null, 'next')
+  }
+}
 
 const createWeekArray = (activeWeekDay, direction) => {
   const weekStart = userStore.weekStart ? 1: 0
@@ -96,9 +108,6 @@ const handleSwipeRight = () => {
     currentSelected.value = -1
     currentIndex.value--
     currentWeek.value = prevCurNextWeek.value.at(0)
-    setTimeout(() => {
-      createWeekArray(null, 'prev')
-    }, 520)
   }
 }
 
@@ -107,9 +116,6 @@ const handleSwipeLeft = () => {
     currentSelected.value = -1
     currentIndex.value++
     currentWeek.value = prevCurNextWeek.value.at(-1)
-    setTimeout(() => {
-      createWeekArray(null, 'next')
-    }, 520)
   }
 }
 
@@ -129,13 +135,6 @@ onMounted(() => {
   currentWeek.value = prevCurNextWeek.value.at(1)
   currentSelected.value = findIndexOfToday(weekDays.value)
 })
-
-const isToday = (date) => {
-  const today = new Date()
-  const date1 = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-  const date2 = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-  return date1.getTime() === date2.getTime()
-}
 
 const currentMonthName = computed(() => {
   const middleOfTheWeek = currentWeek.value.at(3)

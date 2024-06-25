@@ -1,12 +1,12 @@
 <template>
   <div class="tama-full-calendar">
     <div class="tama-full-calendar-header">
-      <i @click="handleGetPreviousMonth" class="ri-arrow-left-line"></i>
+      <i @click="handleSwipeRight" class="ri-arrow-left-line"></i>
       <div class="tama-full-calendar-header-text">
         <h2>{{ getHeader.month }}</h2>
         <h2>{{ getHeader.year }}</h2>
       </div>
-      <i @click="handleGetNextMonth" class="ri-arrow-right-line"></i>
+      <i @click="handleSwipeLeft" class="ri-arrow-right-line"></i>
     </div>
     <app-horizontal-slider
         :amount-items="3"
@@ -89,15 +89,9 @@ const currentMonth = ref([])
 const handleSliderLock = () => {
 
   if (currentIndex.value === 0) {
-    //prevCurNextMonth.value.unshift([])
-    //prevCurNextMonth.value.pop()
     currentIndex.value++
     createMonthArray(null, 'prev')
-
-
   } else if (currentIndex.value === 2) {
-    //prevCurNextMonth.value.push([])
-    //prevCurNextMonth.value.unshift()
     currentIndex.value--
     createMonthArray(null, 'next')
   }
@@ -177,16 +171,12 @@ const handleDaySelect = async (week, day, date) => {
   if (wrapMonth(currentMonthDigit.value - 1) === dateCpy.getMonth()) {
     currentIndex.value--
     currentMonth.value = prevCurNextMonth.value.at(0)
-    setTimeout(() => {
-      createMonthArray(null, 'prev')
-    }, 520)
+    handleSwipeRight()
     currentSelected.value = findIndexOfDate(currentMonth.value, dateCpy)
   } else if (wrapMonth(currentMonthDigit.value + 1) === dateCpy.getMonth()) {
     currentIndex.value++
     currentMonth.value = prevCurNextMonth.value.at(-1)
-    setTimeout(() => {
-      createMonthArray(null, 'next')
-    }, 520)
+    handleSwipeLeft()
     currentSelected.value = findIndexOfDate(currentMonth.value, dateCpy)
   } else {
     currentSelected.value = [week, day]
