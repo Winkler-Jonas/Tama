@@ -52,11 +52,18 @@ watch(currentIndex, (newValue, oldValue) => {
     wrapperRef.value.style.transition = 'transform 0.5s ease';
     wrapperRef.value.style.transform = `translateX(${currentTranslate.value}px)`;
 
-    setTimeout(() => {
-      emit('onLocked')
-    }, 520)
+    wrapperRef.value.addEventListener('transitionend', handleTransitionEnd)
   }
 })
+
+const handleTransitionEnd = (event) => {
+  if (event && event.propertyName === 'transform') {
+    console.log('onLocked triggered')
+    emit('onLocked')
+
+    wrapperRef.value.removeEventListener('transitionend', handleTransitionEnd)
+  }
+}
 
 const handleTouchStart = (event) => {
   startPosition.value = event.touches[0].clientX;

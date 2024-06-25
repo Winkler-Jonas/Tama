@@ -15,7 +15,7 @@
         @on-swipe-left="handleSwipeLeft"
         @on-swipe-right="handleSwipeRight"
         @on-resize="handleSwipeContainerResize"
-        @on-locked="currentIndex = 1"
+        @on-locked="handleSliderLock"
     >
       <template #slider-content>
         <div v-for="(month, monthIdx) in prevCurNextMonth" :key="`month-key-${monthIdx}`"
@@ -86,6 +86,23 @@ const currentSelected = ref([0, 0])
 const currentMonth = ref([])
 
 
+const handleSliderLock = () => {
+
+  if (currentIndex.value === 0) {
+    //prevCurNextMonth.value.unshift([])
+    //prevCurNextMonth.value.pop()
+    currentIndex.value++
+    createMonthArray(null, 'prev')
+
+
+  } else if (currentIndex.value === 2) {
+    //prevCurNextMonth.value.push([])
+    //prevCurNextMonth.value.unshift()
+    currentIndex.value--
+    createMonthArray(null, 'next')
+  }
+}
+
 const createMonthArray = (activeMonthDay, direction) => {
   const weekStart = userStore.weekStart ? 1: 0
 
@@ -127,9 +144,6 @@ const handleSwipeRight = () => {
     currentSelected.value = [-1, -1]
     currentIndex.value--
     currentMonth.value = prevCurNextMonth.value.at(0)
-    setTimeout(() => {
-      createMonthArray(null, 'prev')
-    }, 520)
   }
 }
 
@@ -138,9 +152,6 @@ const handleSwipeLeft = () => {
     currentSelected.value = [-1, -1]
     currentIndex.value++
     currentMonth.value = prevCurNextMonth.value.at(-1)
-    setTimeout(() => {
-      createMonthArray(null, 'next')
-    }, 520)
   }
 }
 
@@ -184,7 +195,12 @@ const handleDaySelect = async (week, day, date) => {
   // retrieve Data from Date
 }
 
-const currentMonthDigit = computed(() => prevCurNextMonth.value.at(1).at(3).at(-1).month)
+const currentMonthDigit = computed(() => {
+  if (currentMonth.value && currentMonth.value.length > 0) {
+    return currentMonth.value.at(3).at(-1).month
+  }
+
+})
 
 const isToday = (date) => {
   const today = new Date()
