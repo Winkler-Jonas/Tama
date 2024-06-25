@@ -29,6 +29,7 @@
                 :is-selected="(currentSelected === dayIdx)"
                 :calendar-digit="day.day_date"
                 @on-select="currentSelected = dayIdx"
+
             />
           </div>
         </div>
@@ -86,8 +87,8 @@ const itemStyle = computed(() => ({
   'min-width': `${slideContainerWidth.value}px`
 }))
 
-const handleSwipeContainerResize = (args) => {
-  slideContainerWidth.value = args[0]
+const handleSwipeContainerResize = (size) => {
+  slideContainerWidth.value = size
 }
 
 const handleSwipeRight = () => {
@@ -97,7 +98,7 @@ const handleSwipeRight = () => {
     currentWeek.value = prevCurNextWeek.value.at(0)
     setTimeout(() => {
       createWeekArray(null, 'prev')
-    }, 550)
+    }, 520)
   }
 }
 
@@ -108,7 +109,7 @@ const handleSwipeLeft = () => {
     currentWeek.value = prevCurNextWeek.value.at(-1)
     setTimeout(() => {
       createWeekArray(null, 'next')
-    }, 550)
+    }, 520)
   }
 }
 
@@ -129,6 +130,12 @@ onMounted(() => {
   currentSelected.value = findIndexOfToday(weekDays.value)
 })
 
+const isToday = (date) => {
+  const today = new Date()
+  const date1 = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  const date2 = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  return date1.getTime() === date2.getTime()
+}
 
 const currentMonthName = computed(() => {
   const middleOfTheWeek = currentWeek.value.at(3)

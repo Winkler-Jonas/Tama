@@ -54,7 +54,7 @@ watch(currentIndex, (newValue, oldValue) => {
 
     setTimeout(() => {
       emit('onLocked')
-    }, 550)
+    }, 520)
   }
 })
 

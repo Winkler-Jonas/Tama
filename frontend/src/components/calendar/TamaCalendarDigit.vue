@@ -68,6 +68,7 @@ const toggleSelected = () => {
 
   padding-top: .4em;
   font-size: min(5vw, 50px);
+  transition: color 0.5s ease;
 }
 
 .tama-calendar-select-img-container {
