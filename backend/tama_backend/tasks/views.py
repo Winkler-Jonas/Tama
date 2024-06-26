@@ -1,9 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsOwnerPermission
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from .permissions import IsOwnerOrIsCreating
 from .models import Task
 from .serializers import TaskSerializer
 
@@ -11,7 +10,7 @@ from .serializers import TaskSerializer
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [IsAuthenticated, IsOwnerPermission]
+    permission_classes = [IsAuthenticated, IsOwnerOrIsCreating]
     authentication_classes = [JWTAuthentication]
 
     def get_queryset(self):
@@ -26,6 +25,7 @@ class TaskViewSet(viewsets.ModelViewSet):
             try:
                 month = int(month)  # 1 indexed !JAN IS NOT 0
                 year = int(year)
+                print(Task.objects.all())
                 queryset = queryset.filter(start_date__year=year, start_date__month=month)
             except ValueError:
                 return queryset.none()
