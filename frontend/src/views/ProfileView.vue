@@ -1,45 +1,59 @@
 <template>
-  <section id="tama-profile-view" :style="`padding-top: ${$route.meta.tama}vh`" class="main-gl-view">
-    <tama-calendar-row
-        :current-date="currentDate"
-        @on-date-select="handleDaySelected"
-        @on-month-change="handleMonthChange"
-    />
-    <div class="tama-target-content">
-      <h2 class="tama-target-task-header">
-        {{ $t('components.task.task') }}
-      </h2>
-      <div class="tama-target-task">
-        <p class="tama-target-task-text">
-          Nichts zu tun, drücke "+" und füge eine neue Aufgabe hinzu
-        </p>
-      </div>
-      <div class="tama-target-daily-task">
-        <h2 class="tama-target-daily-header">
-          {{ $t('components.task.daily') }}
+  <section id="tama-profile-view"
+           :style="`top: ${$route.meta.tama}vh; height: ${100 - $route.meta.tama}vh`"
+           class="main-gl-view">
+    <div class="tama-target-calendar">
+      <tama-calendar-row
+          :current-date="currentDate"
+          @on-date-select="handleDaySelected"
+          @on-month-change="handleMonthChange"
+      />
+    </div>
+
+
+    <section id="tama-profile-view-scrollable">
+      <div class="tama-target-content">
+        <h2 class="tama-target-task-header">
+          {{ $t('components.task.task') }}
         </h2>
-        <tama-daily-task />
-<!--        <div @click="handleEditClicked" class="tama-target-daily-task-container">
-          <div class="round-circle"></div>
-          <p class="tama-target-daily-txt">
-            Esse mindestens 3 verschiedene Arten Obst
+        <div v-for="task in todayTasks" :key="task.description">
+          <p>
+            {{ task }}
           </p>
-        </div>-->
+        </div>
+
+        <div class="tama-target-task">
+          <p class="tama-target-task-text">
+            Nichts zu tun, drücke "+" und füge eine neue Aufgabe hinzu
+          </p>
+        </div>
+        <div class="tama-target-daily-task">
+          <h2 class="tama-target-daily-header">
+            {{ $t('components.task.daily') }}
+          </h2>
+          <tama-daily-task />
+          <!--        <div @click="handleEditClicked" class="tama-target-daily-task-container">
+                    <div class="round-circle"></div>
+                    <p class="tama-target-daily-txt">
+                      Esse mindestens 3 verschiedene Arten Obst
+                    </p>
+                  </div>-->
+        </div>
       </div>
-    </div>
-    <div @click="handleAddClicked" class="tama-target-add-container">
-      <i class="ri-add-line tama-target-add-icon"></i>
-    </div>
-    <tama-slide-up :is-visible="editActive || addActive">
-      <template #slide-up-content>
-        <component :is="showSlideUp" :add-date="currentDate" @on-exit="handleModalClose" />
-      </template>
-    </tama-slide-up>
+    </section>
   </section>
+  <div class="tama-target-add-container">
+    <i @click="handleAddClicked" class="ri-add-line tama-target-add-icon"></i>
+  </div>
+  <tama-slide-up :is-visible="editActive || addActive">
+    <template #slide-up-content>
+      <component :is="showSlideUp" :add-date="currentDate" @on-exit="handleModalClose" />
+    </template>
+  </tama-slide-up>
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, onUnmounted, ref} from 'vue'
 import TamaCalendarRow from "@/components/calendar/TamaCalendarRow.vue";
 import TamaAddTask from "@/components/TamaAddTask.vue";
 import TamaEditTask from "@/components/TamaEditTask.vue";
@@ -47,8 +61,8 @@ import TamaSlideUp from "@/components/TamaSlideUp.vue";
 import TamaDailyTask from "@/components/task/TamaDailyTask.vue";
 import {useTaskStore} from "@/stores/taskStore.js";
 
-const taskStore = useTaskStore()
 
+const taskStore = useTaskStore()
 
 const addActive = ref(false)
 const editActive = ref(false)
@@ -61,6 +75,10 @@ const modalViews = {
   TamaAddTask,
   TamaEditTask
 }
+
+const emit = defineEmits(['main-scrolling'])
+
+
 
 const showSlideUp = computed(() => {
   if (addActive.value) {
@@ -99,13 +117,15 @@ const handleModalClose = () => {
   editActive.value = false
 }
 
+
 onMounted(() => {
+  emit('main-scrolling', 'disable')
+
   try {
     taskStore.fetchTasks(currentMonth.value, currentYear.value)
   } catch (error) {
     // ignore
   }
-
 })
 
 </script>
@@ -113,16 +133,57 @@ onMounted(() => {
 <style scoped>
 
 #tama-profile-view {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+}
+
+.tama-target-calendar {
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  background-color: white;
+}
 
-  overflow-y: hidden;
+
+#tama-profile-view-scrollable {
+  width: 100%;
+  max-width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 25%;
+}
+
+
+
+.tama-target-content {
+  width: 90%;
+  margin-inline: auto;
+  padding: 1em 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
 }
 
 .tama-target-add-container {
-  margin-top: auto;
+  position: fixed;
+  width: 100%;
+  bottom: calc(3.5em + 50px);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tama-target-add-container i {
   height: 50px;
   width: 50px;
   border-radius: 50%;
@@ -135,19 +196,8 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   background-color: black;
-  margin-bottom: .5em;
 }
 
-.tama-target-content {
-  width: 80%;
-  margin-inline: auto;
-  overflow-y: auto;
-
-  padding: 1em 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-}
 
 .tama-target-daily-task-container {
   display: flex;
@@ -155,7 +205,7 @@ onMounted(() => {
 
   padding: 0.5em;
   border-radius: 10px;
-  background-color: rgba(255, 169, 118, 0.5);
+  background-color: var(--tama-color-daily);
 }
 
 .round-circle {

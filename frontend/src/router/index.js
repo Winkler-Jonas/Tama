@@ -31,7 +31,7 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: ProfileView,
-    meta: {requiresAuth: true, nav: true, tama: 40}
+    meta: {requiresAuth: true, nav: true, tama: 30}
   },
   {
     path: '/sign-up',

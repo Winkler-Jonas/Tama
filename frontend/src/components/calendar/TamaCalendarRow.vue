@@ -176,7 +176,6 @@ onMounted(() => {
 
 #tama-calendar-row {
   width: 100%;
-  padding-inline: var(--sgn-mi);
   border-bottom: 1px solid black;
 }
 
@@ -188,6 +187,7 @@ onMounted(() => {
 .tama-calendar-row-container,
 .tama-calendar-row-slider-item {
   flex-shrink: 0;
+  width: 100%;
   margin-inline: auto;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
