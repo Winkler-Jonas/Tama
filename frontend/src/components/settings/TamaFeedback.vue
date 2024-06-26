@@ -104,7 +104,7 @@ const deleteFeedback = async (id) => {
 
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: min-content 1fr min-content;
+  grid-template-rows: min-content 2fr min-content;
 }
 
 .feedback-admin-close {
@@ -132,6 +132,7 @@ const deleteFeedback = async (id) => {
 
   justify-self: center;
   position: relative;
+  bottom: 1em;
   margin-bottom: 1em;
 }
 

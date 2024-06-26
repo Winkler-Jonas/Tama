@@ -71,7 +71,6 @@ const currentDate = ref(new Date())
 const currentMonth = ref(currentDate.value.getMonth())
 const currentYear = ref(currentDate.value.getFullYear())
 const todayTasks = ref([])
-const selectedTask = ref(-1)
 
 const modalViews = {
   TamaAddTask,
@@ -83,7 +82,8 @@ const emit = defineEmits(['main-scrolling'])
 
 
 const handleTaskClicked = (taskID, idx) => {
-  selectedTask.value = idx
+  editActive.value = true
+  showModal.value = true
 }
 
 const showSlideUp = computed(() => {

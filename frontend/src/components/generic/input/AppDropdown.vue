@@ -33,7 +33,9 @@ import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 onMounted(() => {
   const selectIdx = (props.menuItems.length > props.defaultSelect) ? props.defaultSelect : 0
   selectedItem.value = props.menuItems[selectIdx]
-  emit('onSelect', [selectedItem.value, selectIdx])
+  if (!props.defaultCollapsed) {
+    emit('onSelect', [selectedItem.value, selectIdx])
+  }
 })
 
 onUnmounted( () => {

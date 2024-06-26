@@ -29,7 +29,6 @@ const mainStyle = computed(() => ({
 }))
 
 const handleMainScroll = (disableEnable) => {
-  console.log('handleMainCalled')
   if (disableEnable === 'disable') {
     mainScrolling.value = false
   } else if (disableEnable === 'enable') {

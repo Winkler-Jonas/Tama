@@ -30,7 +30,7 @@ const props = defineProps({
 const isVisibleCmp = computed(() => props.isVisible)
 const height = computed(() => props.slideHeight)
 
-const viewHeight = computed(() => ({'height': `${height.value}vh`}))
+const viewHeight = computed(() => ({'min-height': `${height.value}vh`}))
 
 </script>
 
