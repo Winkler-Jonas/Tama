@@ -159,10 +159,10 @@
       },
       "repeat": {
         "label": "Wiederholen",
-        "day": "Täglich",
-        "week": "Wöchtentlich",
-        "month": "Monatlich",
-        "year": "Jährlich",
+        "daily": "Täglich",
+        "weekly": "Wöchtentlich",
+        "monthly": "Monatlich",
+        "yearly": "Jährlich",
         "never": "Nie"
       },
       "due": {

@@ -159,10 +159,10 @@
       },
       "repeat": {
         "label": "Repeat",
-        "day": "Daily",
-        "week": "Weekly",
-        "month": "Monthly",
-        "year": "Yearly",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
         "never": "Never"
       },
       "due": {
