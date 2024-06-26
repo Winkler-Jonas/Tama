@@ -16,11 +16,11 @@
         <h2 class="tama-target-task-header">
           {{ $t('components.task.task') }}
         </h2>
-        <div v-for="task in todayTasks" :key="task.description">
-          <p>
-            {{ task }}
-          </p>
-        </div>
+        <tama-task v-for="(task, idx) in todayTasks" :key="task.id"
+                   :is-done="task.done"
+                   :task-object="task"
+                   @on-task-clicked="(taskID) => handleTaskClicked(taskID, idx)"
+        />
 
         <div class="tama-target-task">
           <p class="tama-target-task-text">
@@ -60,6 +60,7 @@ import TamaEditTask from "@/components/TamaEditTask.vue";
 import TamaSlideUp from "@/components/TamaSlideUp.vue";
 import TamaDailyTask from "@/components/task/TamaDailyTask.vue";
 import {useTaskStore} from "@/stores/taskStore.js";
+import TamaTask from "@/components/task/TamaTask.vue";
 
 
 const taskStore = useTaskStore()
@@ -70,6 +71,7 @@ const currentDate = ref(new Date())
 const currentMonth = ref(currentDate.value.getMonth())
 const currentYear = ref(currentDate.value.getFullYear())
 const todayTasks = ref([])
+const selectedTask = ref(-1)
 
 const modalViews = {
   TamaAddTask,
@@ -79,6 +81,10 @@ const modalViews = {
 const emit = defineEmits(['main-scrolling'])
 
 
+
+const handleTaskClicked = (taskID, idx) => {
+  selectedTask.value = idx
+}
 
 const showSlideUp = computed(() => {
   if (addActive.value) {
@@ -109,6 +115,7 @@ const handleMonthChange = (monthYear) => {
 const handleDaySelected = (date) => {
   currentDate.value = date
   todayTasks.value = taskStore.getTasksByDate(date)
+  console.log(todayTasks.value[0])
 }
 
 const handleModalClose = () => {
