@@ -9,7 +9,7 @@
         <app-round-tick-box @on-click="handleRadioButton"/>
       </div>
     </div>
-    <div v-if="!aiGeneratedItems"
+    <div v-if="!aiGeneratedItems || aiGeneratedItems.length === 0"
          class="ai-input-field-container"
          :class="{'ai-input-field-error': aiError}"
          @focusin="aiError = false"

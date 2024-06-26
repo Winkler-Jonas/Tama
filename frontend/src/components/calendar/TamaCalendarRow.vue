@@ -28,7 +28,7 @@
             <tama-calendar-digit
                 :is-selected="(currentSelected === dayIdx)"
                 :calendar-digit="day.day_date"
-                @on-select="currentSelected = dayIdx"
+                @on-select="() => handleDaySelect(dayIdx, day.date)"
             />
           </div>
         </div>
@@ -39,7 +39,7 @@
 
 <script setup>
 import {useI18n} from "vue-i18n";
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watch, watchEffect} from "vue";
 import { useUserStore } from "@/stores/userStore.js";
 import TamaCalendarDigit from "@/components/calendar/TamaCalendarDigit.vue";
 import { getNextWeek, getCurrentWeek, getPreviousWeek } from "@/utils/calendarLogic.js";
@@ -47,14 +47,47 @@ import AppHorizontalSlider from "@/components/generic/AppHorizontalSlider.vue";
 
 const { t, locale } = useI18n()
 const userStore = useUserStore()
+
+
+const props = defineProps({
+  currentDate: {
+    type: Date,
+    required: false,
+    default: new Date()
+  }
+})
+
 const weekDays = ref([])
-const currentSelected = ref(8)
+const currentSelected = ref(-1)
 
 const prevCurNextWeek = ref([])
 const slideContainerWidth = ref(0)
 const currentIndex = ref(1)
 const currentWeek = ref({})
 
+const emit = defineEmits(['on-date-select', 'on-month-change'])
+
+const currentMonthName = computed(() => {
+  if (Object.keys(currentWeek.value).length !== 0) {
+    const middleOfTheWeek = currentWeek.value.at(3)
+    return middleOfTheWeek.date.toLocaleDateString(t(`jLocals.${locale.value}`), {month: 'long'})
+  }
+
+})
+
+watch(currentMonthName, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    emit('on-month-change', [
+      currentWeek.value.at(3).date.getMonth(),
+      currentWeek.value.at(3).date.getFullYear()
+    ])
+  }
+})
+
+const handleDaySelect = (dayIdx, date) =>  {
+  currentSelected.value = dayIdx
+  emit('on-date-select', date)
+}
 
 const handleSliderLock = () => {
 
@@ -130,16 +163,12 @@ const findIndexOfToday = (array) => {
 };
 
 onMounted(() => {
-  const today = new Date()
-  createWeekArray(today)
+  createWeekArray(props.currentDate)
   currentWeek.value = prevCurNextWeek.value.at(1)
   currentSelected.value = findIndexOfToday(weekDays.value)
 })
 
-const currentMonthName = computed(() => {
-  const middleOfTheWeek = currentWeek.value.at(3)
-  return middleOfTheWeek.date.toLocaleDateString(t(`jLocals.${locale.value}`), {month: 'long'})
-})
+
 
 </script>
 

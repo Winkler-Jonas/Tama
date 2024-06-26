@@ -12,6 +12,21 @@ const formatDate = (date) => {
     return formatter.format(date).replace(/\//g, '.');
 }
 
+const formatToDjangoDate = (date) => {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1),  // getMonth() returns 0-based index, add 1 for correct month
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    // Pad month and day with a zero if they are less than 10
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
 /**
  * @param start {day: dayOfTheYear {Number}, year: yearNr {Number}}
  *
@@ -164,6 +179,7 @@ const dateMonitor = new DateMonitor();
 
 export {
     formatDate,
+    formatToDjangoDate,
     getNextWeek,
     getCurrentWeek,
     getPreviousWeek,

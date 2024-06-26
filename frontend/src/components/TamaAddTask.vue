@@ -8,23 +8,25 @@
           :menu-label="$t('components.addTask.repeat.label')"
           @on-input-clicked="activeMenu = 2"
           @on-select="handleRepeatSelect"
-          :menu-items="repeatValues" direction="up"
+          :menu-items="Object.values(repeatValues)"
+          direction="up"
           :external-collapse="activeMenu === 2"
       />
       <app-dropdown
           :menu-label="$t('components.addTask.due.label')"
           @on-input-clicked="activeMenu = 3"
           @on-select="handleDueSelect"
-          :menu-items="dueValues" direction="up"
+          :menu-items="Object.values(dueValues)"
+          direction="up"
           :external-collapse="activeMenu === 3"
       />
       <app-dropdown
           :menu-label="$t('components.addTask.category.label')"
           @on-input-clicked="activeMenu = 4"
           @on-select="handleCategorySelect"
-          :menu-items="categoryValues" direction="up"
+          :menu-items="Object.values(categoryValues)"
+          direction="up"
           :external-collapse="activeMenu === 4"
-
       />
       <div class="tama-add-task-menu-submit-area">
         <i @click="handleExitClicked" class="ri-close-line tama-add-task-menu-close"></i>
@@ -36,50 +38,96 @@
 
 <script setup>
 import {useI18n} from "vue-i18n";
-import {computed, ref } from "vue";
+import {computed, reactive, ref} from "vue";
 import AppAiInput from "@/components/generic/input/AppAiInput.vue";
 import AppDropdown from "@/components/generic/input/AppDropdown.vue";
+import {useUserStore} from "@/stores/userStore.js";
+import {useTaskStore} from "@/stores/taskStore.js";
+
 const { tm } = useI18n()
+const userStore = useUserStore()
+const taskStore = useTaskStore()
+
+const props = defineProps({
+  addDate: {
+    type: Date,
+    required: true
+  }
+})
 
 const emit = defineEmits(['onExit', 'onSubmit'])
 
 const contentData = ref(tm(''))
 const activeMenu = ref(0)
 
-const isVisible = computed(() => props.isVisible)
 const repeatValues = computed(() => {
   const repeatData = contentData.value.components.addTask.repeat || {};
-  return Object.entries(repeatData)
-      .filter(([key, _]) => key !== 'label')
-      .map(([_, value]) => value);
+  const {label, ...repeatValues} = repeatData
+  return repeatValues
 })
 const dueValues = computed(() => {
-  const repeatData = contentData.value.components.addTask.due || {};
-  return Object.entries(repeatData)
-      .filter(([key, _]) => key !== 'label') // Exclude the key 'label'
-      .map(([_, value]) => value);
+  const dueData = contentData.value.components.addTask.due || {};
+  const {label, ...dueValues} = dueData
+  return dueValues
 })
 const categoryValues = computed(() => {
-  const repeatData = contentData.value.components.addTask.category || {};
-  return Object.entries(repeatData)
-      .filter(([key, _]) => key !== 'label') // Exclude the key 'label'
-      .map(([_, value]) => value);
+  const categoryData = contentData.value.components.addTask.category || {};
+  const {label, ...categoryValues} = categoryData
+  return categoryValues
+})
+
+
+const formatEndDate = (endDateInt) => {
+  const weekStart = userStore.weekStart ? 1: 0;
+  let endDate = new Date(props.addDate);
+
+  switch (endDateInt) {
+    case 1:
+      // Next day
+      endDate.setDate(props.addDate.getDate() + 1);
+      return endDate;
+    case 2:
+      // End of the week
+      let dayOfWeek = props.addDate.getDay();
+      let daysToAdd = (6 + weekStart) - dayOfWeek;
+      endDate.setDate(props.addDate.getDate() + daysToAdd);
+      return endDate;
+    case 3:
+      // End of the month
+      endDate.setMonth(props.addDate.getMonth() + 1, 0);
+      return endDate;
+    case 4:
+      // End of the year
+      endDate.setFullYear(props.addDate.getFullYear(), 11, 31);
+      return endDate;
+    default:
+      return new Date(props.addDate);
+  }
+}
+
+const userInput = reactive({
+  description: '',
+  repeat: '',
+  start_date: props.addDate,
+  end_date: props.addDate,
+  category: '',
+  important: 0
 })
 
 const handleTaskInput = (usrInput) => {
-
+  userInput.description = usrInput
 }
 
 const handleRepeatSelect = (selected) => {
-
+  userInput.repeat = Object.keys(repeatValues.value)[selected[1]]
 }
 
 const handleDueSelect = (selected) => {
-
+  userInput.end_date = formatEndDate(selected[1])
 }
 
 const handleCategorySelect = (selected) => {
-
+  userInput.category = Object.keys(categoryValues.value)[selected[1]]
 }
 
 const handleExitClicked = () => {
@@ -87,8 +135,14 @@ const handleExitClicked = () => {
 }
 
 const handleSubmitClicked = () => {
-  // todo: Need server api
-  emit('onSubmit')
+  if (Object.values(userInput).every(value => value !== null && value !== undefined && value !== '')) {
+    try {
+      taskStore.createTask(userInput)
+      emit('onSubmit')
+    } catch (error) {
+      // todo display error somehow
+    }
+  }
 }
 
 </script>

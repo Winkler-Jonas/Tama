@@ -1,6 +1,10 @@
 <template>
   <section id="tama-profile-view" :style="`padding-top: ${$route.meta.tama}vh`" class="main-gl-view">
-    <tama-calendar-row />
+    <tama-calendar-row
+        :current-date="currentDate"
+        @on-date-select="handleDaySelected"
+        @on-month-change="handleMonthChange"
+    />
     <div class="tama-target-content">
       <h2 class="tama-target-task-header">
         {{ $t('components.task.task') }}
@@ -28,24 +32,30 @@
     </div>
     <tama-slide-up :is-visible="editActive || addActive">
       <template #slide-up-content>
-        <component :is="showSlideUp" @on-exit="handleModalClose" />
+        <component :is="showSlideUp" :add-date="currentDate" @on-exit="handleModalClose" />
       </template>
     </tama-slide-up>
   </section>
 </template>
 
 <script setup>
-import {computed, ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import TamaCalendarRow from "@/components/calendar/TamaCalendarRow.vue";
 import TamaAddTask from "@/components/TamaAddTask.vue";
 import TamaEditTask from "@/components/TamaEditTask.vue";
 import TamaSlideUp from "@/components/TamaSlideUp.vue";
 import TamaDailyTask from "@/components/task/TamaDailyTask.vue";
+import {useTaskStore} from "@/stores/taskStore.js";
+
+const taskStore = useTaskStore()
 
 
-const daySelected = ref(false)
 const addActive = ref(false)
 const editActive = ref(false)
+const currentDate = ref(new Date())
+const currentMonth = ref(currentDate.value.getMonth())
+const currentYear = ref(currentDate.value.getFullYear())
+const todayTasks = ref([])
 
 const modalViews = {
   TamaAddTask,
@@ -72,11 +82,31 @@ const handleEditClicked = () => {
   showModal.value = true
 }
 
+const handleMonthChange = (monthYear) => {
+  currentMonth.value = monthYear[0]
+  currentYear.value = monthYear[1]
+  taskStore.fetchTasks(currentMonth.value, currentYear.value)
+}
+
+const handleDaySelected = (date) => {
+  currentDate.value = date
+  todayTasks.value = taskStore.getTasksByDate(date)
+}
+
 const handleModalClose = () => {
   showModal.value = false
   addActive.value = false
   editActive.value = false
 }
+
+onMounted(() => {
+  try {
+    taskStore.fetchTasks(currentMonth.value, currentYear.value)
+  } catch (error) {
+    // ignore
+  }
+
+})
 
 </script>
 
