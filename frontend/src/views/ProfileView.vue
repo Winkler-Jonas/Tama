@@ -9,68 +9,48 @@
           @on-month-change="handleMonthChange"
       />
     </div>
-
-
-    <section id="tama-profile-view-scrollable">
-      <div class="tama-target-content">
-        <h2 class="tama-target-task-header">
-          {{ $t('components.task.task') }}
-        </h2>
-        <tama-task v-for="(task, idx) in todayTasks" :key="task.id"
-                   :is-done="task.done"
-                   :task-object="task"
-                   @on-task-clicked="(taskID) => handleTaskClicked(taskID, idx)"
-        />
-
-        <div class="tama-target-task">
-          <p class="tama-target-task-text">
-            Nichts zu tun, drücke "+" und füge eine neue Aufgabe hinzu
-          </p>
-        </div>
-        <div class="tama-target-daily-task">
-          <h2 class="tama-target-daily-header">
-            {{ $t('components.task.daily') }}
-          </h2>
-          <tama-daily-task />
-          <!--        <div @click="handleEditClicked" class="tama-target-daily-task-container">
-                    <div class="round-circle"></div>
-                    <p class="tama-target-daily-txt">
-                      Esse mindestens 3 verschiedene Arten Obst
-                    </p>
-                  </div>-->
-        </div>
-      </div>
-    </section>
+    <div class="tama-target-tasks-scrollable" :style="srollablePadding">
+      <tama-target-tasks @on-task-clicked="handleTaskClicked" :day-target="currentDate" @on-amount-change="(value) => totalNormalTasks = value"/>
+      <tama-daily-tasks @on-daily-clicked="handleDailyClicked" :day-target="currentDate" @on-amount-change="(value) => totalDailyTasks = value"/>
+    </div>
   </section>
-  <div class="tama-target-add-container">
-    <i @click="handleAddClicked" class="ri-add-line tama-target-add-icon"></i>
-  </div>
-  <tama-slide-up :is-visible="editActive || addActive">
+  <transition name="fade">
+    <div v-if="isGreaterEqual(today, currentDate)" class="tama-target-add-container">
+      <i @click="handleAddClicked" class="ri-add-line tama-target-add-icon"></i>
+    </div>
+  </transition>
+  <tama-slide-up :is-visible="editActive || addActive" :slide-height="isDaily ? 50 : 60" @height-change="(value) => slideUpHeight = value">
     <template #slide-up-content>
-      <component :is="showSlideUp" :add-date="currentDate" @on-exit="handleModalClose" />
+      <component :is="showSlideUp" :is-daily="isDaily" :slide-up-height="slideUpHeight" :task-object="selectedTask" :add-date="currentDate" @on-exit="handleModalClose" />
     </template>
   </tama-slide-up>
 </template>
 
 <script setup>
-import {computed, onMounted, onUnmounted, ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import TamaCalendarRow from "@/components/calendar/TamaCalendarRow.vue";
 import TamaAddTask from "@/components/TamaAddTask.vue";
 import TamaEditTask from "@/components/TamaEditTask.vue";
 import TamaSlideUp from "@/components/TamaSlideUp.vue";
-import TamaDailyTask from "@/components/task/TamaDailyTask.vue";
 import {useTaskStore} from "@/stores/taskStore.js";
-import TamaTask from "@/components/task/TamaTask.vue";
-
+import TamaTargetTasks from "@/components/target/TamaTargetTasks.vue";
+import TamaDailyTasks from "@/components/target/TamaDailyTasks.vue";
+import {isGreaterEqual} from '@/utils/calendarLogic.js'
 
 const taskStore = useTaskStore()
 
+const totalDailyTasks = ref(0)
+const totalNormalTasks = ref(0)
 const addActive = ref(false)
 const editActive = ref(false)
 const currentDate = ref(new Date())
+const today = ref(new Date())
 const currentMonth = ref(currentDate.value.getMonth())
 const currentYear = ref(currentDate.value.getFullYear())
 const todayTasks = ref([])
+const selectedTask = ref({})
+const isDaily = ref(false)
+const slideUpHeight = ref(0)
 
 const modalViews = {
   TamaAddTask,
@@ -79,11 +59,21 @@ const modalViews = {
 
 const emit = defineEmits(['main-scrolling'])
 
+const srollablePadding = computed(() => ({
+  'padding-bottom': `${20 + (totalDailyTasks.value + totalNormalTasks.value) * 2}rem`
+}))
 
-
-const handleTaskClicked = (taskID, idx) => {
+const handleTaskClicked = (taskObj) => {
   editActive.value = true
   showModal.value = true
+  selectedTask.value = taskObj
+}
+
+const handleDailyClicked = (dailyObj) => {
+  editActive.value = true
+  showModal.value = true
+  isDaily.value = true
+  selectedTask.value = dailyObj
 }
 
 const showSlideUp = computed(() => {
@@ -101,11 +91,6 @@ const handleAddClicked = () => {
   showModal.value = true
 }
 
-const handleEditClicked = () => {
-  editActive.value = true
-  showModal.value = true
-}
-
 const handleMonthChange = (monthYear) => {
   currentMonth.value = monthYear[0]
   currentYear.value = monthYear[1]
@@ -115,13 +100,14 @@ const handleMonthChange = (monthYear) => {
 const handleDaySelected = (date) => {
   currentDate.value = date
   todayTasks.value = taskStore.getTasksByDate(date)
-  console.log(todayTasks.value[0])
+  console.log(todayTasks.value)
 }
 
 const handleModalClose = () => {
   showModal.value = false
   addActive.value = false
   editActive.value = false
+  isDaily.value = false
 }
 
 
@@ -159,14 +145,15 @@ onMounted(() => {
 }
 
 
-#tama-profile-view-scrollable {
-  width: 100%;
+.tama-target-tasks-scrollable {
+  padding-top: 1em;
+  width: 90%;
   max-width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  padding-bottom: 25%;
+  height: min-content;
 }
 
 
@@ -242,5 +229,15 @@ onMounted(() => {
 
 }
 
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 
 </style>

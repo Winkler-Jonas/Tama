@@ -51,6 +51,14 @@ export const useUserStore = defineStore('user', () => {
         }
     }
 
+    function removeDailyByDesc(desc, date) {
+        const formattedDate = formatDate(date)
+        dailyTasks.value[formattedDate].reduceRight((acc, task, idx) => {
+            if (task.desc === desc) dailyTasks.value[formattedDate].splice(idx, 1);
+            return acc;
+        }, null)
+    }
+
     async function getDailies() {
         const todayFormatted = formatDate(new Date());
         if (dailyTasks.value[todayFormatted]) {
@@ -135,6 +143,7 @@ export const useUserStore = defineStore('user', () => {
         welcomeDone,
         focusTasks,
         dailyTasks,
+        userFocus,
         weekStart,
         username,
         password,
@@ -150,7 +159,8 @@ export const useUserStore = defineStore('user', () => {
         setNotification,
         removeFocusTask,
         setNewFocusTask,
-        setDailySelected
+        setDailySelected,
+        removeDailyByDesc
     }
 }, {
     persist: {

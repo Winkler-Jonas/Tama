@@ -147,38 +147,38 @@ const getPreviousMonth = (dayOfTheYear, year, weekStart) => {
     return getCurrentMonth(getNthDayOfYear(correctedNumber.year, correctedNumber.day), weekStart)
 }
 
-class DateMonitor {
-    constructor() {
-        this.currentDate = new Date().toDateString();
-        this.listeners = [];
-    }
+const isGreaterEqual = (date1, date2) => {
+    const dateA = date1 instanceof Date ? date1 : new Date(date1)
+    const dateB = date2 instanceof Date ? date2 : new Date(date2)
+    const dayAYear = dateA.getFullYear();
+    const dayAMonth = dateA.getMonth();
+    const dayADay = dateA.getDate();
 
-    checkDateChange() {
-        const newDate = new Date().toDateString();
-        if (this.currentDate !== newDate) {
-            this.currentDate = newDate;
-            this.listeners.forEach(listener => listener(this.currentDate));
+    const dayBYear = dateB.getFullYear();
+    const dayBMonth = dateB.getMonth();
+    const dayBDay = dateB.getDate();
+
+    if (dayAYear > dayBYear) {
+        return false;
+    } else if (dayAYear < dayBYear) {
+        return true;
+    } else {
+        if (dayAMonth > dayBMonth) {
+            return false;
+        } else if (dayAMonth < dayBMonth) {
+            return true;
+        } else {
+            return dayADay <= dayBDay;
         }
     }
+};
 
-    start() {
-        this.checkDateChange();
-        this.interval = setInterval(() => this.checkDateChange(), 60000);
-    }
 
-    stop() {
-        clearInterval(this.interval);
-    }
 
-    onDateChange(callback) {
-        this.listeners.push(callback);
-    }
-}
-
-const dateMonitor = new DateMonitor();
 
 export {
     formatDate,
+    isGreaterEqual,
     formatToDjangoDate,
     getNextWeek,
     getCurrentWeek,
