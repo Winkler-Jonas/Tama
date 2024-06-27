@@ -105,6 +105,9 @@
         "reAsk": "Are you sure? Tasks and achievements cannot be restored!",
         "error": "An error occurred, we were not able to delete your account! Please try again later."
       }
+    },
+    "target": {
+      "none": "Nothing to do, press \"+\" and add a new Task"
     }
   },
   "error": {
@@ -211,7 +214,8 @@
     },
     "task": {
       "task": "Tasks",
-      "daily": "Daily"
+      "daily": "Daily",
+      "taskDone": "Summary"
     }
   }
 }

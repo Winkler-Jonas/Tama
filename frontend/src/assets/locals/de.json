@@ -105,6 +105,9 @@
         "reAsk": "Bist du dir sicher? Alle Tasks und Erfolge werden unwiederruflich gelöscht.",
         "error": "Ein Fehler ist aufgetreten, wir konnten deinen Account nicht löschen! Versuche es später erneut."
       }
+    },
+    "target": {
+      "none": "Nichts zu tun, drücke \"+\" und füge eine neue Aufgabe hinzu"
     }
   },
   "error": {
@@ -211,7 +214,8 @@
     },
     "task": {
       "task": "Aufgaben",
-      "daily": "Heutige Aufgaben"
+      "daily": "Heutige Aufgaben",
+      "taskDone": "Resümee"
     }
   }
 }
