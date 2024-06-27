@@ -14,10 +14,8 @@ class TaskViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
 
     def get_queryset(self):
-        """
-        Restrict the returned tasks to a given month, if provided.
-        """
-        queryset = super().get_queryset()
+        user = self.request.user
+        queryset = super().get_queryset().filter(owner=user)
         month = self.request.query_params.get('month')
         year = self.request.query_params.get('year')
 
@@ -25,7 +23,6 @@ class TaskViewSet(viewsets.ModelViewSet):
             try:
                 month = int(month)  # 1 indexed !JAN IS NOT 0
                 year = int(year)
-                print(Task.objects.all())
                 queryset = queryset.filter(start_date__year=year, start_date__month=month)
             except ValueError:
                 return queryset.none()

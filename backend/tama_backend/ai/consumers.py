@@ -148,8 +148,6 @@ class GetDaily(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             text_data_json = json.loads(text_data)
-            print('received')
-            print(text_data_json)
             if not settings.DEBUG:
                 if not self.validate_user_time(self.scope['user'].id, text_data['user_time_zone']):
                     raise ValueError('Daily already created')
@@ -157,11 +155,8 @@ class GetDaily(AsyncWebsocketConsumer):
 
 
             modified_question = await self.modify_input(user_focus)
-            print(modified_question)
             response = await self.ask_google_gemini(modified_question)
-            print(response)
             final_response = self.process_response(response)
-            print(final_response)
             await self.send(text_data=json.dumps({'message': final_response}))
         except json.JSONDecodeError:
             # frontend error

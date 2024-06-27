@@ -1,4 +1,3 @@
-# backend/tama_backend/Dockerfile
 FROM python:3.11
 
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -36,4 +35,3 @@ RUN mkdir -p /app/staticfiles
 
 # Run migrations and collect static files before starting the server
 CMD ["/wait-for-db.sh", "db:5432", "--", "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python create_superuser.py && python manage.py collectstatic --noinput && daphne -b 0.0.0.0 -p 8000 tama_backend.asgi:application"]
-# CMD ["/wait-for-db.sh", "db:5432", "--", "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && daphne -e ssl:port=443:privateKey=/etc/ssl/tamado.app.key.pem:certKey=/etc/ssl/tamado.app.cert.pem --http_timeout 600 tama_backend.asgi:application"]
