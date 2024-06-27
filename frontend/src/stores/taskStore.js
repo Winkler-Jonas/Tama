@@ -58,7 +58,6 @@ export const useTaskStore = defineStore('task', {
             try {
                 taskData.start_date = formatToDjangoDate(taskData.start_date)
                 taskData.end_date = formatToDjangoDate(taskData.end_date)
-                console.log(toRaw(taskData))
                 const response = await api.post('/tasks/', toRaw(taskData));
                 this.tasks.push(response.data);
                 this.saveTasksToLocalStorage();
