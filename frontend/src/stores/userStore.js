@@ -70,6 +70,7 @@ export const useUserStore = defineStore('user', () => {
                 const socketConnected = await websocketService.createSocket('daily', '/ws/getDaily/');
                 websocketService.setHandler('daily', {
                     onMessage: (data) => {
+                        console.log(data)
                         const dataArray = Object.values(data)
                         if (dataArray.every(item => item.trim() === '')) {
                             console.log('Error parsing daily-response')

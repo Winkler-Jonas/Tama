@@ -1,15 +1,21 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
+from datetime import datetime, timedelta
 from asgiref.sync import sync_to_async
+from django.utils.timezone import now
 import google.generativeai as genai
+from .models import DailyTask
+from tasks.models import Task
 from django.conf import settings
 from datetime import datetime
 from decouple import config
 import regex as re
 import traceback
+import logging
 import pytz
 import json
 
+logger = logging.getLogger(__name__)
 
 response_pattern = re.compile(r"\*\*(?P<issue>.+?)\*\*", re.DOTALL | re.MULTILINE)
 response_focus = re.compile(r"\"(?P<focus>.+?)\"", re.DOTALL | re.MULTILINE)
@@ -148,48 +154,49 @@ class GetDaily(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             text_data_json = json.loads(text_data)
-            if not settings.DEBUG:
-                if not self.validate_user_time(self.scope['user'].id, text_data['user_time_zone']):
-                    raise ValueError('Daily already created')
-            user_focus = text_data_json['focus']
+            user = self.scope['user']
+            today = now().date()
 
+            # Check for existing tasks
+            existing_daily_tasks = await get_daily_tasks_from_daily_model(user, today)
+            if existing_daily_tasks:
+                await self.send(text_data=json.dumps({'message': existing_daily_tasks}))
+                return
 
-            modified_question = await self.modify_input(user_focus)
-            response = await self.ask_google_gemini(modified_question)
-            final_response = self.process_response(response)
-            await self.send(text_data=json.dumps({'message': final_response}))
+            # Create tasks with gemini
+            history_tasks = await get_history_tasks(user, text_data_json['focus'])
+            modified_question = await self.modify_input(text_data_json['focus'])
+            response = await self.ask_google_gemini(modified_question, [{"role": "system", "content": task} for task in history_tasks])
+            new_tasks = self.parse_response(response)
+
+            # Store new tasks and send them to the user
+            final_tasks = await self.store_new_tasks(user, today, new_tasks)
+            await self.send(text_data=json.dumps({'message': final_tasks}))
         except json.JSONDecodeError:
-            # frontend error
+            logger.error("Invalid JSON format received: %s", text_data)
             await self.send(text_data=json.dumps({'error': 'Invalid JSON format.'}))
         except ValueError as e:
-            # user error / frontend error
-            print('caught valueError')
+            logger.error("ValueError caught: %s", str(e))
             await self.send(text_data=json.dumps({'error': str(e)}))
         except Exception as e:
-            # who knows
-            print(e)
-            traceback.print_exc()
+            logger.exception("An unexpected error occurred.")
             await self.send(text_data=json.dumps({'error': 'An unexpected error occurred.'}))
 
-    async def validate_user_time(self, user_id, time_zone):
-        try:
-            utc_now = datetime.now(pytz.utc)
-            user_tz = pytz.timezone(time_zone)
-        except pytz.UnknownTimeZoneError:
-            return False
+    @sync_to_async
+    def get_daily_tasks(self, user, date):
+        return list(DailyTask.objects.filter(owner=user, start_date=date).values_list('description', flat=True))
 
-        user_time = utc_now.astimezone(user_tz)
-        last_run_date = await get_last_run_date(user_id)
+    @sync_to_async
+    def store_new_tasks(self, user, date, tasks):
+        DailyTask.objects.filter(owner=user, start_date__lt=date - timedelta(days=30)).delete()
+        daily_task_objects = [DailyTask(owner=user, description=task, start_date=date) for task in tasks]
+        DailyTask.objects.bulk_create(daily_task_objects)
+        return tasks
 
-        if last_run_date is None or user_time.date() > last_run_date:
-            await update_last_run_date(user_id, user_time.date())
-            return True
-        return False
-
-    def process_response(self, response):
-        formatted_response = dict()
+    def parse_response(self, response):
+        formatted_response = []
         if (match := response_daily.findall(response)) and len(match) > 2:
-            formatted_response = {f'daily_{idx}': val for idx, val in enumerate(match)}
+            formatted_response = [daily for daily in match]
         return formatted_response
 
     @sync_to_async
@@ -203,9 +210,9 @@ class GetDaily(AsyncWebsocketConsumer):
                 f"Answer in this language [{self.locale}].")
 
     @sync_to_async
-    def ask_google_gemini(self, input_text):
+    def ask_google_gemini(self, input_text, history):
         try:
-            chat_session = model.start_chat(history=[])
+            chat_session = model.start_chat(history=history)
             response = chat_session.send_message(input_text)
             return response.text
         except Exception as e:
@@ -217,19 +224,16 @@ User = get_user_model()
 
 
 @sync_to_async
-def get_last_run_date(user_id):
-    try:
-        user = User.objects.get(pk=user_id)
-        return user.last_run_date
-    except User.DoesNotExist:
-        return None
+def get_daily_tasks_from_daily_model(user, date):
+    return list(DailyTask.objects.filter(owner=user, start_date=date).values_list('description', flat=True))
 
 
 @sync_to_async
-def update_last_run_date(user_id, date):
-    try:
-        user = User.objects.get(pk=user_id)
-        user.update_run_date(date)
-        user.save()
-    except User.DoesNotExist:
-        return None
+def get_history_tasks(user, category):
+    thirty_days_ago = now().date() - timedelta(days=30)
+    return list(Task.objects.filter(
+        owner=user,
+        daily=True,
+        start_date__gte=thirty_days_ago,
+        category=category
+    ).values_list('description', flat=True))

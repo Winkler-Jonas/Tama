@@ -168,6 +168,7 @@ class WebSocketService {
             const handler = this.handlers[key];
             if (handler && handler.onMessage) {
                 const data = JSON.parse(event.data);
+                console.log(data)
                 if (data.error) {
                     if (handler.onError) {
                         handler.onError(getAIErrorMessage(data.error).message);
