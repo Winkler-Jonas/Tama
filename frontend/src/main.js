@@ -15,7 +15,6 @@ import { registerSW } from "virtual:pwa-register"
 import Vue3TouchEvents from "vue3-touch-events";
 import {useAuthStore} from "@/stores/auth.js";
 import { emitter } from '@/eventEmitter.js'
-import iconsSvg from '@/assets/icons/icons.svg'
 
 
 function setVhProperty() {
