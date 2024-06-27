@@ -73,12 +73,6 @@ function findIndexOfDate(array, date) {
 }
 
 
-
-
-
-
-
-
 const prevCurNextMonth = ref([])
 const slideContainerWidth = ref(0)
 const currentIndex = ref(1)

@@ -1,6 +1,6 @@
 <template>
   <div class="tama-daily-task-wrapper">
-    <h2 class="tama-target-daily-header">
+    <h2 v-if="openDailies.length > 0 || dailiesDone.length > 0" class="tama-target-daily-header">
       {{ $t('components.task.daily') }}
     </h2>
     <div v-for="(task, dailyIdx) in dailiesDone" :key="dailyIdx"
@@ -72,12 +72,9 @@ const openDailies = computed(() => {
 
 .tama-daily-task-wrapper {
   padding-top: 1em;
-
-  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
-
   gap: 1em;
 }
 

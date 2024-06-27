@@ -57,6 +57,7 @@ export const useUserStore = defineStore('user', () => {
             if (task.desc === desc) dailyTasks.value[formattedDate].splice(idx, 1);
             return acc;
         }, null)
+        updateLocalStorage()
     }
 
     async function getDailies() {

@@ -42,7 +42,7 @@ import {useI18n} from "vue-i18n";
 import {computed, onMounted, ref, watch, watchEffect} from "vue";
 import { useUserStore } from "@/stores/userStore.js";
 import TamaCalendarDigit from "@/components/calendar/TamaCalendarDigit.vue";
-import { getNextWeek, getCurrentWeek, getPreviousWeek } from "@/utils/calendarLogic.js";
+import { getNextWeek, getCurrentWeek, getPreviousWeek, findIndexOfDate } from "@/utils/calendarLogic.js";
 import AppHorizontalSlider from "@/components/generic/AppHorizontalSlider.vue";
 
 const { t, locale } = useI18n()
@@ -152,20 +152,10 @@ const handleSwipeLeft = () => {
   }
 }
 
-const findIndexOfToday = (array) => {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  return array.findIndex(item => {
-    const itemDate = new Date(item.date);
-    itemDate.setHours(0, 0, 0, 0);
-    return itemDate.getTime() === today.getTime();
-  });
-};
-
 onMounted(() => {
   createWeekArray(props.currentDate)
   currentWeek.value = prevCurNextWeek.value.at(1)
-  currentSelected.value = findIndexOfToday(weekDays.value)
+  currentSelected.value = findIndexOfDate(currentWeek.value, props.currentDate)
 })
 
 

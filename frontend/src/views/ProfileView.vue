@@ -51,6 +51,7 @@ const todayTasks = ref([])
 const selectedTask = ref({})
 const isDaily = ref(false)
 const slideUpHeight = ref(0)
+const showModal = ref(false)
 
 const modalViews = {
   TamaAddTask,
@@ -60,7 +61,7 @@ const modalViews = {
 const emit = defineEmits(['main-scrolling'])
 
 const srollablePadding = computed(() => ({
-  'padding-bottom': `${20 + (totalDailyTasks.value + totalNormalTasks.value) * 2}rem`
+  'padding-bottom': `${20 + totalDailyTasks.value + totalNormalTasks.value}vh`
 }))
 
 const handleTaskClicked = (taskObj) => {
@@ -84,7 +85,7 @@ const showSlideUp = computed(() => {
   }
 })
 
-const showModal = ref(false)
+
 
 const handleAddClicked = () => {
   addActive.value = true
@@ -100,7 +101,6 @@ const handleMonthChange = (monthYear) => {
 const handleDaySelected = (date) => {
   currentDate.value = date
   todayTasks.value = taskStore.getTasksByDate(date)
-  console.log(todayTasks.value)
 }
 
 const handleModalClose = () => {
@@ -149,22 +149,9 @@ onMounted(() => {
   padding-top: 1em;
   width: 90%;
   max-width: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow-y: scroll;
   display: flex;
   flex-direction: column;
-  height: min-content;
-}
-
-
-
-.tama-target-content {
-  width: 90%;
-  margin-inline: auto;
-  padding: 1em 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
 }
 
 .tama-target-add-container {
@@ -190,43 +177,6 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   background-color: black;
-}
-
-
-.tama-target-daily-task-container {
-  display: flex;
-  align-items: center;
-
-  padding: 0.5em;
-  border-radius: 10px;
-  background-color: var(--tama-color-daily);
-}
-
-.round-circle {
-  width: 30px;
-  height: 20px;
-  border: 1px solid black;
-  border-radius: 50%;
-}
-
-.tama-target-task-header {
-  color: var(--tama-color-blue);
-  text-align: center;
-}
-
-.tama-target-daily-header {
-  color: var(--tama-color-orange);
-  text-align: center;
-}
-
-.tama-target-daily-txt {
-  padding-left: 1em;
-}
-
-.tama-target-task-text {
-  padding: 0.5em;
-  color: var(--tama-color-gray);
-
 }
 
 

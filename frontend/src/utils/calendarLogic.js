@@ -173,13 +173,16 @@ const isGreaterEqual = (date1, date2) => {
     }
 };
 
-
-
+const findIndexOfDate = (array, date) => {
+    const formattedDate = formatDate(date)
+    return array.findIndex(day => formatDate(day.date) === formattedDate)
+}
 
 export {
     formatDate,
     isGreaterEqual,
     formatToDjangoDate,
+    findIndexOfDate,
     getNextWeek,
     getCurrentWeek,
     getPreviousWeek,
