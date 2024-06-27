@@ -33,7 +33,7 @@ generation_config = {
 }
 
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
+    model_name="gemini-1.5-pro",
     generation_config=generation_config,
 )
 
@@ -120,6 +120,7 @@ class AskAIConsumer(AsyncWebsocketConsumer):
 
         return (f"I want to do something and need 3 good ideas. "
                 f"One idea must not exceed 10 words. "
+                f"The answer must not be highlighted with asterisk or other markup."
                 f"Answer in this language [{self.locale}]. "
                 f"This is the topic: [{input_text}]")
 
@@ -166,7 +167,7 @@ class GetDaily(AsyncWebsocketConsumer):
             # Create tasks with gemini
             history_tasks = await get_history_tasks(user, text_data_json['focus'])
             modified_question = await self.modify_input(text_data_json['focus'])
-            response = await self.ask_google_gemini(modified_question, [{"role": "system", "content": task} for task in history_tasks])
+            response = await self.ask_google_gemini(modified_question, history_tasks)
             new_tasks = self.parse_response(response)
 
             # Store new tasks and send them to the user
@@ -212,10 +213,12 @@ class GetDaily(AsyncWebsocketConsumer):
     @sync_to_async
     def ask_google_gemini(self, input_text, history):
         try:
-            chat_session = model.start_chat(history=history)
+            previous_tasks = [{"parts": [{"text": task}], "role": "model"} for task in history]
+            chat_session = model.start_chat(history=previous_tasks)
             response = chat_session.send_message(input_text)
             return response.text
         except Exception as e:
+            print(e)
             raise ValueError("Gemini-Error")
 
 
