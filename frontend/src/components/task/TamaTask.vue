@@ -95,6 +95,8 @@ const containerHeight = ref(0)
 }
 
 .tama-task-done {
+  flex-shrink: 0;
+  flex-grow: 0;
   border: 1px solid var(--tama-color-gray);
   color: var(--tama-color-gray);
 }

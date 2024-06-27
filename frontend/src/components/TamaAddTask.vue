@@ -43,6 +43,7 @@ import AppAiInput from "@/components/generic/input/AppAiInput.vue";
 import AppDropdown from "@/components/generic/input/AppDropdown.vue";
 import {useUserStore} from "@/stores/userStore.js";
 import {useTaskStore} from "@/stores/taskStore.js";
+import {formatEndDate} from "@/utils/taskHandler.js";
 
 const { tm } = useI18n()
 const userStore = useUserStore()
@@ -77,33 +78,7 @@ const categoryValues = computed(() => {
 })
 
 
-const formatEndDate = (endDateInt) => {
-  const weekStart = userStore.weekStart ? 1: 0;
-  let endDate = new Date(props.addDate);
 
-  switch (endDateInt) {
-    case 1:
-      // Next day
-      endDate.setDate(props.addDate.getDate() + 1);
-      return endDate;
-    case 2:
-      // End of the week
-      let dayOfWeek = props.addDate.getDay();
-      let daysToAdd = (6 + weekStart) - dayOfWeek;
-      endDate.setDate(props.addDate.getDate() + daysToAdd);
-      return endDate;
-    case 3:
-      // End of the month
-      endDate.setMonth(props.addDate.getMonth() + 1, 0);
-      return endDate;
-    case 4:
-      // End of the year
-      endDate.setFullYear(props.addDate.getFullYear(), 11, 31);
-      return endDate;
-    default:
-      return new Date(props.addDate);
-  }
-}
 
 const userInput = reactive({
   description: '',
@@ -123,7 +98,7 @@ const handleRepeatSelect = (selected) => {
 }
 
 const handleDueSelect = (selected) => {
-  userInput.end_date = formatEndDate(selected[1])
+  userInput.end_date = formatEndDate(selected[1], props.addDate, userStore.weekStart ? 1: 0)
 }
 
 const handleCategorySelect = (selected) => {

@@ -21,7 +21,15 @@
   </transition>
   <tama-slide-up :is-visible="editActive || addActive" :slide-height="isDaily ? 50 : 60" @height-change="(value) => slideUpHeight = value">
     <template #slide-up-content>
-      <component :is="showSlideUp" :is-daily="isDaily" :slide-up-height="slideUpHeight" :task-object="selectedTask" :add-date="currentDate" @on-exit="handleModalClose" />
+      <component
+          :is="showSlideUp"
+          :is-daily="isDaily"
+          :slide-up-height="slideUpHeight"
+          :task-object="selectedTask"
+          :add-date="currentDate"
+          @on-exit="handleModalClose"
+          @on-submit="handleTaskAdded"
+      />
     </template>
   </tama-slide-up>
 </template>
@@ -85,11 +93,15 @@ const showSlideUp = computed(() => {
   }
 })
 
-
-
 const handleAddClicked = () => {
   addActive.value = true
   showModal.value = true
+}
+
+const handleTaskAdded = () => {
+  taskStore.fetchTasks(currentMonth.value, currentYear.value)
+  todayTasks.value = taskStore.getTasksByDate(currentDate.value)
+  handleModalClose()
 }
 
 const handleMonthChange = (monthYear) => {
