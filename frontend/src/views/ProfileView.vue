@@ -7,11 +7,18 @@
           :current-date="currentDate"
           @on-date-select="handleDaySelected"
           @on-month-change="handleMonthChange"
+          @on-swipe="currentDate = null"
       />
     </div>
     <div class="tama-target-tasks-scrollable" :style="srollablePadding">
-      <tama-target-tasks @on-task-clicked="handleTaskClicked" :day-target="currentDate" @on-amount-change="(value) => totalNormalTasks = value"/>
-      <tama-daily-tasks @on-daily-clicked="handleDailyClicked" :day-target="currentDate" @on-amount-change="(value) => totalDailyTasks = value"/>
+      <tama-target-tasks
+          @on-task-clicked="handleTaskClicked"
+          :day-target="currentDate"
+          @on-amount-change="(value) => totalNormalTasks = value"/>
+      <tama-daily-tasks
+          @on-daily-clicked="handleDailyClicked"
+          :day-target="currentDate"
+          @on-amount-change="(value) => totalDailyTasks = value"/>
     </div>
   </section>
   <transition name="fade">

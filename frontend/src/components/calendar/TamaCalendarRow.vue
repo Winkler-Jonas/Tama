@@ -48,7 +48,7 @@ import AppHorizontalSlider from "@/components/generic/AppHorizontalSlider.vue";
 const { t, locale } = useI18n()
 const userStore = useUserStore()
 
-
+const emit = defineEmits(['on-date-select', 'on-month-change', 'on-swipe'])
 const props = defineProps({
   currentDate: {
     type: Date,
@@ -65,7 +65,7 @@ const slideContainerWidth = ref(0)
 const currentIndex = ref(1)
 const currentWeek = ref({})
 
-const emit = defineEmits(['on-date-select', 'on-month-change'])
+
 
 const currentMonthName = computed(() => {
   if (Object.keys(currentWeek.value).length !== 0) {
@@ -141,6 +141,7 @@ const handleSwipeRight = () => {
     currentSelected.value = -1
     currentIndex.value--
     currentWeek.value = prevCurNextWeek.value.at(0)
+    emit('on-swipe')
   }
 }
 
@@ -149,6 +150,7 @@ const handleSwipeLeft = () => {
     currentSelected.value = -1
     currentIndex.value++
     currentWeek.value = prevCurNextWeek.value.at(-1)
+    emit('on-swipe')
   }
 }
 

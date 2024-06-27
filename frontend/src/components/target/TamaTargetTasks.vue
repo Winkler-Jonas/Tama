@@ -1,8 +1,13 @@
 <template>
 <div class="tama-target-tasks-wrapper">
   <h2 class="tama-target-task-header">
-    {{ $t('components.task.task') }}
+    {{ showheader ? $t('components.task.task'): $t('components.task.taskDone') }}
   </h2>
+  <transition name="fade">
+    <div v-if="userTasks.length === 0 && showheader" class="tama-target-tasks-none">
+      <p>{{ $t('views.target.none') }}</p>
+    </div>
+  </transition>
   <transition-group name="list" tag="div" class="tama-target-tasks-task-list">
     <tama-task v-for="(task, taskIdx) in userTasks" :key="task.id"
                :task-object="task"
@@ -15,20 +20,24 @@
 
 <script setup>
 import TamaTask from "@/components/task/TamaTask.vue"
-import {computed, onMounted} from "vue"
+import {computed, onMounted, ref} from "vue"
 import {useTaskStore} from "@/stores/taskStore.js";
+import {isGreaterEqual} from "@/utils/calendarLogic.js";
 
 const taskStore = useTaskStore()
 
 const emit = defineEmits(['on-task-clicked'])
 const props = defineProps({
   dayTarget: {
-    type: Date,
+    type: [Date, null],
     required: true
   }
 })
 
 const currentDate = computed(() => props.dayTarget)
+const today = ref(new Date())
+
+const showheader = computed(() => isGreaterEqual(today.value, currentDate.value))
 
 const userTasks = computed(() => {
   return taskStore.getTasksByDate(currentDate.value).filter(task => !task.daily)
@@ -44,8 +53,14 @@ onMounted(() => {
 
 .tama-target-tasks-wrapper {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.tama-target-tasks-none {
+  padding: 1em 0;
+  color: var(--tama-color-gray);
 }
 
 .tama-target-tasks-wrapper h2 {
@@ -74,6 +89,16 @@ onMounted(() => {
 
 .list-leave-active {
   position: absolute;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 </style>

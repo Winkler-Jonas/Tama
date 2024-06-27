@@ -35,7 +35,7 @@ onBeforeMount(async () => {
 const emit = defineEmits(['on-daily-clicked', 'on-amount-change'])
 const props = defineProps({
   dayTarget: {
-    type: Date,
+    type: [Date, null],
     required: true
   }
 })
@@ -60,7 +60,8 @@ const dailiesDone = computed(() => {
 const openDailies = computed(() => {
   const todayKey = formatDate(currentDate.value);
   if (userStore.dailyTasks) {
-    return userStore.dailyTasks[todayKey] || [];
+    const storedDailies = userStore.dailyTasks[todayKey] || [];
+    return storedDailies.filter(openD => !dailiesDone.value.some(closedD => closedD.description === openD.desc) )
   }
   return []
 });
