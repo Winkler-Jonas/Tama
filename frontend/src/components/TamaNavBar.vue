@@ -30,11 +30,11 @@ const navRoutes = ref({
   },
   target: {
     route: 'profile',
-    icon: 'target'
+    icon: 'home'
   },
   settings: {
     route: 'settings',
-    icon: 'gear'
+    icon: 'settings'
   }
 })
 
