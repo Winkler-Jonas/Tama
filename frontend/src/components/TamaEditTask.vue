@@ -5,13 +5,13 @@
       <span class="text-sm text-gray">{{ $t('components.editTask.mark') }}</span>
     </div>
     <div class="tama-tasks-container">
-      <tama-icon-container v-if="!isDaily" icon-name="inProgress" :is-disabled="!inProgress" :icon-state="inProgress" :icon-text="$t('components.editTask.inProcess')"/>
-      <tama-icon-container icon-name="done" @on-container-click="handleDoneClicked" :icon-state="(currentTask.done && !undoneDaily)" :icon-text="$t('components.editTask.done')"/>
-      <tama-icon-container v-if="!isDaily" icon-name="stroke" @on-container-click="handleStrokeClicked" :icon-state="currentTask.stroke" :icon-text="$t('components.editTask.stroke')"/>
-      <tama-icon-container v-if="!isDaily" icon-name="subTask" :is-disabled="true" :icon-text="$t('components.editTask.subTask')"/>
-      <tama-icon-container icon-name="edit" @on-container-click="handleEditClicked" :icon-state="false" :icon-text="$t('components.editTask.edit')"/>
-      <tama-icon-container icon-name="move" @on-container-click="handleMoveClicked" :icon-state="false" :icon-text="$t('components.editTask.move')"/>
-      <tama-icon-container v-if="!isDaily" icon-name="trash" @on-container-click="handleDeleteClicked" :icon-state="false" :icon-text="$t('components.editTask.trash')"/>
+      <tama-icon-container  v-if="!isDaily" icon-name="inProgress" :is-disabled="!inProgress" :icon-state="inProgress" :icon-text="$t('components.editTask.inProcess')"/>
+      <tama-icon-container  icon-name="done" @on-container-click="handleDoneClicked" :icon-state="(currentTask.done && !undoneDaily)" :icon-text="$t('components.editTask.done')"/>
+      <tama-icon-container  v-if="!isDaily" icon-name="stroke" @on-container-click="handleStrokeClicked" :icon-state="currentTask.stroke" :icon-text="$t('components.editTask.stroke')"/>
+      <tama-icon-container  v-if="!isDaily" icon-name="subTask" :is-disabled="true" :icon-text="$t('components.editTask.subTask')"/>
+      <tama-icon-container  icon-name="edit" @on-container-click="handleEditClicked" :icon-state="false" :icon-text="$t('components.editTask.edit')"/>
+      <tama-icon-container  icon-name="move" @on-container-click="handleMoveClicked" :icon-state="false" :icon-text="$t('components.editTask.move')"/>
+      <tama-icon-container  v-if="!isDaily" icon-name="trash" @on-container-click="handleDeleteClicked" :icon-state="false" :icon-text="$t('components.editTask.trash')"/>
     </div>
     <div class="tama-edit-task-bottom-area">
       <i @click="handleExitClicked" class="ri-close-line tama-edit-task-menu-close"></i>
@@ -42,8 +42,10 @@ const updateHeight = () => {
   }
 }
 
+
+
 onMounted(() => {
-  updateHeight();
+  updateHeight()
   window.addEventListener('resize', updateHeight);
 });
 
@@ -125,8 +127,6 @@ const handleFocusClicked = () => {
 }
 </script>
 
-
-
 <style scoped>
 
 #tama-edit-task {
@@ -148,13 +148,13 @@ const handleFocusClicked = () => {
 .tama-tasks-container {
   height: 100%;
   width: 90%;
-  flex: 1;
+  margin-inline: auto;
+
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 10px;
   justify-content: center;
-  justify-items: center;
-  align-content: center;
+  align-items: start;
 }
 
 .tama-tasks-container::after {
@@ -163,7 +163,7 @@ const handleFocusClicked = () => {
   grid-column: 1 / -1;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 389px) {
   .tama-tasks-container {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 5px;
