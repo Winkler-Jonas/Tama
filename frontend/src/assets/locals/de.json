@@ -216,6 +216,21 @@
       "task": "Aufgaben",
       "daily": "Heutige Aufgaben",
       "taskDone": "Resümee"
+    },
+    "category": {
+      "headerFirst": "Was ist dein Fokus?",
+      "header": "Fokus",
+      "subHeaderFirst": "Du kannst deinen Fokus später jederzeit in den Einstellungen ändern",
+      "subHeader": "Um deinen Fokus zu ändern, wähle einen neuen Fokus aus",
+      "done": "Fertig",
+      "sport": "Sport",
+      "diet": "Ernährung",
+      "digitalDetox": "Digital Detox",
+      "friends": "Freunde",
+      "mentalHealth": "Mentale Gesundheit",
+      "education": "Bildung",
+      "hobbies": "Hobby",
+      "finance": "Sparen"
     }
   }
 }

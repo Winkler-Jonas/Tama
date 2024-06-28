@@ -175,6 +175,10 @@ p {
     font-size: 12px !important;
 }
 
+.text-center {
+    text-align: center;
+}
+
 .text-button {
     font-size: 20px;
     color: white;

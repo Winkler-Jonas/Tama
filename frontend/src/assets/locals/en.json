@@ -216,6 +216,21 @@
       "task": "Tasks",
       "daily": "Daily",
       "taskDone": "Summary"
+    },
+    "category": {
+      "headerFirst": "What do you want to focus on?",
+      "header": "Focus",
+      "subHeaderFirst": "You can change your focus at any time in the settings",
+      "subHeader": "To change your focus, choose a different category",
+      "done": "Done",
+      "sport": "Sport",
+      "diet": "Diet",
+      "digitalDetox": "Digital Detox",
+      "friends": "Friends",
+      "mentalHealth": "Mental Health",
+      "education": "Education",
+      "hobbies": "Hobby",
+      "finance": "Save Money"
     }
   }
 }
