@@ -1,4 +1,5 @@
 <template>
+  <tama-focus-select :show-focus-select="!userStore.userFocus"/>
   <section id="tama-profile-view"
            :style="`top: ${$route.meta.tama}vh; height: ${100 - $route.meta.tama}vh`"
            class="main-gl-view">
@@ -51,8 +52,11 @@ import {useTaskStore} from "@/stores/taskStore.js";
 import TamaTargetTasks from "@/components/target/TamaTargetTasks.vue";
 import TamaDailyTasks from "@/components/target/TamaDailyTasks.vue";
 import {isGreaterEqual} from '@/utils/calendarLogic.js'
+import TamaFocusSelect from "@/components/focus/TamaFocusSelect.vue";
+import {useUserStore} from "@/stores/userStore.js";
 
 const taskStore = useTaskStore()
+const userStore = useUserStore()
 
 const totalDailyTasks = ref(0)
 const totalNormalTasks = ref(0)
@@ -129,6 +133,7 @@ const handleModalClose = () => {
   isDaily.value = false
 }
 
+const showFocusSelect = computed(() => !userStore.userFocus)
 
 onMounted(() => {
   emit('main-scrolling', 'disable')

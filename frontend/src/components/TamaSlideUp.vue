@@ -53,6 +53,7 @@ watchEffect(() => {
 }
 
 .tama-slide-up-modal-cls {
+  max-height: 100vh;
   z-index: 101;
   position: absolute;
   bottom: 0;

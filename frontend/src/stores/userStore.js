@@ -13,7 +13,7 @@ export const useUserStore = defineStore('user', () => {
     const weekStart = ref(true)
     const dailyTasks = ref(JSON.parse(localStorage.getItem('dailyTasks')) || {});
     const dailySelected = ref(0)
-    const userFocus = ref('Studieren')
+    const userFocus = ref('')
 
     function setDailySelected (idx) {
         dailySelected.value = idx
@@ -113,6 +113,10 @@ export const useUserStore = defineStore('user', () => {
         focusTasks.value[taskValue.key] = taskValue.value
     }
 
+    function setUserFocus(focus) {
+        userFocus.value = focus
+    }
+
     function getTaskFocus(task) {
         return focusTasks.value[task] ? focusTasks.value[task] : 0
     }
@@ -156,6 +160,7 @@ export const useUserStore = defineStore('user', () => {
         setUsername,
         setWeekStart,
         getTaskFocus,
+        setUserFocus,
         clearUserInfo,
         setWelcomeDone,
         setNotification,
