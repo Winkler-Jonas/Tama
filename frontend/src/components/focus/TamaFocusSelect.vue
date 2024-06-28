@@ -36,6 +36,7 @@ const selectedFocus = ref(userStore.userFocus)
 
 const categories = computed(() => Object.fromEntries(Object.entries(contentData.value.components.category || {}).filter(([key, value]) => !key.toLowerCase().includes('header') && key !== 'done')))
 
+const emit = defineEmits(['on-focus-selected'])
 const props = defineProps({
   showFocusSelect: {
     type: Boolean,
