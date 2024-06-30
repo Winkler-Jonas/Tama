@@ -1,71 +1,183 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Activate Your Account</title>
-    <style>
-        /* Import the font */
-        @import url('https://fonts.googleapis.com/css2?family=Short+Stack&display=swap');
+<html lang="de">
 
-        /* Define base styles and fallbacks */
-        body, p, h1, h2, h3, a, li {
-            font-family: 'Short Stack', 'Comic Sans MS', Arial, sans-serif;
-        }
-    </style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aktiviere deinen Account</title>
+  <style>
+    /* Import the font */
+    @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Short+Stack&display=swap');
+
+    h1,
+    h2,
+    h3 {
+      font-family: 'Short Stack', 'Comic Sans MS', Arial, sans-serif;
+    }
+
+    p,
+    a,
+    li {
+      font-family: 'Josefin Sans', 'Comic Sans MS', Arial, sans-serif;
+    }
+
+    body {
+      font-family: 'Josefin Sans', 'Comic Sans MS', Arial, sans-serif;
+      background-color: #83B6C7;
+      margin: 0;
+      padding: 0;
+      color: black;
+    }
+
+    ol {
+      padding: 20px;
+      padding-left: 16px;
+      margin-top: 0;
+    }
+
+    li {
+      line-height: 1.6;
+    }
+
+    h4 {
+      margin-bottom: 0;
+    }
+
+    a {
+      color: #FFA976;
+    }
+
+    h3 {
+      margin-top: 20px;
+    }
+
+    .email-container {
+      min-width: 350px;
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    .header {
+      text-align: center;
+      padding-bottom: 20px;
+    }
+
+    .image-container {
+      background-color: #83B6C7;
+      width: 175px;
+      height: 175px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      margin-bottom: 20px;
+    }
+
+    .image-container img {
+      width: 65%;
+    }
+
+    .header h2 {
+      margin: 0;
+    }
+
+    .content {
+      padding: 20px;
+      text-align: center;
+      border-top: 2px solid #eeeeee;
+    }
+
+    .content p {
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+
+    table {
+      text-align: left;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .button-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .button {
+      background-color: #FFA976;
+      color: #ffffff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    @media only screen and (max-width: 600px) {
+      table {
+        display: block;
+        width: 100%;
+      }
+
+      table td {
+        display: block;
+        width: 100%;
+      }
+    }
+  </style>
 </head>
-<body style="background: #83B6C7; margin: 0; padding: 20px; font-family: 'Short Stack', 'Comic Sans MS', Arial, sans-serif;">
-<table width="100%" cellspacing="0" cellpadding="0"
-       style="max-width: 600px; margin: auto; background: #ffffff; padding: 20px;">
-    <tr>
-        <td style="text-align: center; padding: 10px;">
-            <img src="https://tamado.app/assets/pet-UTjUnlmj.png" alt="logo"
-                 style="width: 100px; height: 100px; border-radius: 50%;">
-        </td>
-        <td style="text-align: center;">
-            <h1 style="font-size: 24px; margin: 0;">Tamado</h1>
-            <p>Account Aktivierung</p>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2" style="text-align: center;">
-            <h2>Hi {{ user.username }},</h2>
-            <p>Vielen Dank für die Registrierung. Bitte klick auf den Button unten, um deinen Account zu aktivieren.</p>
-            <p style="background-color: #FFA976; border-radius: 10px; padding: 10px; display: inline-block;">
-                <a href="https://{{ domain }}/activate/{{ uid }}/{{ token }}/"
-                   style="color: white; text-decoration: none;">Account aktivieren</a>
-            </p>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2">
-            <hr style="border: 0; height: 1px; background: #333; margin: 20px 0;">
-            <h3>Installiere Tamado auf deinem Smartphone</h3>
-            <table width="100%" cellspacing="0" cellpadding="0">
-                <tr>
-                    <td valign="top">
-                        <h4>Android</h4>
-                        <ol>
-                            <li>Öffne Chrome</li>
-                            <li>Navigiere zu <a href="https://{{ domain }}">Tamado</a></li>
-                            <li>Tippe auf das Menüsymbol</li>
-                            <li>Wähle 'Zum Startbildschirm hinzufügen'</li>
-                            <li>Befolge die Anweisungen</li>
-                        </ol>
-                    </td>
-                    <td valign="top">
-                        <h4>iPhone</h4>
-                        <ol>
-                            <li>Öffne Safari</li>
-                            <li>Besuche <a href="https://{{ domain }}">Tamado</a></li>
-                            <li>Tippe auf das Teilen-Symbol</li>
-                            <li>Wähle 'Zum Home-Bildschirm hinzufügen'</li>
-                            <li>Befolge die Anweisungen</li>
-                        </ol>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
+
+<body>
+  <div class="email-container">
+    <div class="header">
+      <div class="image-container">
+        <img src="https://tamado.app/assets/pet-UTjUnlmj.png" alt="tamado.app Logo">
+      </div>
+      <h2>Aktiviere deinen Tamado Account</h2>
+    </div>
+    <div class="content">
+      <strong>
+        <p>Hi {{ user.username }},</p>
+      </strong>
+      <p>
+        vielen Dank für deine Anmeldung bei Tamado.app. Um deine Anmeldung abzuschließen,
+        bestätige bitte deine E-Mail-Adresse.</p>
+      <div class="button-container">
+        <a href="https://{{ domain }}/activate/{{ uid }}/{{ token }}/" class="button">E-Mail-Adresse bestätigen</a>
+      </div>
+    </div>
+    <div class="content">
+      <h3>Installiere Tamado auf deinem Smartphone</h3>
+      <table cellspacing="0" cellpadding="0">
+        <tr>
+          <td valign="top">
+            <h4>Android</h4>
+            <ol>
+              <li>Öffne Chrome</li>
+              <li>Navigiere zu <a href="https://{{ domain }}">Tamado</a></li>
+              <li>Tippe auf das Menüsymbol</li>
+              <li>Wähle 'Zum Startbildschirm hinzufügen'</li>
+              <li>Befolge die Anweisungen</li>
+            </ol>
+          </td>
+          <td valign="top">
+            <h4>iPhone</h4>
+            <ol>
+              <li>Öffne Safari</li>
+              <li>Besuche <a href="https://{{ domain }}">Tamado</a></li>
+              <li>Tippe auf das Teilen-Symbol</li>
+              <li>Wähle 'Zum Home-Bildschirm hinzufügen'</li>
+              <li>Befolge die Anweisungen</li>
+            </ol>
+          </td>
+        </tr>
+      </table>
+    </div>
 </body>
+
 </html>
