@@ -17,7 +17,7 @@ import json
 
 logger = logging.getLogger(__name__)
 
-response_pattern = re.compile(r"\*\*(?P<issue>.+?)\*\*", re.DOTALL | re.MULTILINE)
+response_pattern = re.compile(r"(\d\.\s)?(?P<issue>.+)$", re.MULTILINE)
 response_focus = re.compile(r"\"(?P<focus>.+?)\"", re.DOTALL | re.MULTILINE)
 response_daily = re.compile(r'^\d+\.?\s?(?P<daily>.+)$', re.MULTILINE)
 
@@ -106,6 +106,7 @@ class AskAIConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({'error': 'Invalid JSON format.'}))
         except ValueError as e:
             # user error / frontend error
+            print(e)
             await self.send(text_data=json.dumps({'error': str(e)}))
         except Exception as e:
             # who knows
@@ -130,8 +131,9 @@ class AskAIConsumer(AsyncWebsocketConsumer):
             'issue2': '',
             'issue3': ''
         }
-        if (match := response_pattern.findall(response)) and len(match) > 2:
-            formatted_response |= {key: match[idx] for idx, key in enumerate(formatted_response.keys())}
+        if matches := response_pattern.finditer(response):
+            match_list = [match.group('issue') for match in matches]
+            formatted_response |= {key: match_list[idx] for idx, key in enumerate(formatted_response)}
         return formatted_response
 
     @sync_to_async
@@ -139,6 +141,8 @@ class AskAIConsumer(AsyncWebsocketConsumer):
         try:
             chat_session = model.start_chat(history=[])
             response = chat_session.send_message(input_text)
+            print('original response text')
+            print(response.text)
             return response.text
         except Exception as e:
             raise ValueError("Gemini-Error")
@@ -161,6 +165,7 @@ class GetDaily(AsyncWebsocketConsumer):
             # Check for existing tasks
             existing_daily_tasks = await get_daily_tasks_from_daily_model(user, today)
             if existing_daily_tasks:
+                print('getting existing tasks')
                 await self.send(text_data=json.dumps({'message': existing_daily_tasks}))
                 return
 
@@ -169,7 +174,8 @@ class GetDaily(AsyncWebsocketConsumer):
             modified_question = await self.modify_input(text_data_json['focus'])
             response = await self.ask_google_gemini(modified_question, history_tasks)
             new_tasks = self.parse_response(response)
-
+            print('got new response')
+            print(new_tasks)
             # Store new tasks and send them to the user
             final_tasks = await self.store_new_tasks(user, today, new_tasks)
             await self.send(text_data=json.dumps({'message': final_tasks}))
@@ -205,7 +211,7 @@ class GetDaily(AsyncWebsocketConsumer):
         return (f"I want to do something new today."
                 f"Can you provide me 10 great ideas?"
                 f"The task must be reasonable, regarding price and location."
-                f"The task must revolve around [{input_text}]."
+                f"The task must revolve around this topic [{input_text}]."
                 f"The answer must not be highlighted with asterisk or other markup."
                 f"One task must not exceed 15 words."
                 f"Answer in this language [{self.locale}].")
@@ -216,6 +222,8 @@ class GetDaily(AsyncWebsocketConsumer):
             previous_tasks = [{"parts": [{"text": task}], "role": "model"} for task in history]
             chat_session = model.start_chat(history=previous_tasks)
             response = chat_session.send_message(input_text)
+            print('google response')
+            print(response)
             return response.text
         except Exception as e:
             print(e)
