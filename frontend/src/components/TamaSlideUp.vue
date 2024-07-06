@@ -64,6 +64,7 @@ watchEffect(() => {
   max-width: var(--tama-max-w);
   background-color: white;
 
+  transition: all 0.3s ease;
   border: 3px solid var(--tama-color-orange);
   border-radius: 2rem 2rem 0 0;
   border-bottom: none;

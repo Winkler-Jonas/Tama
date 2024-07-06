@@ -7,13 +7,13 @@ export const useUserStore = defineStore('user', () => {
     const email = ref('')
     const username = ref('')
     const password = ref('')
-    const welcomeDone = ref(false)
+    const welcomeDone = ref(JSON.parse(localStorage.getItem('welcomeDone')) || false)
     const focusTasks = ref({})
     const notification = ref(false)
     const weekStart = ref(true)
     const dailyTasks = ref(JSON.parse(localStorage.getItem('dailyTasks')) || {});
     const dailySelected = ref(0)
-    const userFocus = ref('')
+    const userFocus = ref(JSON.parse(localStorage.getItem('userFocus')) || '')
 
     function setDailySelected (idx) {
         dailySelected.value = idx
@@ -106,6 +106,8 @@ export const useUserStore = defineStore('user', () => {
 
     function setWelcomeDone(value) {
         welcomeDone.value = value
+        const serializedData = JSON.stringify(welcomeDone.value);
+        localStorage.setItem('welcomeDone', serializedData);
     }
 
     function setNewFocusTask(taskValue) {
@@ -114,6 +116,8 @@ export const useUserStore = defineStore('user', () => {
 
     function setUserFocus(focus) {
         userFocus.value = focus
+        const serializedData = JSON.stringify(userFocus.value);
+        localStorage.setItem('userFocus', serializedData);
     }
 
     function getTaskFocus(task) {

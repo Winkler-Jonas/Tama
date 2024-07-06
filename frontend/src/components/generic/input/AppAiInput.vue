@@ -90,7 +90,6 @@ const handleGenerateAI = () => {
 }
 
 const handleUserSelectedItem = (userSelectAIdx) => {
-  console.log('user selected')
   userInput.value = userSelectAIdx[0]
   aiGeneratedItems.value = null
 }
@@ -107,7 +106,6 @@ async function connectWebSocket() {
     // Setting message and error handlers
     websocketService.setHandler('ask', {
       onMessage: (data) => {
-        console.log(data)
         const dataArray = Object.values(data)
         if (dataArray.every(item => item.trim() === '')) {
           aiError.value = true

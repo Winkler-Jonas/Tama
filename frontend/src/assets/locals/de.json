@@ -162,11 +162,11 @@
       },
       "repeat": {
         "label": "Wiederholen",
+        "never": "Nie",
         "daily": "Täglich",
         "weekly": "Wöchtentlich",
         "monthly": "Monatlich",
-        "yearly": "Jährlich",
-        "never": "Nie"
+        "yearly": "Jährlich"
       },
       "due": {
         "label": "Fälligkeit",
@@ -189,7 +189,7 @@
       }
     },
     "editTask": {
-      "inProcess": "In Bearbeitung",
+      "inProgress": "In Bearbeitung",
       "done": "Fertig",
       "stroke": "Streichen",
       "subTask": "Unter-aufgabe",
@@ -197,6 +197,16 @@
       "move": "Verschieben",
       "trash": "Löschen",
       "mark": "markieren als"
+    },
+    "moveTask": {
+      "header": "{task} verschieben",
+      "start": "Start",
+      "end": "Ende",
+      "move": {
+        "day": "Ein Tag",
+        "week": "Eine Woche",
+        "month": "Einen Monat"
+      }
     },
     "timer": {
       "earlyLeave": "Lass uns fokusieren ..."

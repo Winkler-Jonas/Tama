@@ -162,11 +162,11 @@
       },
       "repeat": {
         "label": "Repeat",
+        "never": "Never",
         "daily": "Daily",
         "weekly": "Weekly",
         "monthly": "Monthly",
-        "yearly": "Yearly",
-        "never": "Never"
+        "yearly": "Yearly"
       },
       "due": {
         "label": "Due Date",
@@ -189,7 +189,7 @@
       }
     },
     "editTask": {
-      "inProcess": "In Process",
+      "inProgress": "In Process",
       "done": "Done",
       "stroke": "Cancel",
       "subTask": "Sub-Task",
@@ -197,6 +197,16 @@
       "move": "Move",
       "trash": "Delete",
       "mark": "mark as"
+    },
+    "moveTask": {
+      "header": "Move {task}",
+      "start": "Start",
+      "end": "End",
+      "move": {
+        "day": "One Day",
+        "week": "One Week",
+        "month": "One Month"
+      }
     },
     "timer": {
       "earlyLeave": "Let's focus ..."

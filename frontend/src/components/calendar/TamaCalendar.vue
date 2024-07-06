@@ -12,6 +12,7 @@
         :amount-items="3"
         :current-index="currentIndex"
         :is-circular="true"
+        :show-gradient="false"
         @on-swipe-left="handleSwipeLeft"
         @on-swipe-right="handleSwipeRight"
         @on-resize="handleSwipeContainerResize"
@@ -30,7 +31,7 @@
                 v-for="(day, dayIdx) in week" :key="day.date_str"
                 :style="day.month !== currentMonthDigit ? 'color: var(--tama-color-gray)' : ''"
                 :is-selected="[weekIdx, dayIdx].every((value, index) => value === currentSelected[index])"
-                :is-today="isToday(day.date)"
+                :is-today="!simpleCalendar ? isToday(day.date) : isStartDate(day.date)"
                 :calendar-digit="day.day_date"
                 @on-select="handleDaySelect(weekIdx, dayIdx, day.date)"
             />
@@ -42,9 +43,9 @@
 </template>
 
 <script setup>
-import {getCurrentMonth, getNextMonth, getPreviousMonth} from "@/utils/calendarLogic.js";
+import {getCurrentMonth, getNextMonth, getPreviousMonth, isEqual} from "@/utils/calendarLogic.js";
 import TamaCalendarDigit from "@/components/calendar/TamaCalendarDigit.vue";
-import {computed, onBeforeMount, onMounted, ref} from "vue";
+import {computed, onBeforeMount, onMounted, ref, watch} from "vue";
 import {useUserStore} from "@/stores/userStore.js";
 import {useI18n} from "vue-i18n";
 import AppHorizontalSlider from "@/components/generic/AppHorizontalSlider.vue";
@@ -53,6 +54,41 @@ const { t, locale } = useI18n()
 const userStore = useUserStore()
 
 const monthDays = ref([])
+
+const emit = defineEmits(['on-date-select'])
+const props = defineProps({
+  simpleCalendar: {
+    type: Boolean,
+    required: false
+  },
+  startDate: {
+    type: Date,
+    required: false
+  },
+  endDate: {
+    type: Date,
+    required: false
+  }
+})
+
+const startDate = computed(() => props.startDate)
+const endDate = computed(() => props.endDate)
+
+const blueCircle = computed(() => {
+  if (props.simpleCalendar) {
+    return startDate.value
+  } else {
+    return new Date()
+  }
+})
+
+const orangeCircle = computed(() => {
+  if (props.simpleCalendar) {
+    return endDate.value
+  } else {
+    return new Date()
+  }
+})
 
 function findIndexOfDate(array, date) {
   date.setHours(0, 0, 0, 0);
@@ -81,7 +117,6 @@ const currentMonth = ref([])
 
 
 const handleSliderLock = () => {
-
   if (currentIndex.value === 0) {
     currentIndex.value++
     createMonthArray(null, 'prev')
@@ -103,16 +138,16 @@ const createMonthArray = (activeMonthDay, direction) => {
     prevCurNextMonth.value.pop()
     prevCurNextMonth.value.unshift(getPreviousMonth(currentFirstDay.year_day, currentFirstDay.year, weekStart))
   } else {
-      const activeMonth = getCurrentMonth(activeMonthDay, weekStart)
+    const activeMonth = getCurrentMonth(activeMonthDay, weekStart)
 
-      const firstDay = activeMonth.at(0).at(0)
-      const lastDay = activeMonth.at(-1).at(-1)
+    const firstDay = activeMonth.at(0).at(0)
+    const lastDay = activeMonth.at(-1).at(-1)
 
-      prevCurNextMonth.value = [
-          getPreviousMonth(firstDay.year_day, firstDay.year, weekStart),
-          activeMonth,
-          getNextMonth(lastDay.year_day, lastDay.year, weekStart)
-      ]
+    prevCurNextMonth.value = [
+        getPreviousMonth(firstDay.year_day, firstDay.year, weekStart),
+        activeMonth,
+        getNextMonth(lastDay.year_day, lastDay.year, weekStart)
+    ]
   }
 }
 
@@ -144,14 +179,13 @@ const handleSwipeLeft = () => {
 }
 
 onBeforeMount(() => {
-  const today = new Date()
-  createMonthArray(today)
-
-  monthDays.value = getCurrentMonth(new Date(), userStore.weekStart ? 1 : 0)
+  const start = new Date(startDate.value)
+  createMonthArray(start)
+  monthDays.value = getCurrentMonth(start, userStore.weekStart ? 1 : 0)
 })
 
 onMounted(() => {
-  currentSelected.value = findIndexOfDate(monthDays.value, new Date())
+  currentSelected.value = findIndexOfDate(monthDays.value, orangeCircle.value)
   currentMonth.value = prevCurNextMonth.value[1]
 })
 
@@ -175,7 +209,7 @@ const handleDaySelect = async (week, day, date) => {
   } else {
     currentSelected.value = [week, day]
   }
-
+  emit('on-date-select', date)
   // retrieve Data from Date
 }
 
@@ -193,6 +227,12 @@ const isToday = (date) => {
   return date1.getTime() === date2.getTime()
 }
 
+const isStartDate = (date) => {
+  const today = blueCircle.value
+  const date1 = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  const date2 = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  return date1.getTime() === date2.getTime()
+}
 
 const getHeader = computed(() => {
   if (currentMonth.value.length > 0) {
@@ -257,8 +297,6 @@ const getHeader = computed(() => {
 .tama-full-calendar-day {
   display: grid;
   place-items: center;
-
-
 }
 
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="swipe-container"
+  <div class="swipe-container" :class="{'disable-gradient': !showGradient}"
        @touchstart.passive="handleTouchStart"
        @touchmove.passive="handleTouchMove"
        @touchend.passive="handleTouchEnd"
@@ -27,6 +27,11 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false
+  },
+  showGradient: {
+    type: Boolean,
+    required: false,
+    default: true
   }
 })
 
@@ -117,6 +122,11 @@ onUnmounted(() => {
   overflow: hidden;
   width: 100%;
   height: max-content;
+}
+
+.swipe-container.disable-gradient::before,
+.swipe-container.disable-gradient::after {
+  content: none;
 }
 
 .swipe-container:before,

@@ -28,9 +28,9 @@
           direction="up"
           :external-collapse="activeMenu === 4"
       />
-      <div class="tama-add-task-menu-submit-area">
-        <i @click="handleExitClicked" class="ri-close-line tama-add-task-menu-close"></i>
-        <i @click="handleSubmitClicked" class="ri-check-line tama-add-task-menu-submit"></i>
+      <div class="flex space-between w-full tama-add-task-menu-submit-area">
+        <app-round-button @on-click="emit('onClose')" icon-name="close-line" class="bg-orange text-xxl" />
+        <app-round-button @on-click="handleSubmitClicked" icon-name="check-line" class="bg-blue text-xl"/>
       </div>
     </div>
   </section>
@@ -44,6 +44,7 @@ import AppDropdown from "@/components/generic/input/AppDropdown.vue";
 import {useUserStore} from "@/stores/userStore.js";
 import {useTaskStore} from "@/stores/taskStore.js";
 import {formatEndDate} from "@/utils/taskHandler.js";
+import AppRoundButton from "@/components/generic/AppRoundButton.vue";
 
 const { tm } = useI18n()
 const userStore = useUserStore()
@@ -53,10 +54,10 @@ const props = defineProps({
   addDate: {
     type: Date,
     required: true
-  }
+  },
 })
 
-const emit = defineEmits(['onExit', 'onSubmit'])
+const emit = defineEmits(['onClose', 'onSubmit'])
 
 const contentData = ref(tm(''))
 const activeMenu = ref(0)
@@ -76,9 +77,6 @@ const categoryValues = computed(() => {
   const {label, ...categoryValues} = categoryData
   return categoryValues
 })
-
-
-
 
 const userInput = reactive({
   description: '',
@@ -103,10 +101,6 @@ const handleDueSelect = (selected) => {
 
 const handleCategorySelect = (selected) => {
   userInput.category = Object.keys(categoryValues.value)[selected[1]]
-}
-
-const handleExitClicked = () => {
-  emit('onExit')
 }
 
 const handleSubmitClicked = () => {
@@ -158,32 +152,7 @@ const handleSubmitClicked = () => {
 
 .tama-add-task-menu-submit-area {
   margin-top: auto;
-  display: flex;
-  justify-content: space-between;
 
   margin-bottom: var(--sgn-mbt);
-}
-
-.tama-add-task-menu-close,
-.tama-add-task-menu-submit {
-  height: 50px;
-  width: 50px;
-  border-radius: 50%;
-
-  font-size: calc(var(--tama-h1-size) + 10px);
-  font-weight: bold;
-  color: white;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.tama-add-task-menu-close {
-  background-color: var(--tama-color-orange);
-}
-
-.tama-add-task-menu-submit {
-  background-color: var(--tama-color-green);
 }
 </style>

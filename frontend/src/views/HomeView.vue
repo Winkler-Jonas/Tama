@@ -27,7 +27,7 @@
       <i @click="handleAddClicked" class="ri-add-line tama-target-add-icon"></i>
     </div>
   </transition>
-  <tama-slide-up :is-visible="editActive || addActive" :slide-height="isDaily ? 50 : 60" @height-change="(value) => slideUpHeight = value">
+  <tama-slide-up :is-visible="editActive || addActive" :slide-height="slideUpHeight" @height-change="(value) => slideUpHeight = value">
     <template #slide-up-content>
       <component
           :is="showSlideUp"
@@ -35,8 +35,9 @@
           :slide-up-height="slideUpHeight"
           :task-object="selectedTask"
           :add-date="currentDate"
-          @on-exit="handleModalClose"
+          @on-close="handleModalClose"
           @on-submit="handleTaskAdded"
+          @on-height-change="handleHeightChange"
       />
     </template>
   </tama-slide-up>
@@ -69,12 +70,17 @@ const currentYear = ref(currentDate.value.getFullYear())
 const todayTasks = ref([])
 const selectedTask = ref({})
 const isDaily = ref(false)
-const slideUpHeight = ref(0)
+const slideUpHeight = ref(60)
 const showModal = ref(false)
 
 const modalViews = {
   TamaAddTask,
   TamaEditTask
+}
+
+
+const handleHeightChange = (heightInVH) => {
+  slideUpHeight.value = heightInVH
 }
 
 const emit = defineEmits(['main-scrolling'])
@@ -176,6 +182,7 @@ onMounted(() => {
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
+  gap: 3em;
 }
 
 .tama-target-add-container {

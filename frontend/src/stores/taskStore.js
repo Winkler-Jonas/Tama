@@ -69,15 +69,19 @@ export const useTaskStore = defineStore('task', {
 
         async updateTask(taskId, updatedData) {
             try {
+                updatedData.start_date = formatToDjangoDate(updatedData.start_date)
+                updatedData.end_date = formatToDjangoDate(updatedData.end_date)
                 const response = await api.patch(`/tasks/${taskId}/`, updatedData);
                 const index = this.tasks.findIndex(task => task.id === taskId);
                 if (index !== -1) {
                     this.tasks[index] = response.data;
                     this.saveTasksToLocalStorage();
                 }
+                return response.data;
             } catch (err) {
                 this.error = err.message;
-                // Optionally handle local updates or retries
+                // todo should be stored locally and synced as soon as connection is established again
+                throw err
             }
         },
 

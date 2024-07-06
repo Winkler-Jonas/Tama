@@ -147,6 +147,22 @@ const getPreviousMonth = (dayOfTheYear, year, weekStart) => {
     return getCurrentMonth(getNthDayOfYear(correctedNumber.year, correctedNumber.day), weekStart)
 }
 
+const isEqual = (dateA, dateB) => {
+    return toDateString(dateA) === toDateString(dateB)
+}
+
+function toDateString(date) {
+    return date.toISOString().split('T')[0];
+}
+
+function isDateBefore(date1, date2) {
+    return toDateString(date1) < toDateString(date2);
+}
+
+function isDateAfter(date1, date2) {
+    return toDateString(date1) > toDateString(date2);
+}
+
 const isGreaterEqual = (date1, date2) => {
     const dateA = date1 instanceof Date ? date1 : new Date(date1)
     const dateB = date2 instanceof Date ? date2 : new Date(date2)
@@ -179,8 +195,11 @@ const findIndexOfDate = (array, date) => {
 }
 
 export {
+    isEqual,
     formatDate,
     isGreaterEqual,
+    isDateBefore,
+    isDateAfter,
     formatToDjangoDate,
     findIndexOfDate,
     getNextWeek,

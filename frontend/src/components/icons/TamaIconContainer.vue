@@ -34,29 +34,7 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false
-  }
-})
-
-const sizeContainers = () => {
-  const grid = document.querySelector('.tama-tasks-container');
-  const items = document.querySelectorAll('.tama-icon-wrapper');
-  const gridWidth = grid.clientWidth;
-  const itemWidth = items[0].clientWidth;
-  const itemsPerRow = Math.floor(gridWidth / itemWidth);
-  const totalRows = Math.ceil(items.length / itemsPerRow);
-  const lastRowItemCount = items.length - (totalRows - 1) * itemsPerRow;
-
-  if (lastRowItemCount === 1 && items.length > 1) {
-    grid.style.gridTemplateColumns = `repeat(${itemsPerRow}, 1fr)`;
-    items[items.length - 1].style.gridColumn = `${Math.floor(itemsPerRow / 2) + 1}`;
-  } else {
-    grid.style.gridTemplateColumns = `repeat(auto-fit, minmax(100px, 1fr))`;
-    items.forEach(item => item.style.gridColumn = 'auto');
-  }
-}
-
-onMounted(() => {
-  sizeContainers()
+  },
 })
 
 </script>
@@ -64,6 +42,8 @@ onMounted(() => {
 <style scoped>
 
 .tama-icon-wrapper {
+  position: relative;
+  grid-column: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -93,7 +73,7 @@ onMounted(() => {
 
 .tama-icon-wrapper p {
   hyphens: auto;
-  font-size: clamp(9px, 3.5vw, 25px) !important;
+  font-size: clamp(9px, 3.5vw, 16px) !important;
 }
 
 .tama-icon-container {

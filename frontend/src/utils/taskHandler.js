@@ -1,21 +1,55 @@
-
+import {isEqual} from "@/utils/calendarLogic.js";
 
 
 const getTaskByID = (taskID, taskArray) => {
     return taskArray.find(obj => obj.id === taskID)
 }
 
-const createDaily = (taskDesc, date, focus) => {
-    return {
-        description: taskDesc,
-        repeat: 'never',
-        start_date: date,
-        end_date: date,
-        category: focus,
-        important: 0,
-        done: true,
-        daily: true
+const convertTask = (task, date, usrFocus) => {
+    const isDaily = !!task.desc
+
+    return isDaily ? {
+        obj: {
+            description: task.desc,
+            repeat: 'never',
+            start_date: new Date(date),
+            end_date: new Date(date),
+            category: usrFocus,
+            important: 0,
+            done: false,
+            daily: true
+        },
+        functions: ['done', 'edit', 'move']
+    } : {
+        obj: {
+            description: task.description,
+            repeat: task.repeat,
+            start_date: new Date(task.start_date),
+            end_date: new Date(task.end_date),
+            category: task.category,
+            important: 0,
+            done: task.done,
+            stroke: task.stroke,
+            daily: false
+        },
+        functions: ['inProgress', 'done', 'stroke', 'subTask', 'edit', 'move', 'trash']
     }
+}
+
+const taskAltered = (taskA, taskB) => {
+    let retVal = false
+
+    for (let key in taskA) {
+        if (taskA[key] instanceof Date) {
+            retVal = !isEqual(taskA[key], taskB[key])
+        } else {
+            retVal = taskA[key] !== taskB[key]
+        }
+        if (retVal) {
+            break
+        }
+    }
+    return retVal
 }
 
 /**
@@ -56,7 +90,8 @@ const formatEndDate = (endDateInt, startDate, weekStart) => {
 }
 
 export {
-    createDaily,
+    taskAltered,
+    convertTask,
     getTaskByID,
     formatEndDate
 }
