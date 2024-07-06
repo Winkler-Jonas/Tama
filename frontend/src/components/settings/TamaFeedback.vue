@@ -1,6 +1,6 @@
 <template>
   <template v-if="user.is_admin">
-    <div class="feedback-admin-view">
+    <div class="feedback-admin-view" :style="componentHeight">
       <div @click="handleExitClicked" class="feedback-admin-close">
         <i class="ri-close-line tama-feedback-close"></i>
       </div>
@@ -16,28 +16,29 @@
     </div>
   </template>
   <template v-else>
-    <transition name="fade">
-      <div v-if="!showThankYou" class="tama-feedback">
-        <h2>{{ $t('views.settings.feedback.subLabel') }}</h2>
-        <div class="tama-feedback-text">
-      <textarea v-model.trim="userMessage"
-                :placeholder="$t('views.settings.feedback.placeholder')">
-      </textarea>
+    <transition name="fade" :style="componentHeight" class="tama-feedback">
+
+        <div v-if="!showThankYou" >
+          <h2>{{ $t('views.settings.feedback.subLabel') }}</h2>
+          <div class="tama-feedback-text">
+            <textarea v-model.trim="userMessage"
+                      :placeholder="$t('views.settings.feedback.placeholder')">
+            </textarea>
+          </div>
+          <div class="tama-feedback-buttons">
+            <i @click="handleExitClicked" class="ri-close-line tama-feedback-close"></i>
+            <i @click="handleSubmitClicked" class="ri-mail-send-line tama-feedback-send"></i>
+          </div>
         </div>
-        <div class="tama-feedback-buttons">
-          <i @click="handleExitClicked" class="ri-close-line tama-feedback-close"></i>
-          <i @click="handleSubmitClicked" class="ri-mail-send-line tama-feedback-send"></i>
+        <div v-else class="tama-feedback-thank-you">
+          <h2 v-text-animation="{text: $t('views.settings.feedback.thankYou'), speed: 50}"></h2>
         </div>
-      </div>
-      <div v-else class="tama-feedback-thank-you">
-        <h2 v-text-animation="{text: $t('views.settings.feedback.thankYou'), speed: 50}"></h2>
-      </div>
     </transition>
   </template>
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {useAuthStore} from "@/stores/auth.js";
 import feedbackService from '@/services/feedbackService';
 import AppButton from "@/components/generic/AppButton.vue";
@@ -46,6 +47,18 @@ import FeedbackMessage from "@/components/settings/FeedbackMessage.vue";
 const { user } = useAuthStore();
 
 const emit = defineEmits(['onClose'])
+const props = defineProps({
+  minHeight: {
+    type: Number,
+    required: false
+  }
+})
+
+const minHeight = computed(() => props.minHeight)
+
+const componentHeight = computed(() => ({
+  'min-height': `${minHeight.value}vh`
+}))
 const userMessage = ref('')
 const showThankYou = ref(false)
 const feedbackList = ref([]);
@@ -99,12 +112,11 @@ const deleteFeedback = async (id) => {
 
 
 .feedback-admin-view {
-  height: 100%;
   width: 100%;
 
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: min-content 1fr min-content;
+  grid-template-rows: min-content 2fr min-content;
 }
 
 .feedback-admin-close {
@@ -132,11 +144,11 @@ const deleteFeedback = async (id) => {
 
   justify-self: center;
   position: relative;
+  bottom: 1em;
   margin-bottom: 1em;
 }
 
 .tama-feedback {
-  height: 100%;
   padding: 1em var(--sgn-mi);
 
   display: flex;
@@ -156,6 +168,7 @@ textarea::placeholder {
 }
 
 .tama-feedback-text {
+  flex: 1;
   border: 1px solid black;
   border-radius: 10px;
   height: 50%;

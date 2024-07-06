@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '@/views/HomeView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import LoginView from '@/views/LoginView.vue'
 import ActivationView from '@/views/ActivationView.vue'
@@ -19,7 +19,11 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, nav: true, tama: 30 }
+  },
+  {
+    path: '/home',
+    redirect: '/'
   },
   {
     path: '/welcome',
@@ -62,7 +66,7 @@ const routes = [
     path: '/calendar',
     name: 'calendar',
     component: CalendarView,
-    meta: { requiresAuth: true, nav: true, tama: 40 }
+    meta: { requiresAuth: true, nav: true, tama: 20 }
   },
   {
     path: '/settings',
@@ -109,12 +113,12 @@ router.beforeEach(async (to, from, next) => {
     if (!authStore.user) {
       try {
         await authStore.fetchUserProfile();
-        return next('/profile');
+        return next();
       } catch (error) {
         return next('/login');
       }
     }
-    return next('/profile');
+    return next();
   }
 
   if (requiresAuth) {

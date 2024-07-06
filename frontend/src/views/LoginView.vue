@@ -55,7 +55,7 @@ const login = async () => {
   errorMessage.value = ''
   try {
     await authStore.login(userStore.username, userStore.password);
-    await router.push('/profile');
+    await router.push('/home');
   }
   catch (error) {
     if (error instanceof (CredentialError || PasswordError)) {

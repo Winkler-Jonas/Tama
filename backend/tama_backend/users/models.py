@@ -6,6 +6,8 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     email_verified = models.BooleanField(default=False)
 
+    last_run_date = models.DateField(null=True, blank=True)
 
-class Task(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    def update_run_date(self, date):
+        self.last_run_date = date
+        self.save()

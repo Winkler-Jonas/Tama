@@ -43,11 +43,14 @@
 /* signup + welcome*/
 :root {
    --tama-color-orange: #FFA976;
+   --tama-color-daily: #FDDEC4;
    --tama-color-blue: #83B6C7;
    --tama-color-gray: #777777;
    --tama-color-green: #84A59D;
    --tama-color-nav: #f7ede2;
+   --tama-color-error: #aa1a1a;
 
+   --tama-xl-size: 40px;
    --tama-h1-size: 30px;
    --tama-h2-size: 20px;
 
@@ -154,8 +157,24 @@ h2 {
     color: var(--tama-color-orange)
 }
 
+.bg-orange {
+    background-color: var(--tama-color-orange);
+}
+
+.bg-red {
+    background-color: var(--tama-color-error);
+}
+
+.bg-green {
+    background-color: var(--tama-color-green);
+}
+
 .text-blue {
     color: var(--tama-color-blue)
+}
+
+.bg-blue {
+    background-color: var(--tama-color-blue);
 }
 
 .text-black {
@@ -172,6 +191,23 @@ p {
 
 .text-sm {
     font-size: 12px !important;
+}
+
+.text-md {
+    font-size: var(--tama-h2-size);
+}
+
+.text-xl {
+    font-size: var(--tama-h1-size);
+}
+
+.text-xxl {
+    font-size: var(--tama-xl-size);
+    font-weight: bolder;
+}
+
+.text-center {
+    text-align: center;
 }
 
 .text-button {

@@ -9,7 +9,7 @@
         <app-round-tick-box @on-click="handleRadioButton"/>
       </div>
     </div>
-    <div v-if="!aiGeneratedItems"
+    <div v-if="!aiGeneratedItems || aiGeneratedItems.length === 0"
          class="ai-input-field-container"
          :class="{'ai-input-field-error': aiError}"
          @focusin="aiError = false"
@@ -65,7 +65,7 @@ const userInput = ref('')
 const aiInputEnabled = ref(!props.aiOption)
 const aiGenerating = ref(false)
 const aiError = ref(false)
-const aiGeneratedItems = ref(null)
+const aiGeneratedItems = ref([])
 const sockedConnected = ref(false);
 
 watch(userInput, (newValue, oldValue) => {
@@ -89,36 +89,39 @@ const handleGenerateAI = () => {
   submitQuestion()
 }
 
-const handleUserSelectedItem = (userSelect) => {
-  userInput.value = userSelect
+const handleUserSelectedItem = (userSelectAIdx) => {
+  userInput.value = userSelectAIdx[0]
   aiGeneratedItems.value = null
 }
 
 const submitQuestion = () => {
-  websocketService.send({ question: userInput.value });
+  websocketService.send('ask',{ question: userInput.value });
 };
 
 async function connectWebSocket() {
   try {
-    const status = await websocketService.createSocket('/ws/askAI/');
-    if (status === "open") {
-      sockedConnected.value = true;
+    sockedConnected.value = false
+    sockedConnected.value = await websocketService.createSocket('ask', '/ws/askAI/')
 
-      websocketService.setOnMessageHandler((data) => {
-        if (data.every(item => item.trim() === '')) {
+    // Setting message and error handlers
+    websocketService.setHandler('ask', {
+      onMessage: (data) => {
+        const dataArray = Object.values(data)
+        if (dataArray.every(item => item.trim() === '')) {
           aiError.value = true
         } else {
-          aiGeneratedItems.value = data;
+          aiGeneratedItems.value = dataArray;
         }
         aiGenerating.value = false
-      });
-      websocketService.setOnErrorHandler(error => {
+      },
+      onError: (data) => {
         aiError.value = true;
         aiGenerating.value = false
-      });
-    }
+      },
+    });
   } catch (error) {
-    sockedConnected.value = true;
+    sockedConnected.value = false;
+    console.error('Failed to connect:', error);
   }
 }
 
@@ -133,7 +136,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  websocketService.closeSocket();
+  websocketService.closeSocket('ask');
 });
 
 </script>

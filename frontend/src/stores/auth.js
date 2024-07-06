@@ -50,7 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const refreshTokenFn = async () => {
         try {
-            const response = await api.post('/api/token/refresh/', { refresh: refreshToken.value });
+            const response = await api.post('/token/refresh/', { refresh: refreshToken.value });
             setAuthData(response.data.access, refreshToken.value);
         } catch (error) {
             clearAuthData();

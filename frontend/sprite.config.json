@@ -1,7 +1,7 @@
 {
   "mode": {
     "symbol": {
-      "sprite": "../src/assets/icons/icons.svg"
+      "sprite": "../public/icons/icons.svg"
     }
   },
   "shape": {

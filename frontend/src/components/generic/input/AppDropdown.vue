@@ -33,10 +33,13 @@ import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 onMounted(() => {
   const selectIdx = (props.menuItems.length > props.defaultSelect) ? props.defaultSelect : 0
   selectedItem.value = props.menuItems[selectIdx]
+  if (!props.defaultCollapsed) {
+    emit('onSelect', [selectedItem.value, selectIdx])
+  }
 })
 
 onUnmounted( () => {
-  emit('onSelect', selectedItem.value)
+  emit('onSelect', [selectedItem.value, clickedIdx.value])
 })
 
 const props = defineProps({
@@ -95,11 +98,13 @@ watch(externalCollapse, (newValue, oldValue) => {
 
 const selectedItem = ref('')
 const menuCollapsed = ref(props.defaultCollapsed)
+const clickedIdx = ref(0)
 
 const handleItemClick = (idx) => {
   menuCollapsed.value = false
+  clickedIdx.value = idx
   selectedItem.value = props.menuItems[idx]
-  emit("onSelect", selectedItem.value)
+  emit("onSelect", [selectedItem.value, idx])
 }
 
 const handleInputClicked = () => {

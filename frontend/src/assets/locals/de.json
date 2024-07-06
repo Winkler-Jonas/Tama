@@ -3,6 +3,10 @@
     "de": "Deutsch",
     "en": "Englisch"
   },
+  "jLocals": {
+    "de": "de-DE",
+    "en": "en-US"
+  },
   "placeholder": {
     "pass": "Passwort eingeben",
     "passRepeat": "Passwort bestätigen",
@@ -101,6 +105,9 @@
         "reAsk": "Bist du dir sicher? Alle Tasks und Erfolge werden unwiederruflich gelöscht.",
         "error": "Ein Fehler ist aufgetreten, wir konnten deinen Account nicht löschen! Versuche es später erneut."
       }
+    },
+    "target": {
+      "none": "Nichts zu tun, drücke \"+\" und füge eine neue Aufgabe hinzu"
     }
   },
   "error": {
@@ -155,11 +162,11 @@
       },
       "repeat": {
         "label": "Wiederholen",
-        "day": "Täglich",
-        "week": "Wöchtentlich",
-        "month": "Monatlich",
-        "year": "Jährlich",
-        "never": "Nie"
+        "never": "Nie",
+        "daily": "Täglich",
+        "weekly": "Wöchtentlich",
+        "monthly": "Monatlich",
+        "yearly": "Jährlich"
       },
       "due": {
         "label": "Fälligkeit",
@@ -182,17 +189,58 @@
       }
     },
     "editTask": {
-      "inProcess": "In Bearbeitung",
+      "inProgress": "In Bearbeitung",
       "done": "Fertig",
       "stroke": "Streichen",
-      "subTask": "Unteraufgabe",
+      "subTask": "Unter-aufgabe",
       "edit": "Bearbeiten",
       "move": "Verschieben",
       "trash": "Löschen",
       "mark": "markieren als"
     },
+    "moveTask": {
+      "header": "{task} verschieben",
+      "start": "Start",
+      "end": "Ende",
+      "move": {
+        "day": "Ein Tag",
+        "week": "Eine Woche",
+        "month": "Einen Monat"
+      }
+    },
     "timer": {
       "earlyLeave": "Lass uns fokusieren ..."
+    },
+    "calendar": {
+      "weekdays": {
+        "mon": "Montag",
+        "tue": "Dienstag",
+        "wed": "Mittwoch",
+        "thu": "Donnerstag",
+        "fri": "Freitag",
+        "sat": "Samstag",
+        "sun": "Sonntag"
+      }
+    },
+    "task": {
+      "task": "Aufgaben",
+      "daily": "Heutige Aufgaben",
+      "taskDone": "Resümee"
+    },
+    "category": {
+      "headerFirst": "Was ist dein Fokus?",
+      "header": "Fokus",
+      "subHeaderFirst": "Du kannst deinen Fokus später jederzeit in den Einstellungen ändern",
+      "subHeader": "Um deinen Fokus zu ändern, wähle einen neuen Fokus aus",
+      "done": "Fertig",
+      "sport": "Sport",
+      "diet": "Ernährung",
+      "digitalDetox": "Digital Detox",
+      "friends": "Freunde",
+      "mentalHealth": "Mentale Gesundheit",
+      "education": "Bildung",
+      "hobbies": "Hobby",
+      "finance": "Sparen"
     }
   }
 }

@@ -3,9 +3,9 @@
     <header class="tama-header">
       <app-tama-area v-if="$route.meta.tama" :tama-area-height="$route.meta.tama" />
     </header>
-    <main>
+    <main :style="mainStyle">
       <router-view v-slot="{ Component }">
-        <component :is="Component" :key="$route.fullPath"/>
+        <component :is="Component" @main-scrolling="handleMainScroll" :key="$route.fullPath"/>
       </router-view>
     </main>
     <footer>
@@ -19,8 +19,24 @@
 import TamaNavBar from "@/components/TamaNavBar.vue";
 import {useAuthStore} from "@/stores/auth.js";
 import AppTamaArea from "@/components/generic/AppTamaArea.vue";
+import {computed, ref} from "vue";
 
 const authStore = useAuthStore()
+const mainScrolling = ref(true)
+
+const mainStyle = computed(() => ({
+  'overflow-y': mainScrolling.value ? 'auto' : 'hidden'
+}))
+
+const handleMainScroll = (disableEnable) => {
+  if (disableEnable === 'disable') {
+    mainScrolling.value = false
+  } else if (disableEnable === 'enable') {
+    mainScrolling.value = true
+  }
+}
+
+
 </script>
 
 <style scoped>
@@ -45,6 +61,7 @@ main {
   grid-column: 1 / -1;
   z-index: 1;
   height: 100%;
+  overflow-x: hidden;
   overflow-y: visible;
 }
 

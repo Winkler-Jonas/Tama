@@ -1,21 +1,21 @@
 <template>
-  <div class="tama-icon-wrapper">
-    <div class="tama-icon-aspect-ratio"></div>
-    <div class="tama-icon-content">
-      <div class="tama-icon-container">
-        <tama-icon :icon-name="iconName"/>
-      </div>
-      <p :lang="languageStore.locale">{{ iconText }}</p>
+  <div class="tama-icon-wrapper"
+       @click="emit('on-container-click')"
+       :class="[{'container-disabled': isDisabled}, {'container-active': iconState}]">
+    <div class="tama-icon-container">
+      <tama-icon :icon-name="iconName"/>
     </div>
+    <p :lang="languageStore.locale">{{ iconText }}</p>
   </div>
 </template>
 
 <script setup>
 import TamaIcon from "@/components/generic/TamaIcon.vue";
 import {useLanguageStore} from "@/stores/langStore.js";
+import {onMounted} from "vue";
 const languageStore = useLanguageStore()
 
-
+const emit = defineEmits(['on-container-click'])
 const props = defineProps({
   iconName: {
     type: String,
@@ -24,7 +24,17 @@ const props = defineProps({
   iconText: {
     type: String,
     required: true,
-  }
+  },
+  iconState: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  isDisabled: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
 })
 
 </script>
@@ -32,42 +42,44 @@ const props = defineProps({
 <style scoped>
 
 .tama-icon-wrapper {
-  --i-w: 30%;
-  --i-mw: 150px;
   position: relative;
-  width: min(var(--i-w), var(--i-mw));
-}
-
-.tama-icon-aspect-ratio {
-  padding-top: 100%;
-}
-
-.tama-icon-content {
-  position: absolute;
-  top: 0; bottom: 0; left: 0; right: 0;
-
-  width: 100%;
-  height: 100%;
+  grid-column: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  aspect-ratio: 1;
+
   text-align: center;
   padding: .5em 0;
 
+  transition: all 0.3s ease;
   border: 2px solid black;
   border-radius: 20%;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
 
-.tama-icon-content p {
-  margin-top: auto;
+.tama-icon-wrapper.container-disabled {
+  background-color: rgba(199, 196, 198, 0.9);
+  border: 2px solid var(--tama-color-gray);
+  box-shadow: none;
+}
+
+.tama-icon-wrapper.container-active {
+  border: 2px solid var(--tama-color-orange);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.tama-icon-wrapper p {
   hyphens: auto;
-  font-size: clamp(10px, 12px, 20px);
+  font-size: clamp(9px, 3.5vw, 16px) !important;
 }
 
 .tama-icon-container {
-  margin-inline: 25%;
+  width: 40%;
+  margin-inline: auto;
+  padding-bottom: clamp(10px, 3vw, 20px);
 }
 
 

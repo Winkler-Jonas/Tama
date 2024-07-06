@@ -1,36 +1,78 @@
 <template>
-  <tama-slide-up :slide-height="slideHeight" :is-visible="isVisible">
-    <template #slide-up-content>
-      <section id="tama-edit-task">
-        <div class="tama-edit-task-header">
-          <h2>{{ taskName }}</h2>
-          <span class="text-sm text-gray">{{ $t('components.editTask.mark') }}</span>
-        </div>
-        <div class="tama-tasks-container">
-          <tama-icon-container icon-name="inProgress" :icon-text="$t('components.editTask.inProcess')"/>
-          <tama-icon-container icon-name="done" :icon-text="$t('components.editTask.done')"/>
-          <tama-icon-container icon-name="stroke" :icon-text="$t('components.editTask.stroke')"/>
-          <tama-icon-container icon-name="sub-task" :icon-text="$t('components.editTask.subTask')"/>
-          <tama-icon-container icon-name="edit" :icon-text="$t('components.editTask.edit')"/>
-          <tama-icon-container icon-name="move" :icon-text="$t('components.editTask.move')"/>
-          <tama-icon-container icon-name="trash" :icon-text="$t('components.editTask.trash')"/>
-        </div>
-        <div class="tama-edit-task-bottom-area">
-          <i @click="handleExitClicked" class="ri-close-line tama-edit-task-menu-close"></i>
-          <i @click="handleFocusClicked" class="ri-timer-line tama-edit-task-menu-focus"></i>
-        </div>
-      </section>
-    </template>
-  </tama-slide-up>
+  <section id="tama-edit-task" :style="slideHeight ? `min-height: ${slideUpHeight}vh`: ''">
+    <div class="tama-edit-task-header">
+      <h2>{{ currentTask.description }}</h2>
+      <span class="text-sm text-gray">{{ $t('components.editTask.mark') }}</span>
+    </div>
+    <div class="tama-edit-functions-container">
+      <tama-edit-function
+          v-for="(tamaFnKey, funIdx) in editFunctionKeys" :key="`FunIdx-${funIdx}`"
+          ref="functionRefs"
+          :function-key="tamaFnKey"
+          :active-functions="activeFunctions"
+          :force-disable="tamaFnKey === 'inProgress' && !inProgress"
+          @on-function-click="handleFunctionClick"
+      />
+    </div>
+    <div class="flex space-between w-full">
+      <app-round-button @on-click="emit('on-close')" icon-name="close-line" class="bg-orange text-xxl" />
+      <app-round-button
+          @on-click="() => !mutation ? handleFocusClicked() : handleSubmitChanges()"
+          :icon-name="mutation ? 'check-line': 'timer-line'"
+          :class="{'bg-blue text-xl': !mutation && !saveError, 'bg-green text-xxl': mutation && !saveError, 'bg-red text-xxl': saveError}"
+      />
+    </div>
+    <app-blurred-overlay :is-visible="showEdit || showMove" />
+    <transition name="tama-edit-container">
+      <tama-edit-task-edit
+          v-if="showEdit"
+          :task-category="currentTask.category"
+          :task-description="currentTask.description"
+          @on-close="modalUnsavedExit = true"
+          @on-save="handleTaskEdit"
+          key="edit"
+      />
+      <tama-edit-task-move
+          v-else-if="showMove"
+          :task-name="currentTask.description"
+          :start-date="currentTask.start_date"
+          :end-date="currentTask.end_date"
+          @on-close="modalUnsavedExit = true"
+          @on-save="handleTaskEdit"
+          key="move"
+      />
+    </transition>
+<!--    <tama-edit-task-main
+        @on-edit-task="editTask = true"
+        @on-move-task="moveTask = true"
+        @on-focus="handleFocusClicked"
+        @on-close="handleExitClicked"
+        @change-height="(value) => emit('on-height-change', value)"
+        :is-daily="isDaily"
+        :task-object="currentTask"
+    />-->
+  </section>
 </template>
 
 <script setup>
-
-import TamaIconContainer from "@/components/icons/TamaIconContainer.vue";
-import TamaSlideUp from "@/components/TamaSlideUp.vue";
-import {onMounted, onUnmounted, ref} from "vue";
 import router from "@/router/index.js";
+import {useTaskStore} from "@/stores/taskStore.js";
+import {convertTask, taskAltered} from "@/utils/taskHandler.js";
+import {useUserStore} from "@/stores/userStore.js";
+import {isGreaterEqual} from "@/utils/calendarLogic.js";
+import {computed, onMounted, onUnmounted, ref, watch} from "vue";
+import AppRoundButton from "@/components/generic/AppRoundButton.vue";
+import TamaEditTaskEdit from "@/components/edit/TamaEditTaskEdit.vue";
+import TamaEditFunction from "@/components/edit/TamaEditFunction.vue";
+import TamaEditTaskMove from "@/components/edit/TamaEditTaskMove.vue";
+import AppBlurredOverlay from "@/components/generic/AppBlurredOverlay.vue";
 
+const taskStore = useTaskStore()
+const userStore = useUserStore()
+const noneInteractive = ['inProgress']
+const modalActions = ['move', 'edit']
+
+const slideHeight = ref(0)
 const updateHeight = () => {
   if (window.innerWidth < 800) {
     slideHeight.value = window.innerHeight < 750 ? 75 : 60;
@@ -40,94 +82,233 @@ const updateHeight = () => {
 }
 
 onMounted(() => {
-  updateHeight();  // Set initial height
-  window.addEventListener('resize', updateHeight);  // Add resize listener
+  updateHeight()
+  window.addEventListener('resize', updateHeight);
+  const convertedTask = convertTask(props.taskObject, today.value, userStore.userFocus)
+  currentTask.value = convertedTask.obj
+  fallBackTask.value = convertTask(props.taskObject, today.value, userStore.userFocus).obj
+  editFunctionKeys.value = convertedTask.functions
+  activeFunctions.value = [
+      isGreaterEqual(today.value, convertedTask.obj.end_date) ? 'inProgress' : '',
+      convertedTask.obj.done ? 'done' : '',
+      convertedTask.obj.stroke ? 'stroke' : ''
+  ]
+  activeFunctions.value = activeFunctions.value.filter(item => item !== '')
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', updateHeight);  // Clean up listener
+  window.removeEventListener('resize', updateHeight);
 });
 
+const emit = defineEmits(['on-close', 'on-height-change'])
 const props = defineProps({
-  isVisible: {
-    type: Boolean,
+  taskObject: {
+    type: Object,
     required: true
   },
-  taskName: {
-    type: String,
+  isDaily: {
+    type: Boolean,
     required: false,
-    default: 'Web-Technologien fertig machen'
+    default: false
+  },
+  slideUpHeight: {
+    type: Number,
+    required: false,
   }
 })
 
-const slideHeight = ref(0)
+const saveError = ref(false)
+const functionRefs = ref([])
+const showEdit = ref(false)
+const showMove = ref(false)
+const today = ref(new Date())
+const currentTask = ref({})
+const editFunctionKeys = ref([])
+const activeFunctions = ref([])
+const fallBackTask = ref({})
+const functionActive = computed(() =>
+      activeFunctions.value.some(item =>
+        noneInteractive.some(ni => item !== ni)))
+const inProgress = computed(() => isGreaterEqual(today.value, currentTask.value.end_date))
+const modalUnsavedExit = ref(false)
+const currentAction = ref('')
+const mutation = computed(() => taskAltered(currentTask.value, fallBackTask.value))
 
-const emit = defineEmits(['onExit'])
 
-const handleExitClicked = () => {
-  emit('onExit')
+watch(activeFunctions, (newValue, oldValue) => {
+  /**
+   * Old Tasks cannot be inProgress
+   * -> Removes inProgress in case added to activeFunctions
+   */
+  if (!inProgress.value && newValue.includes('inProgress')) {
+    activeFunctions.value = activeFunctions.value.filter(item => item !== 'inProgress')
+  }
+  /* Revert to fallback */
+
+  if (oldValue.includes('edit') && !newValue.includes('edit')) {
+    currentTask.value.description = fallBackTask.value.description
+    currentTask.value.category = fallBackTask.value.category
+  }
+  if (oldValue.includes('move') && !newValue.includes('move')) {
+    currentTask.value.start_date = new Date(fallBackTask.value.start_date)
+    currentTask.value.end_date = new Date(fallBackTask.value.end_date)
+  }
+  if (oldValue.includes('done') && !newValue.includes('done')) {
+    currentTask.value.done = !currentTask.value.done
+  }
+  if (oldValue.includes('stroke') && !newValue.includes('stroke')) {
+    currentTask.value.stroke = !currentTask.value.stroke
+  }
+})
+watch(modalUnsavedExit, (newValue, oldValue) => {
+  if (newValue && !oldValue && modalActions.some(item => item === currentAction.value)) {
+    /* execute the moduleFunction if the user clicks exit instead of save */
+    /* This allows for the function to remove highlighting and also closes the modal */
+    functionRefs.value.find(ref => ref.moduleFunction && ref.moduleFunction.name.includes(currentAction.value)).moduleFunction()
+  }
+  modalUnsavedExit.value = false
+})
+watch(showMove, newValue => {
+  if (newValue) {
+    emit('on-height-change', 100)
+  } else {
+    emit('on-height-change', 60)
+  }
+})
+
+const handleFunctionClick = (data) => {
+  activeFunctions.value = activeFunctions.value.filter(item => !data.disable.includes(item))
+  if (data.enable) {
+    activeFunctions.value.push(data.enable)
+  }
+  currentAction.value = data.enable
+  if (data.action) {
+    Object.assign(currentTask.value, data.action)
+  }
+  if (Object.keys(data.modal).length > 0) {
+    showEdit.value = data.modal.edit
+    showMove.value = data.modal.move
+  }
 }
 
+const handleTaskEdit = (dataObj) => {
+  const objKeys = Object.keys(dataObj)
+  if (objKeys.includes('start_date')) {
+    currentTask.value.start_date = dataObj.start_date
+    currentTask.value.end_date = dataObj.end_date
+    showMove.value = false
+  } else if (objKeys.includes('desc')) {
+    currentTask.value.description = dataObj.desc
+    currentTask.value.category = dataObj.category
+    showEdit.value = false
+  }
+}
+
+/**
+ * Leave Functions
+ */
 const handleFocusClicked = () => {
-  router.push({name: 'focus', params: { taskID: props.taskName }})
+  router.push({name: 'focus', params: { taskID: props.taskObject.description }})
 }
+
+const handleSubmitChanges = async () => {
+  const showError = () => {
+    saveError.value = true
+    setTimeout(() => {
+      saveError.value = false
+    }, 5000)
+  }
+
+  if (props.isDaily) {
+    if (currentAction.value !== 'done') {
+      currentTask.value.daily = false
+    }
+    try {
+      await taskStore.createTask({...currentTask.value})
+      userStore.removeDailyByDesc(currentTask.value.description, today.value)
+      userStore.removeDailyByDesc(currentTask.value.description, today.value)
+      emit('on-close')
+    } catch (error) {
+      showError()
+    }
+  } else {
+    try {
+      if (currentAction.value === 'trash') {
+        await taskStore.deleteTask(props.taskObject.id)
+      } else {
+        await taskStore.updateTask(props.taskObject.id, {...props.taskObject, ...currentTask.value})
+      }
+      emit('on-close')
+    } catch (error) {
+      // todo no connection (should be stored locally but no time to implement)
+      showError()
+    }
+  }
+}
+
+/*const handleDoneClicked = () => {
+  const task = !props.isDaily ? currentTask.value : createDaily(props.taskObject.desc, today.value, userStore.userFocus)
+  if (undoneDaily.value) {
+    taskStore.createTask(task)
+
+    emit('onExit')
+  } else {
+    task.done = !task.done
+    task.stroke = false
+    taskStore.updateTask(task.id, task)
+  }
+}
+
+const handleStrokeClicked = () => {
+  const task = currentTask.value
+  task.stroke = !task.stroke
+  task.done = false
+  taskStore.updateTask(currentTask.value.id, task)
+}
+
+
+const handleDeleteClicked = () => {
+  taskStore.deleteTask(currentTask.value.id)
+  emit('onExit')
+}*/
 </script>
-
-
 
 <style scoped>
 
 #tama-edit-task {
+  height: 100%;
+  width: 100%;
+  padding: 1em;
+
   display: flex;
   flex-direction: column;
-  margin-inline: var(--sgn-mi);
-  margin-bottom: 1em;
-  height: 100%;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .tama-edit-task-header {
-  margin: 1em 0;
   text-align: center;
 }
 
-.tama-tasks-container {
+.tama-edit-functions-container {
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: clamp(3px, 1em, 10px);
 }
 
-.tama-edit-task-bottom-area {
-  margin-top: auto;
-  display: flex;
-  justify-content: space-between;
-
-  margin-bottom: var(--sgn-mbt);
+/* Modal Content slide in */
+.tama-edit-container-enter-active,
+.tama-edit-container-leave-active {
+  transition: all 0.5s ease;
 }
 
-.tama-edit-task-menu-close,
-.tama-edit-task-menu-focus {
-  height: 50px;
-  width: 50px;
-  border-radius: 50%;
-
-
-  font-weight: bold;
-  color: white;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.tama-edit-container-leave-active {
+  transform: translateX(0%);
 }
 
-.tama-edit-task-menu-close {
-  font-size: calc(var(--tama-h1-size) + 10px);
-  background-color: var(--tama-color-orange);
-}
-
-
-.tama-edit-task-menu-focus {
-  font-size: calc(var(--tama-h1-size));
-  background-color: var(--tama-color-green);
+.tama-edit-container-enter-from,
+.tama-edit-container-leave-to {
+  transform: translateX(100%);
 }
 </style>

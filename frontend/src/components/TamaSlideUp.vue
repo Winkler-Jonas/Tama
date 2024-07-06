@@ -5,7 +5,7 @@
     </Transition>
     <Transition name="tama-slide-up-modal">
       <div v-if="isVisible" :style="viewHeight" class="tama-slide-up-modal-cls">
-        <slot name="slide-up-content"></slot>
+        <slot :parent-height="height" name="slide-up-content"></slot>
       </div>
     </Transition>
   </teleport>
@@ -13,8 +13,9 @@
 
 <script setup>
 
-import {computed} from "vue";
+import {computed,  watchEffect} from "vue";
 
+const emit = defineEmits(['height-change'])
 const props = defineProps({
   isVisible: {
     type: Boolean,
@@ -30,7 +31,11 @@ const props = defineProps({
 const isVisibleCmp = computed(() => props.isVisible)
 const height = computed(() => props.slideHeight)
 
-const viewHeight = computed(() => ({'height': `${height.value}vh`}))
+const viewHeight = computed(() => ({'min-height': `${height.value}vh`}))
+
+watchEffect(() => {
+  emit('height-change', height.value)
+})
 
 </script>
 
@@ -48,6 +53,7 @@ const viewHeight = computed(() => ({'height': `${height.value}vh`}))
 }
 
 .tama-slide-up-modal-cls {
+  max-height: 100vh;
   z-index: 101;
   position: absolute;
   bottom: 0;
@@ -58,6 +64,7 @@ const viewHeight = computed(() => ({'height': `${height.value}vh`}))
   max-width: var(--tama-max-w);
   background-color: white;
 
+  transition: all 0.3s ease;
   border: 3px solid var(--tama-color-orange);
   border-radius: 2rem 2rem 0 0;
   border-bottom: none;

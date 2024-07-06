@@ -38,10 +38,11 @@
         :button-sub-label="$t('views.settings.user.subLabel')"
         @on-click="handleUserDeleteClicked"
     />
-    <tama-slide-up :is-visible="showMessageBox" :slide-height="!feedbackActive ? 40 : 50">
+    <tama-slide-up :is-visible="showMessageBox" @height-change="(value) => slidableHeight = value" :slide-height="!feedbackActive ? 40 : 50">
       <template #slide-up-content>
         <component
             :is="feedbackOrUser"
+            :min-height="slidableHeight"
             @on-close="handleSlidableClose"
         />
       </template>
@@ -68,6 +69,7 @@ const contentData = computed(() => tm(''))
 
 const feedbackActive = ref(false)
 const showMessageBox = ref(false)
+const slidableHeight = ref(0)
 const activeMenu = ref(0)
 const langValues = computed(() => createDropdownArgument(contentData.value.lang || {}, changeLanguage))
 const weekStartValues = computed(() => createDropdownArgument(Object.fromEntries(Object.entries(contentData.value.views.settings.weekStart || {}).filter(([key, value]) => key !== 'label')), changeWeekStart))

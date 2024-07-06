@@ -24,17 +24,21 @@ import router from "@/router/index.js";
 
 const route = useRoute();
 const navRoutes = ref({
+  profile: {
+    route: 'profile',
+    icon: 'profile'
+  },
   calendar: {
     route: 'calendar',
     icon: 'calendar'
   },
   target: {
-    route: 'profile',
-    icon: 'target'
+    route: 'home',
+    icon: 'home'
   },
   settings: {
     route: 'settings',
-    icon: 'gear'
+    icon: 'settings'
   }
 })
 

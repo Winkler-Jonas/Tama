@@ -3,6 +3,10 @@
     "de": "German",
     "en": "English"
   },
+  "jLocals": {
+    "de": "de-DE",
+    "en": "en-US"
+  },
   "placeholder": {
     "pass": "Enter password",
     "passRepeat": "Confirm password",
@@ -101,6 +105,9 @@
         "reAsk": "Are you sure? Tasks and achievements cannot be restored!",
         "error": "An error occurred, we were not able to delete your account! Please try again later."
       }
+    },
+    "target": {
+      "none": "Nothing to do, press \"+\" and add a new Task"
     }
   },
   "error": {
@@ -155,11 +162,11 @@
       },
       "repeat": {
         "label": "Repeat",
-        "day": "Daily",
-        "week": "Weekly",
-        "month": "Monthly",
-        "year": "Yearly",
-        "never": "Never"
+        "never": "Never",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly"
       },
       "due": {
         "label": "Due Date",
@@ -182,7 +189,7 @@
       }
     },
     "editTask": {
-      "inProcess": "In Process",
+      "inProgress": "In Process",
       "done": "Done",
       "stroke": "Cancel",
       "subTask": "Sub-Task",
@@ -191,8 +198,49 @@
       "trash": "Delete",
       "mark": "mark as"
     },
+    "moveTask": {
+      "header": "Move {task}",
+      "start": "Start",
+      "end": "End",
+      "move": {
+        "day": "One Day",
+        "week": "One Week",
+        "month": "One Month"
+      }
+    },
     "timer": {
       "earlyLeave": "Let's focus ..."
+    },
+    "calendar": {
+      "weekdays": {
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday",
+        "sun": "Sunday"
+      }
+    },
+    "task": {
+      "task": "Tasks",
+      "daily": "Daily",
+      "taskDone": "Summary"
+    },
+    "category": {
+      "headerFirst": "What do you want to focus on?",
+      "header": "Focus",
+      "subHeaderFirst": "You can change your focus at any time in the settings",
+      "subHeader": "To change your focus, choose a different category",
+      "done": "Done",
+      "sport": "Sport",
+      "diet": "Diet",
+      "digitalDetox": "Digital Detox",
+      "friends": "Friends",
+      "mentalHealth": "Mental Health",
+      "education": "Education",
+      "hobbies": "Hobby",
+      "finance": "Save Money"
     }
   }
 }

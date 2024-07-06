@@ -32,7 +32,7 @@ const showError = ref(false);
 
 const submitTask = async () => {
   if (sockedConnected.value) {
-    await websocketService.send({ task: props.focusTask });
+    websocketService.send('focus', { task: props.focusTask });
   }
 };
 
@@ -64,13 +64,17 @@ const handleError = (error) => {
 
 async function connectWebSocket() {
   try {
-    const status = await websocketService.createSocket('/ws/focusUP/');
-    if (status === "open") {
-      sockedConnected.value = true;
-      websocketService.setOnMessageHandler(handleResponse);
-      websocketService.setOnErrorHandler(handleError);
-      await submitTask()
-    }
+    sockedConnected.value = await websocketService.createSocket('focus', '/ws/focusUP/');
+
+    websocketService.setHandler('focus', {
+      onMessage: (data) => {
+        handleResponse(data)
+      },
+      onError: (data) => {
+        handleError(data)
+      },
+    });
+    await submitTask()
   } catch (error) {
     sockedConnected.value = false;
   }
