@@ -55,7 +55,7 @@ const userStore = useUserStore()
 
 const monthDays = ref([])
 
-const emit = defineEmits(['on-date-select'])
+const emit = defineEmits(['on-date-select', 'onMonthChange'])
 const props = defineProps({
   simpleCalendar: {
     type: Boolean,
@@ -114,7 +114,6 @@ const slideContainerWidth = ref(0)
 const currentIndex = ref(1)
 const currentSelected = ref([0, 0])
 const currentMonth = ref([])
-
 
 const handleSliderLock = () => {
   if (currentIndex.value === 0) {
@@ -217,7 +216,12 @@ const currentMonthDigit = computed(() => {
   if (currentMonth.value && currentMonth.value.length > 0) {
     return currentMonth.value.at(3).at(-1).month
   }
+})
 
+watch(currentMonthDigit, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    emit('onMonthChange', {month: newValue, year: currentMonth.value.at(3).at(-1).date.getFullYear()})
+  }
 })
 
 const isToday = (date) => {

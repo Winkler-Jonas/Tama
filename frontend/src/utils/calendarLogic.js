@@ -137,6 +137,12 @@ function getCurrentMonth(date = new Date(), weekStart) {
     return weeks;
 }
 
+const formatToDateString = (dateString) => {
+    if (!dateString) return null;
+    const date = new Date(dateString)
+    return isNaN(date.getTime()) ? null : date.toISOString().split('T')[0]
+}
+
 const getNextMonth = (dayOfTheYear, year, weekStart) => {
     const correctedNumber = wrapYearDays(dayOfTheYear + 2, year)
     return getCurrentMonth(getNthDayOfYear(correctedNumber.year, correctedNumber.day), weekStart)
@@ -200,6 +206,7 @@ export {
     isGreaterEqual,
     isDateBefore,
     isDateAfter,
+    formatToDateString,
     formatToDjangoDate,
     findIndexOfDate,
     getNextWeek,

@@ -114,6 +114,9 @@ const props = defineProps({
   slideUpHeight: {
     type: Number,
     required: false,
+  },
+  addDate: {
+    type: Date
   }
 })
 
@@ -236,7 +239,11 @@ const handleSubmitChanges = async () => {
       if (currentAction.value === 'trash') {
         await taskStore.deleteTask(props.taskObject.id)
       } else {
-        await taskStore.updateTask(props.taskObject.id, {...props.taskObject, ...currentTask.value})
+        if (currentTask.value.repeat) {
+          console.log(currentTask.value.repeat)
+        }
+
+        //await taskStore.updateTask(props.taskObject.id, {...props.taskObject, ...currentTask.value})
       }
       emit('on-close')
     } catch (error) {
@@ -245,32 +252,6 @@ const handleSubmitChanges = async () => {
     }
   }
 }
-
-/*const handleDoneClicked = () => {
-  const task = !props.isDaily ? currentTask.value : createDaily(props.taskObject.desc, today.value, userStore.userFocus)
-  if (undoneDaily.value) {
-    taskStore.createTask(task)
-
-    emit('onExit')
-  } else {
-    task.done = !task.done
-    task.stroke = false
-    taskStore.updateTask(task.id, task)
-  }
-}
-
-const handleStrokeClicked = () => {
-  const task = currentTask.value
-  task.stroke = !task.stroke
-  task.done = false
-  taskStore.updateTask(currentTask.value.id, task)
-}
-
-
-const handleDeleteClicked = () => {
-  taskStore.deleteTask(currentTask.value.id)
-  emit('onExit')
-}*/
 </script>
 
 <style scoped>

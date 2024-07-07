@@ -33,11 +33,13 @@ import {CredentialError, EmailError, PasswordError, UnexpectedError} from "@/uti
 import LoginHeader from "@/components/header/AppDefaultHeader.vue";
 import AppTamaArea from "@/components/generic/AppTamaArea.vue";
 import AppHorizontalSeparator from "@/components/generic/AppHorizontalSeparator.vue";
+import {useTaskStore} from "@/stores/taskStore.js";
 
 const { t } = useI18n();
 const userStore = useUserStore()
 const authStore = useAuthStore()
 const router = useRouter()
+const taskStore = useTaskStore();
 
 const inputScreen = ref(true)
 const emailResendRef = ref(null)
@@ -55,6 +57,7 @@ const login = async () => {
   errorMessage.value = ''
   try {
     await authStore.login(userStore.username, userStore.password);
+    await taskStore.initializeStore()
     await router.push('/home');
   }
   catch (error) {

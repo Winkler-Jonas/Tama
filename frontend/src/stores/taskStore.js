@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia';
 import api from '@/services/api';
-import {formatToDjangoDate} from "@/utils/calendarLogic.js";
+import {formatToDateString, formatToDjangoDate} from "@/utils/calendarLogic.js";
 import { toRaw } from "vue";
+import localForage from 'localforage';
+import { useUserStore } from '@/stores/userStore';
 
 export const useTaskStore = defineStore('task', {
     state: () => ({
@@ -15,40 +17,68 @@ export const useTaskStore = defineStore('task', {
             const targetDate = formatToDjangoDate(date)
             return state.tasks.filter(task => task.start_date === targetDate);
         },
+        getTasksOfMonth: (state) => (date) => {
+            const yearMonth = formatToDjangoDate(date).substring(0, 7);
+            const x = state.tasks.filter(task => task.start_date.includes(yearMonth))
+        }
     },
 
     actions: {
-        loadTasksFromLocalStorage() {
-            const tasks = localStorage.getItem('tasks');
-            if (tasks) {
-                this.tasks = JSON.parse(tasks);
+        async initializeStore() {
+            const userStore = useUserStore();
+            const userId = userStore.username;
+
+            localForage.config({
+                name: 'Tamado',
+                storeName: `tasks-${userId}`
+            });
+
+            await this.loadTasksFromIndexedDB();
+        },
+        async loadTasksFromIndexedDB() {
+            const storedTasks = await localForage.getItem('tasks') || [];
+            this.tasks = storedTasks.map(task => ({
+                ...task,
+                invited_users: safeParse(task.invited_users),
+                task_instances: safeParse(task.task_instances)
+            }));
+
+            function safeParse(json) {
+                try {
+                    return JSON.parse(json);
+                } catch (e) {
+                    return {};
+                }
             }
         },
+        async saveTasksToIndexedDB() {
+            const simplifiedTasks = this.tasks.map(task => ({
+                ...task,
+                invited_users: task.invited_users.map(user => user.toString()),
+                task_instances: JSON.stringify(task.task_instances)
+            }));
 
-        saveTasksToLocalStorage() {
-            localStorage.setItem('tasks', JSON.stringify(this.tasks));
+            try {
+                await localForage.setItem(`tasks`, simplifiedTasks);
+            } catch (err) {
+                this.error = 'Failed to save tasks locally.';
+            }
         },
 
         async fetchTasks(month, year) {
-            function formatDate(dateStr) {
-                if (!dateStr) return null;
-                const date = new Date(dateStr);
-                return isNaN(date.getTime()) ? null : date.toISOString().split('T')[0];
-            }
-
             this.isLoading = true;
             try {
                 const response = await api.get(`/tasks/?month=${month+1}&year=${year}`);
                 this.tasks = response.data.map(task => ({
                     ...task,
-                    start_date: formatDate(task.start_date),
-                    end_date: formatDate(task.end_date),
+                    start_date: formatToDateString(task.start_date),
+                    end_date: formatToDateString(task.end_date),
                 }));
                 this.error = null;
-                this.saveTasksToLocalStorage();
+                await this.saveTasksToIndexedDB();
             } catch (err) {
                 this.error = err.message;
-                this.loadTasksFromLocalStorage();
+                await this.loadTasksFromIndexedDB();
             } finally {
                 this.isLoading = false;
             }
@@ -60,10 +90,10 @@ export const useTaskStore = defineStore('task', {
                 taskData.end_date = formatToDjangoDate(taskData.end_date)
                 const response = await api.post('/tasks/', toRaw(taskData));
                 this.tasks.push(response.data);
-                this.saveTasksToLocalStorage();
+                await this.saveTasksToIndexedDB()
             } catch (err) {
+                console.log(err)
                 this.error = err.message;
-                // Optionally add to local storage or queue for later sync
             }
         },
 
@@ -72,16 +102,30 @@ export const useTaskStore = defineStore('task', {
                 updatedData.start_date = formatToDjangoDate(updatedData.start_date)
                 updatedData.end_date = formatToDjangoDate(updatedData.end_date)
                 const response = await api.patch(`/tasks/${taskId}/`, updatedData);
+
                 const index = this.tasks.findIndex(task => task.id === taskId);
                 if (index !== -1) {
-                    this.tasks[index] = response.data;
-                    this.saveTasksToLocalStorage();
+                    this.tasks[index] = {
+                        ...response.data.updated_task,
+                        start_date: formatToDateString(response.data.updated_task.start_date),
+                        end_date: formatToDateString(response.data.updated_task.end_date)
+                    };
                 }
+
+                if (response.data.new_task) {
+                    const formattedNewTask = {
+                        ...response.data.new_task,
+                        start_date: formatToDateString(response.data.new_task.start_date),
+                        end_date: formatToDateString(response.data.new_task.end_date)
+                    };
+                    this.tasks.push(formattedNewTask);
+                }
+
+                this.saveTasksToLocalStorage();
                 return response.data;
             } catch (err) {
                 this.error = err.message;
-                // todo should be stored locally and synced as soon as connection is established again
-                throw err
+                throw err;
             }
         },
 
