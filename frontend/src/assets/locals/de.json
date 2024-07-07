@@ -165,8 +165,7 @@
         "never": "Nie",
         "daily": "Täglich",
         "weekly": "Wöchtentlich",
-        "monthly": "Monatlich",
-        "yearly": "Jährlich"
+        "monthly": "Monatlich"
       },
       "due": {
         "label": "Fälligkeit",

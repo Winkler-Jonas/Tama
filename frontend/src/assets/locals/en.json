@@ -165,8 +165,7 @@
         "never": "Never",
         "daily": "Daily",
         "weekly": "Weekly",
-        "monthly": "Monthly",
-        "yearly": "Yearly"
+        "monthly": "Monthly"
       },
       "due": {
         "label": "Due Date",
