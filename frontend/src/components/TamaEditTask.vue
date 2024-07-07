@@ -59,7 +59,7 @@ import router from "@/router/index.js";
 import {useTaskStore} from "@/stores/taskStore.js";
 import {convertTask, taskAltered} from "@/utils/taskHandler.js";
 import {useUserStore} from "@/stores/userStore.js";
-import {isGreaterEqual} from "@/utils/calendarLogic.js";
+import {formatToDjangoDate, isGreaterEqual} from "@/utils/calendarLogic.js";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import AppRoundButton from "@/components/generic/AppRoundButton.vue";
 import TamaEditTaskEdit from "@/components/edit/TamaEditTaskEdit.vue";
@@ -84,9 +84,9 @@ const updateHeight = () => {
 onMounted(() => {
   updateHeight()
   window.addEventListener('resize', updateHeight);
-  const convertedTask = convertTask(props.taskObject, today.value, userStore.userFocus)
+  const convertedTask = convertTask(props.taskObject, props.addDate, userStore.userFocus)
   currentTask.value = convertedTask.obj
-  fallBackTask.value = convertTask(props.taskObject, today.value, userStore.userFocus).obj
+  fallBackTask.value = convertTask(props.taskObject, props.addDate, userStore.userFocus).obj
   editFunctionKeys.value = convertedTask.functions
   activeFunctions.value = [
       isGreaterEqual(today.value, convertedTask.obj.end_date) ? 'inProgress' : '',
@@ -129,9 +129,6 @@ const currentTask = ref({})
 const editFunctionKeys = ref([])
 const activeFunctions = ref([])
 const fallBackTask = ref({})
-const functionActive = computed(() =>
-      activeFunctions.value.some(item =>
-        noneInteractive.some(ni => item !== ni)))
 const inProgress = computed(() => isGreaterEqual(today.value, currentTask.value.end_date))
 const modalUnsavedExit = ref(false)
 const currentAction = ref('')

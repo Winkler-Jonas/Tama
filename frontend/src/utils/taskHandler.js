@@ -1,4 +1,4 @@
-import {isEqual} from "@/utils/calendarLogic.js";
+import {formatToDjangoDate, isEqual} from "@/utils/calendarLogic.js";
 
 
 const getTaskByID = (taskID, taskArray) => {
@@ -7,6 +7,8 @@ const getTaskByID = (taskID, taskArray) => {
 
 const convertTask = (task, date, usrFocus) => {
     const isDaily = !!task.desc
+
+    console.log(formatToDjangoDate(date))
 
     return isDaily ? {
         obj: {
@@ -28,8 +30,8 @@ const convertTask = (task, date, usrFocus) => {
             end_date: new Date(task.end_date),
             category: task.category,
             important: 0,
-            done: task.done,
-            stroke: task.stroke,
+            done: task.task_instances[formatToDjangoDate(date)] === 'done',
+            stroke: task.task_instances[formatToDjangoDate(date)] === 'cancelled',
             daily: false
         },
         functions: ['inProgress', 'done', 'stroke', 'subTask', 'edit', 'move', 'trash']

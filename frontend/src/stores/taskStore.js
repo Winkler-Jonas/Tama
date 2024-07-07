@@ -141,8 +141,7 @@ export const useTaskStore = defineStore('task', {
         },
 
         async synchronizeTasks() {
-            // Implement synchronization logic here
-            // This could iterate over locally stored tasks and try to sync them with the server
+            // todo: possible store tasks locally and sync as soon as connection is established again. No time tho
         }
     }
 });
