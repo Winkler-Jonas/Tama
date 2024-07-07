@@ -84,40 +84,58 @@ class TaskSerializer(serializers.ModelSerializer):
         start_date = validated_data['start_date']
         end_date = validated_data['end_date']
         repeat = validated_data.get('repeat', 'never')
-        year_limit = start_date.year
+        daily = validated_data.get('daily', False)
 
-        if repeat == 'daily' or repeat == 'never':
+        status = 'done' if daily else 'inProgress'
+
+        if repeat == 'never':
+            TaskInstance.objects.create(task=task, scheduled_date=start_date, status=status)
+            if start_date != end_date:
+                TaskInstance.objects.create(task=task, scheduled_date=end_date, status=status)
+        else:
+            self.create_repeating_task_instances(task, start_date, end_date, repeat, status)
+
+    def create_repeating_task_instances(self, task, start_date, end_date, repeat, status):
+        if repeat == 'daily':
             delta = timedelta(days=1)
         elif repeat == 'weekly':
             delta = timedelta(weeks=1)
         elif repeat == 'monthly':
             delta = relativedelta.relativedelta(months=1)
         else:
-            delta = None
+            delta = None  # This case should not happen as all valid repeats are covered
 
         current_date = start_date
-        while current_date <= end_date and current_date.year == year_limit:
+        while current_date <= end_date:
             TaskInstance.objects.create(
                 task=task,
                 scheduled_date=current_date,
-                status='inProgress'
+                status=status
             )
             current_date += delta
-            if current_date.year != year_limit:
-                break
+
+    def update_task_instance_states(self, task):
+        instances = list(task.instances.all())
+        if task.start_date == task.end_date:
+            if len(instances) > 1:
+                instances[0].delete()
+                instances[1].scheduled_date = task.start_date
+                instances[1].save()
+            elif len(instances) == 1:
+                instances[0].scheduled_date = task.start_date
+                instances[0].save()
+        else:
+            if len(instances) == 1:
+                TaskInstance.objects.create(task=task, scheduled_date=task.end_date, status=instances[0].status)
+            elif len(instances) == 2:
+                instances[0].scheduled_date = task.start_date
+                instances[1].scheduled_date = task.end_date
+                instances[0].save()
+                instances[1].save()
 
     def update(self, instance, validated_data):
-        instances_data = validated_data.pop('task_instances', [])
         super().update(instance, validated_data)
-        for instance_data in instances_data:
-            instance_id = instance_data.get('id')
-            if instance_id:
-                task_instance = TaskInstance.objects.get(id=instance_id, task=instance)
-                for key, value in instance_data.items():
-                    setattr(task_instance, key, value)
-                task_instance.save()
-            else:
-                TaskInstance.objects.create(task=instance, **instance_data)
+        self.update_task_instance_states(instance)
         return instance
 
     def create(self, validated_data):

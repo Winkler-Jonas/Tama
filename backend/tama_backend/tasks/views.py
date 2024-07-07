@@ -7,6 +7,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .permissions import IsOwnerOrIsCreating
 from django.utils.timezone import make_aware
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -47,13 +48,18 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-        new_start_date = serializer.validated_data.get('start_date', old_start_date := instance.start_date)
-        new_end_date = serializer.validated_data.get('end_date', old_end_date := instance.end_date)
+        new_start_date = serializer.validated_data.get('start_date', instance.start_date)
+        new_end_date = serializer.validated_data.get('end_date', instance.end_date)
 
-        if old_start_date != new_start_date or old_end_date != new_end_date:
+        if new_start_date != instance.start_date or new_end_date != instance.end_date:
             self.adjust_task_instances(instance, new_start_date, new_end_date)
 
-        serializer.save()
+        instance = serializer.save()
+
+        instance = get_object_or_404(Task, pk=instance.pk)
+        instance.instances.all()
+
+        serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
     def adjust_task_instances(self, task, new_start_date, new_end_date):
