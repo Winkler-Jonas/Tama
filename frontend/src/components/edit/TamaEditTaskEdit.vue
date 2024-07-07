@@ -44,7 +44,9 @@ const props = defineProps({
 
 const task = ref(props.taskDescription)
 const functionEnabled = ref(false)
-const saveAllowed = computed(() => task.value && task.value !== props.taskDescription)
+const saveAllowed = computed(() =>
+    (task.value && task.value !== props.taskDescription) ||
+    (task.value && props.taskCategory !== Object.keys(categoryValues.value).at(selectedCategory.value)))
 
 const categoryValues = computed(() => {
   const categoryData = contentData.value.components.addTask.category || {};
