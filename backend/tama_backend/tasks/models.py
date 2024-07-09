@@ -41,7 +41,7 @@ class Task(models.Model):
 
 
 class TaskInstance(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='instances')
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='task_instances')
     scheduled_date = models.DateField(db_index=True)
     status = models.CharField(max_length=10, choices=TASK_STATES, default='inProgress')
 

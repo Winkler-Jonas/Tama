@@ -7,13 +7,12 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .permissions import IsOwnerOrIsCreating
 from django.utils.timezone import make_aware
-from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.all().prefetch_related('instances')
+    queryset = Task.objects.all().prefetch_related('task_instances')
     serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrIsCreating]
     authentication_classes = [JWTAuthentication]
@@ -36,7 +35,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         else:
             queryset = Task.objects.filter(owner=user)
 
-        return queryset.prefetch_related('instances')
+        return queryset.prefetch_related('task_instances')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -45,7 +44,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial, context={'task': instance, 'request': request})
         serializer.is_valid(raise_exception=True)
 
         new_start_date = serializer.validated_data.get('start_date', instance.start_date)
@@ -56,14 +55,11 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         instance = serializer.save()
 
-        instance = get_object_or_404(Task, pk=instance.pk)
-        instance.instances.all()
-
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
     def adjust_task_instances(self, task, new_start_date, new_end_date):
-        task.instances.filter(Q(scheduled_date__lt=new_start_date) | Q(scheduled_date__gt=new_end_date)).delete()
+        task.task_instances.filter(Q(scheduled_date__lt=new_start_date) | Q(scheduled_date__gt=new_end_date)).delete()
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
