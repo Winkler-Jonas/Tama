@@ -15,7 +15,7 @@ export const useTaskStore = defineStore('task', {
     getters: {
         getTasksByDate: (state) => (date) => {
             const targetDate = formatToDjangoDate(date)
-            return state.tasks.filter(task => task.start_date === targetDate);
+            return state.tasks.filter(task => Object.keys(task.task_instances).includes(targetDate));
         },
         getTasksOfMonth: (state) => (date) => {
             const yearMonth = formatToDjangoDate(date).substring(0, 7);
@@ -97,32 +97,20 @@ export const useTaskStore = defineStore('task', {
             }
         },
 
-        async updateTask(taskId, updatedData) {
+        async updateTask(taskId, updatedData, taskInstance) {
             try {
                 updatedData.start_date = formatToDjangoDate(updatedData.start_date)
                 updatedData.end_date = formatToDjangoDate(updatedData.end_date)
-                const response = await api.patch(`/tasks/${taskId}/`, updatedData);
 
-                const index = this.tasks.findIndex(task => task.id === taskId);
-                if (index !== -1) {
-                    this.tasks[index] = {
-                        ...response.data.updated_task,
-                        start_date: formatToDateString(response.data.updated_task.start_date),
-                        end_date: formatToDateString(response.data.updated_task.end_date)
-                    };
-                }
-
-                if (response.data.new_task) {
-                    const formattedNewTask = {
-                        ...response.data.new_task,
-                        start_date: formatToDateString(response.data.new_task.start_date),
-                        end_date: formatToDateString(response.data.new_task.end_date)
-                    };
-                    this.tasks.push(formattedNewTask);
-                }
-
-                this.saveTasksToLocalStorage();
-                return response.data;
+                let taskToUpdate = this.tasks.findIndex(task => task.id === taskId)
+                this.tasks[taskToUpdate].category = updatedData.category
+                this.tasks[taskToUpdate].description = updatedData.description
+                this.tasks[taskToUpdate].start_date = updatedData.start_date
+                this.tasks[taskToUpdate].end_date = updatedData.end_date
+                this.tasks[taskToUpdate].task_instances[taskInstance.key] = taskInstance.value
+                const response = await api.patch(`/tasks/${taskId}/`, toRaw(this.tasks[taskToUpdate]))
+                await this.saveTasksToIndexedDB();
+                return response.data
             } catch (err) {
                 this.error = err.message;
                 throw err;
@@ -133,10 +121,9 @@ export const useTaskStore = defineStore('task', {
             try {
                 await api.delete(`/tasks/${taskId}/`);
                 this.tasks = this.tasks.filter(task => task.id !== taskId);
-                this.saveTasksToLocalStorage();
+                await this.saveTasksToIndexedDB();
             } catch (err) {
                 this.error = err.message;
-                // Optionally handle local deletion or queue for later sync
             }
         },
 

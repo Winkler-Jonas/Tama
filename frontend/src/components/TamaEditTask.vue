@@ -132,7 +132,7 @@ const fallBackTask = ref({})
 const inProgress = computed(() => isGreaterEqual(today.value, currentTask.value.end_date))
 const modalUnsavedExit = ref(false)
 const currentAction = ref('')
-const mutation = computed(() => taskAltered(currentTask.value, fallBackTask.value))
+const mutation = computed(() => taskAltered(currentTask.value, fallBackTask.value) || currentAction.value === 'trash')
 
 
 watch(activeFunctions, (newValue, oldValue) => {
@@ -225,8 +225,7 @@ const handleSubmitChanges = async () => {
     }
     try {
       await taskStore.createTask({...currentTask.value})
-      userStore.removeDailyByDesc(currentTask.value.description, today.value)
-      userStore.removeDailyByDesc(currentTask.value.description, today.value)
+      userStore.removeDailyByDesc(fallBackTask.value.description, props.addDate)
       emit('on-close')
     } catch (error) {
       showError()
@@ -236,15 +235,11 @@ const handleSubmitChanges = async () => {
       if (currentAction.value === 'trash') {
         await taskStore.deleteTask(props.taskObject.id)
       } else {
-        if (currentTask.value.repeat) {
-          console.log(currentTask.value.repeat)
-        }
-
-        //await taskStore.updateTask(props.taskObject.id, {...props.taskObject, ...currentTask.value})
+        const state = currentTask.value.done ? 'done' : currentTask.value.stroke ? 'cancelled' : 'inProgress'
+        await taskStore.updateTask(props.taskObject.id, currentTask.value, { key: [formatToDjangoDate(props.addDate)], value: state })
       }
       emit('on-close')
     } catch (error) {
-      // todo no connection (should be stored locally but no time to implement)
       showError()
     }
   }

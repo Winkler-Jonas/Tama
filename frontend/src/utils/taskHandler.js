@@ -8,8 +8,6 @@ const getTaskByID = (taskID, taskArray) => {
 const convertTask = (task, date, usrFocus) => {
     const isDaily = !!task.desc
 
-    console.log(formatToDjangoDate(date))
-
     return isDaily ? {
         obj: {
             description: task.desc,
