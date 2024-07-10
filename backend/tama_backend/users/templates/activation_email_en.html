@@ -5,170 +5,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Activate Your Account</title>
-  <style>
-    /* Import the font */
-    @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Short+Stack&display=swap');
-
-    h1,
-    h2,
-    h3 {
-      font-family: 'Short Stack', 'Comic Sans MS', Arial, sans-serif;
-    }
-
-    p,
-    a,
-    li {
-      font-family: 'Josefin Sans', 'Comic Sans MS', Arial, sans-serif;
-    }
-
-    body {
-      font-family: 'Josefin Sans', 'Comic Sans MS', Arial, sans-serif;
-      background-color: #83B6C7;
-      margin: 0;
-      padding: 0;
-      color: black;
-    }
-
-    ol {
-      padding: 20px;
-      padding-left: 16px;
-      margin-top: 0;
-    }
-
-    li {
-      line-height: 1.6;
-    }
-
-    h4 {
-      margin-bottom: 0;
-    }
-
-    a {
-      color: #FFA976;
-    }
-
-    h3 {
-      margin-top: 20px;
-    }
-
-    .email-container {
-      min-width: 350px;
-      max-width: 600px;
-      margin: 40px auto;
-      background-color: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-    }
-
-    .header {
-      text-align: center;
-      padding-bottom: 20px;
-    }
-
-    .image-container {
-      background-color: #83B6C7;
-      width: 175px;
-      height: 175px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-      margin-bottom: 20px;
-    }
-
-    .image-container img {
-      width: 65%;
-    }
-
-    .header h2 {
-      margin: 0;
-    }
-
-    .content {
-      padding: 20px;
-      text-align: center;
-      border-top: 2px solid #eeeeee;
-    }
-
-    .content p {
-      font-size: 16px;
-      line-height: 1.6;
-      margin: 10px 0;
-    }
-
-    table {
-      text-align: left;
-      width: 100%;
-      margin-top: 20px;
-    }
-
-    .button-container {
-      text-align: center;
-      margin: 20px 0;
-    }
-
-    .button {
-      background-color: #FFA976;
-      color: #ffffff;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-
-    @media only screen and (max-width: 600px) {
-      table {
-        display: block;
-        width: 100%;
-      }
-
-      table td {
-        display: block;
-        width: 100%;
-      }
-    }
-  </style>
 </head>
 
-<body>
-  <div class="email-container">
-    <div class="header">
-      <div class="image-container">
-        <img src="https://tamado.app/assets/pet-UTjUnlmj.png" alt="tamado.app Logo">
-      </div>
-      <h2>Activate your Tamado account</h2>
-    </div>
-    <div class="content">
-      <strong>
-        <p>Hi {{ user.username }},</p>
-      </strong>
-      <p>
-        thank you for signing up with Tamado.app. To complete your registration, please confirm your email address.</p>
-      <div class="button-container">
-        <a href="https://{{ domain }}/activate/{{ uid }}/{{ token }}/" class="button">Confirm email address</a>
-      </div>
-    </div>
-    <div class="content">
-      <h3>Install Tamado on your mobile device</h3>
-      <table cellspacing="0" cellpadding="0">
+<body style="background-color: #ffffff; margin: 0; padding: 0; font-family: Arial, sans-serif; color: black;">
+  <div style="max-width: 600px; margin: 40px auto; background-color: #f7ede2; padding: 20px; border-radius: 8px; box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);">
+    <div style="text-align: center; padding-bottom: 20px;">
+      <table align="center" style="background-color: #83B6C7; width: 175px; height: 175px; border-radius: 50%; margin: 0 auto 20px;">
         <tr>
-          <td valign="top">
-            <h4>Android</h4>
-            <ol>
+          <td align="center" valign="middle">
+            <img src="https://tamado.app/assets/pet-UTjUnlmj.png" alt="tamado.app Logo" style="width: 65%;">
+          </td>
+        </tr>
+      </table>      
+      <h2 style="margin: 0; font-family: Arial, sans-serif;">Activate your Tamado account</h2>
+    </div>
+    <div style="padding: 20px; text-align: center; border-top: 2px solid #eeeeee;">
+      <p><strong>Hi {{ user.username }},</strong></p>
+      <p>thank you for signing up with Tamado.app. To complete your registration, please confirm your email address.</p>
+      <div style="text-align: center; margin: 20px 0;">
+        <a href="https://{{ domain }}/activate/{{ uid }}/{{ token }}/" style="background-color: #FFA976; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 16px;">Confirm email address</a>
+      </div>
+    </div>
+    <div style="padding: 20px; text-align: center; border-top: 2px solid #eeeeee;">
+      <h3 style="margin-top: 20px; font-family: Arial, sans-serif;">Install Tamado on your mobile device</h3>
+      <table cellspacing="0" cellpadding="0" style="text-align: left; width: 100%; margin-top: 20px;">
+        <tr>
+          <td valign="top" style="padding: 10px;">
+            <h4 style="margin-bottom: 0; font-family: Arial, sans-serif;">Android</h4>
+            <ol style="padding: 20px; padding-left: 16px; margin-top: 0;">
               <li>Open Chrome</li>
-              <li>Visit <a href="https://{{ domain }}">Tamado</a></li>
+              <li>Visit <a href="https://{{ domain }}" style="color: #FFA976;">Tamado</a></li>
               <li>Tap the menu icon</li>
               <li>Select 'Add to Home screen'</li>
               <li>Follow the instructions</li>
             </ol>
           </td>
-          <td valign="top">
-            <h4>iPhone</h4>
-            <ol>
+          <td valign="top" style="padding: 10px;">
+            <h4 style="margin-bottom: 0; font-family: Arial, sans-serif;">iPhone</h4>
+            <ol style="padding: 20px; padding-left: 16px; margin-top: 0;">
               <li>Open Safari</li>
-              <li>Visit <a href="https://{{ domain }}">Tamado</a></li>
+              <li>Visit <a href="https://{{ domain }}" style="color: #FFA976;">Tamado</a></li>
               <li>Tap the share icon</li>
               <li>Tap 'Add to Home Screen'</li>
               <li>Follow the instructions</li>
@@ -177,6 +53,7 @@
         </tr>
       </table>
     </div>
+  </div>
 </body>
 
 </html>
