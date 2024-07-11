@@ -23,7 +23,7 @@
 */
 <template>
   <tama-focus-select :show-focus-select="!userStore.getUserFocus()"/>
-  <tama-level-bar :current-points="0" :next-level="100" />
+  <tama-level-bar :current-points="currentPoints" :next-level="requiredPoints" />
   <tama-food-icon ref="foodRef" :tama-height="$route.meta.tama" @on-value-change="handleFoodIcon"/>
   <section id="tama-profile-view"
            :style="`top: ${$route.meta.tama}vh; height: ${100 - $route.meta.tama}vh`"
@@ -155,7 +155,6 @@ const handleTaskAdded = () => {
   taskStore.fetchTasks(currentMonth.value, currentYear.value)
   todayTasks.value = taskStore.getTasksByDate(currentDate.value)
   handleModalClose()
-  foodRef.value.handleClick()
 }
 
 const handleMonthChange = (monthYear) => {
@@ -174,6 +173,8 @@ const handleModalClose = () => {
   addActive.value = false
   editActive.value = false
   isDaily.value = false
+  console.log(foodRef.value)
+  foodRef.value.refreshIcon()
 }
 
 const showFocusSelect = computed(() => !userStore.userFocus)

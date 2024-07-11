@@ -65,22 +65,16 @@ class TaskInstanceSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         with transaction.atomic():
-            status = validated_data.get('status')
+            current_status = instance.status
+            instance = super().update(instance, validated_data)
+            new_status = validated_data.get('status', current_status)
 
-            print(f'status -> {status}')
-            print(f'cmp-task -> {instance.completion_date}')
-
-            if status == 'done' and instance.completion_date is None:
-                print('update')
+            if new_status == 'done' and instance.completion_date is None:
                 instance.completion_date = now()
                 instance.save()
                 self.handle_first_time_completion(instance.task.owner)
 
-            for attr, value in validated_data.items():
-                if attr != 'completion_date':
-                    setattr(instance, attr, value)
-            instance.save()
-        return instance
+            return instance
 
     def handle_first_time_completion(self, user):
         print('user')

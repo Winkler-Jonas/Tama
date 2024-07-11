@@ -46,7 +46,6 @@ const token = ref(0)
 const tamaHeight = computed(() => props.tamaHeight)
 const socketConnected = ref(false)
 const websocketError = ref(false)
-const websocketResponse = ref('')
 
 const iconPosition = computed(() => ({
   top: `calc(${tamaHeight.value}vh - 12vh)`
@@ -58,6 +57,12 @@ const handleClick = () => {
   }
 }
 
+const refreshIcon = () => {
+  if (socketConnected.value) {
+    websocketService.send('token',{ action: 'refresh' })
+  }
+}
+
 async function connectWebSocket() {
   try {
     socketConnected.value = false
@@ -65,11 +70,12 @@ async function connectWebSocket() {
 
     websocketService.setHandler('token', {
       onMessage: (data) => {
-        if (data.trim() === '') {
+        if (!data) {
           websocketError.value = true
         } else {
-          websocketResponse.value = data.available;
-          emit('on-value-change', {current: data.used, final: data.level})
+          token.value = data.available;
+          console.log(data)
+          emit('on-value-change', {current: data.used - data.available, final: data.level})
         }
       },
       onError: (data) => {
@@ -83,8 +89,9 @@ async function connectWebSocket() {
   }
 }
 
-onMounted(() => {
-  connectWebSocket()
+onMounted(async () => {
+  await connectWebSocket()
+  refreshIcon()
 })
 
 onUnmounted(() => {
@@ -92,7 +99,7 @@ onUnmounted(() => {
 })
 
 defineExpose({
-  handleClick,
+  refreshIcon,
 })
 
 </script>

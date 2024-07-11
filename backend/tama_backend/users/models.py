@@ -57,6 +57,9 @@ class CustomUser(AbstractUser):
             self.available_token -= 1
             self.save()
 
+    def get_available_token(self):
+        return self.available_token
+
     def add_token(self):
         self.available_token += 1
         self.token += 1

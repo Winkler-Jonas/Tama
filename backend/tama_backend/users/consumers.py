@@ -120,11 +120,12 @@ class TokenConsumer(AsyncWebsocketConsumer):
     def remove_token(self, user):
         if user:
             user.remove_token()
-            return user.available_token
+            return user.get_available_token()
 
     @database_sync_to_async
     def get_available_token(self, user):
-        return user.available_token if user else None
+        user.refresh_from_db()
+        return user.get_available_token()
 
     @database_sync_to_async
     def get_token_used(self, user):
@@ -141,16 +142,18 @@ class TokenConsumer(AsyncWebsocketConsumer):
 
             if not user.is_authenticated:
                 await self.send(text_data=json.dumps({'error': 'Unauthorized'}))
-                print('failed auth')
                 return
 
             used_token = await self.get_token_used(user)
             next_level = await self.get_tokens_required_for_next_level(user)
+            remaining_token = 0
 
             if data.get('action') == 'remove_token':
                 remaining_token = await self.remove_token(user)
-            else:
+            elif data.get('action') == 'refresh':
+                print('refreshing')
                 remaining_token = await self.get_available_token(user)
+                print(f'remaining: {remaining_token}')
             response = {
                 'message': {
                     'available': remaining_token,
