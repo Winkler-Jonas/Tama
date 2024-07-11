@@ -29,14 +29,14 @@
     </div>
     <h1>{{ tamaAreaText }}</h1>
     <div class="tama-area-pet-container">
-      <img :src="tamaPet" alt="TamaPet">
+      <img :src="currentImage" alt="TamaPet">
     </div>
   </div>
 </template>
 
 <script setup>
 import { useUIStore } from "@/stores/uiStore.js"
-import { computed, ref, watch } from "vue";
+import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 
 const tamaContainer = ref(null)
 const { tamaSetHeight, tamaGetHeight } = useUIStore()
@@ -54,11 +54,40 @@ const props = defineProps({
   tamaPet: {
     type: String,
     required: false,
-    default: new URL('@/assets/pet.png', import.meta.url).href
+    default: new URL('@/assets/tama_interaction.gif', import.meta.url).href
+  },
+  tamaImageChange: {
+    type: Boolean,
+    default: false
   }
 })
 
 const tamaCurrentHeight = computed(() => ({height: `${tamaGetHeight.value}vh`}))
+
+const tamaActive = new URL('@/assets/tama_interaction.gif', import.meta.url).href
+const tamaBored = new URL('@/assets/tama_bored.gif', import.meta.url).href
+const tamaEat = new URL('@/assets/tama_feed.gif', import.meta.url).href
+
+const tamaImageChange = computed(() => props.tamaImageChange)
+const currentImage = ref(tamaActive)
+
+const triggerTamaEat = () => {
+  currentImage.value = tamaEat;
+  setTimeout(() => {
+    currentImage.value = tamaActive
+  }, 1000);
+};
+
+watch(tamaImageChange, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    triggerTamaEat();
+  }
+}, { immediate: true });
+
+onMounted(() => {
+  currentImage.value = tamaActive
+});
+
 
 watch(() => props.tamaAreaHeight, (newHeight) => {
   tamaSetHeight(newHeight);
@@ -117,7 +146,7 @@ h1 {
   flex: 1;
   margin: auto 0;
   z-index: 1;
-  max-height: 35%;
+  max-height: 50%;
   width: auto;
 
   display: flex;

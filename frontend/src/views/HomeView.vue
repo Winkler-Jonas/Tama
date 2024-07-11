@@ -24,7 +24,7 @@
 <template>
   <tama-focus-select :show-focus-select="!userStore.getUserFocus()"/>
   <tama-level-bar :current-points="currentPoints" :next-level="requiredPoints" />
-  <tama-food-icon ref="foodRef" :tama-height="$route.meta.tama" @on-value-change="handleFoodIcon"/>
+  <tama-food-icon ref="foodRef" @play-animation="$emit('feed-tama')" :tama-height="$route.meta.tama" @on-value-change="handleFoodIcon"/>
   <section id="tama-profile-view"
            :style="`top: ${$route.meta.tama}vh; height: ${100 - $route.meta.tama}vh`"
            class="main-gl-view">
@@ -119,7 +119,7 @@ const handleHeightChange = (heightInVH) => {
   slideUpHeight.value = heightInVH
 }
 
-const emit = defineEmits(['main-scrolling'])
+const emit = defineEmits(['main-scrolling', 'feed-tama'])
 
 const srollablePadding = computed(() => ({
   'padding-bottom': `${20 + totalDailyTasks.value + totalNormalTasks.value}vh`

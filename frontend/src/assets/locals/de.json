@@ -47,7 +47,7 @@
       },
       "notVerified": {
         "hdr": "Verifizierung",
-        "msg": "Wir konnten Ihr E-Mail Adress bisher leider noch nicht verifizieren",
+        "msg": "Wir konnten Ihre E-Mail-Adresse bisher leider noch nicht verifizieren",
         "resend": "E-Mail erneut senden",
         "newMail": "Deine E-Mail Adresse?",
         "redirect": "Bearbeite {num}"
@@ -103,7 +103,7 @@
         "subLabel": "Löschen",
         "hdr": "Account löschen?",
         "reAsk": "Bist du dir sicher? Alle Tasks und Erfolge werden unwiederruflich gelöscht.",
-        "error": "Ein Fehler ist aufgetreten, wir konnten deinen Account nicht löschen! Versuche es später erneut."
+        "error": "Ein Fehler ist aufgetreten. Wir konnten deinen Account nicht löschen! Bitte versuche es später erneut."
       }
     },
     "target": {
@@ -155,7 +155,7 @@
     "email": {
       "valid": "Bitte geben Sie eine gültige E-Mail Adresse ein",
       "noMatch": "E-Mail Adressen stimmen nicht überein",
-      "taken": "Diese E-Mail Adresse ist bereits mit einem Account verlinkt",
+      "taken": "Diese E-Mail-Adresse ist bereits mit einem Account verlinkt",
       "verified": "Wir konnten Ihr E-Mail Adress bisher leider noch nicht verifizieren",
       "empty": "Bitte geben Sie eine E-Mail Adresse ein"
     },
@@ -184,7 +184,7 @@
         "label": "Wiederholen",
         "never": "Nie",
         "daily": "Täglich",
-        "weekly": "Wöchtentlich",
+        "weekly": "Wöchentlich",
         "monthly": "Monatlich"
       },
       "due": {

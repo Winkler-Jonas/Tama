@@ -34,7 +34,7 @@ import TamaIcon from "@/components/generic/TamaIcon.vue";
 import {computed, onMounted, onUnmounted, ref} from "vue";
 import websocketService from "@/services/registerWS.js";
 
-const emit = defineEmits(['on-value-change'])
+const emit = defineEmits(['on-value-change', 'play-animation'])
 const props = defineProps({
   tamaHeight: {
     type: Number,
@@ -52,8 +52,9 @@ const iconPosition = computed(() => ({
 }))
 
 const handleClick = () => {
-  if (socketConnected.value) {
+  if (socketConnected.value && token.value > 0) {
     websocketService.send('token',{ action: 'remove_token' })
+    emit('play-animation')
   }
 }
 
@@ -67,7 +68,6 @@ async function connectWebSocket() {
   try {
     socketConnected.value = false
     socketConnected.value = await websocketService.createSocket('token', '/ws/token/')
-
     websocketService.setHandler('token', {
       onMessage: (data) => {
         if (!data) {

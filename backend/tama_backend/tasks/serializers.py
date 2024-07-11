@@ -69,6 +69,10 @@ class TaskInstanceSerializer(serializers.ModelSerializer):
             instance = super().update(instance, validated_data)
             new_status = validated_data.get('status', current_status)
 
+            print('new status')
+            print(new_status)
+            print(instance.completion_date)
+
             if new_status == 'done' and instance.completion_date is None:
                 instance.completion_date = now()
                 instance.save()
@@ -77,11 +81,8 @@ class TaskInstanceSerializer(serializers.ModelSerializer):
             return instance
 
     def handle_first_time_completion(self, user):
-        print('user')
-        print(user)
         if user:
             user.add_token()
-
 
 
 class TaskSerializer(serializers.ModelSerializer):

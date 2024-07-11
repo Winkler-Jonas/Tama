@@ -24,11 +24,11 @@
 <template>
   <section id="tama-app" class="full-height">
     <header class="tama-header" :style="`position: ${$route.meta.position}`">
-      <app-tama-area v-if="$route.meta.tama" :tama-area-height="$route.meta.tama" />
+      <app-tama-area v-if="$route.meta.tama" :tama-image-change="feedTama" :tama-area-height="$route.meta.tama" />
     </header>
     <main :style="mainStyle">
       <router-view v-slot="{ Component }">
-        <component :is="Component" @main-scrolling="handleMainScroll" :key="$route.fullPath"/>
+        <component :is="Component" @main-scrolling="handleMainScroll" @feed-tama="feedTama = !feedTama" :key="$route.fullPath"/>
       </router-view>
     </main>
     <footer>
@@ -46,6 +46,7 @@ import {computed, ref} from "vue";
 
 const authStore = useAuthStore()
 const mainScrolling = ref(true)
+const feedTama = ref(false)
 
 const mainStyle = computed(() => ({
   'overflow-y': mainScrolling.value ? 'auto' : 'hidden'
