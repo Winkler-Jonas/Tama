@@ -47,7 +47,7 @@
       },
       "notVerified": {
         "hdr": "Verifizierung",
-        "msg": "Wir konnten Ihr E-Mail Adress bisher leider noch nicht verifizieren",
+        "msg": "Wir konnten Ihre E-Mail-Adresse bisher leider noch nicht verifizieren",
         "resend": "E-Mail erneut senden",
         "newMail": "Deine E-Mail Adresse?",
         "redirect": "Bearbeite {num}"
@@ -103,11 +103,31 @@
         "subLabel": "Löschen",
         "hdr": "Account löschen?",
         "reAsk": "Bist du dir sicher? Alle Tasks und Erfolge werden unwiederruflich gelöscht.",
-        "error": "Ein Fehler ist aufgetreten, wir konnten deinen Account nicht löschen! Versuche es später erneut."
+        "error": "Ein Fehler ist aufgetreten. Wir konnten deinen Account nicht löschen! Bitte versuche es später erneut."
       }
     },
     "target": {
       "none": "Nichts zu tun, drücke \"+\" und füge eine neue Aufgabe hinzu"
+    },
+    "profile": {
+      "greet": "Hallo",
+      "logout": "Abmelden",
+      "invites": "Einladungen",
+      "focus": "Fokus ändern",
+      "friends": {
+        "hdr": "Freunde",
+        "placeholder": "Füge deine Freunde auf Tamado hinzu"
+      },
+      "invite": {
+        "placeholder": "Freunde einladen",
+        "send": "Deine Einladung wurde gesendet",
+        "error": "Wir konnten deine Einladung leider nicht senden",
+        "from": "Von:",
+        "at": "Am:"
+      }
+    },
+    "calendar":{
+      "hdr": "Aufgaben"
     }
   },
   "error": {
@@ -135,7 +155,7 @@
     "email": {
       "valid": "Bitte geben Sie eine gültige E-Mail Adresse ein",
       "noMatch": "E-Mail Adressen stimmen nicht überein",
-      "taken": "Diese E-Mail Adresse ist bereits mit einem Account verlinkt",
+      "taken": "Diese E-Mail-Adresse ist bereits mit einem Account verlinkt",
       "verified": "Wir konnten Ihr E-Mail Adress bisher leider noch nicht verifizieren",
       "empty": "Bitte geben Sie eine E-Mail Adresse ein"
     },
@@ -164,9 +184,8 @@
         "label": "Wiederholen",
         "never": "Nie",
         "daily": "Täglich",
-        "weekly": "Wöchtentlich",
-        "monthly": "Monatlich",
-        "yearly": "Jährlich"
+        "weekly": "Wöchentlich",
+        "monthly": "Monatlich"
       },
       "due": {
         "label": "Fälligkeit",
@@ -241,6 +260,10 @@
       "education": "Bildung",
       "hobbies": "Hobby",
       "finance": "Sparen"
+    },
+    "scoreBoard": {
+      "done": "Tasks abgeschlossen:",
+      "open": "Tasks offen:"
     }
   }
 }

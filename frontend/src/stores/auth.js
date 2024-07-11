@@ -1,3 +1,26 @@
+/*
+* This file is part of Project-Tamado.
+*
+* Copyright (c) 2024 Jonas Winkler
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 import {defineStore} from 'pinia'
 import {ref} from 'vue'
 import api from '@/services/api.js'
@@ -44,6 +67,8 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('expiresAt');
         localStorage.removeItem('user');
+        localStorage.removeItem('dailyTasks')
+        localStorage.removeItem('userFocus')
         delete api.defaults.headers.common['Authorization'];
     };
 
@@ -93,6 +118,7 @@ export const useAuthStore = defineStore('auth', () => {
             localStorage.setItem('user', JSON.stringify(response.data.user));
             api.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
             user.value = response.data.user;
+            localStorage.setItem('userFocus', user.value.focus)
             await fetchUserProfile();
         } catch (error) {
             clearAuthData();

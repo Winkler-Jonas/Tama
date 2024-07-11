@@ -1,18 +1,41 @@
+/*
+* This file is part of Project-Tamado.
+*
+* Copyright (c) 2024 Jonas Winkler
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 <template>
 <div class="tama-target-tasks-wrapper">
   <h2 class="tama-target-task-header">
-    {{ showheader ? $t('components.task.task'): $t('components.task.taskDone') }}
+    {{ showHeader ? $t('components.task.task'): $t('components.task.taskDone') }}
   </h2>
   <transition name="fade">
-    <div v-if="userTasks.length === 0 && showheader" class="tama-target-tasks-none">
+    <div v-if="userTasks.length === 0 && showHeader" class="tama-target-tasks-none">
       <p>{{ $t('views.target.none') }}</p>
     </div>
   </transition>
   <transition-group name="list" tag="div" class="tama-target-tasks-task-list">
     <tama-task v-for="(task, taskIdx) in userTasks" :key="task.id"
                :task-object="task"
-               :is-done="task.done"
-               :is-stroked="task.stroke"
+               :is-done="task.task_instances[formatToDjangoDate(currentDate)] === 'done'"
+               :is-stroked="task.task_instances[formatToDjangoDate(currentDate)] === 'cancelled'"
                @on-task-clicked="emit('on-task-clicked', task)" />
   </transition-group>
 </div>
@@ -22,7 +45,7 @@
 import TamaTask from "@/components/task/TamaTask.vue"
 import {computed, onMounted, ref} from "vue"
 import {useTaskStore} from "@/stores/taskStore.js";
-import {isGreaterEqual} from "@/utils/calendarLogic.js";
+import {formatToDjangoDate, isGreaterEqual} from "@/utils/calendarLogic.js";
 
 const taskStore = useTaskStore()
 
@@ -34,17 +57,13 @@ const props = defineProps({
   }
 })
 
-const currentDate = computed(() => props.dayTarget)
 const today = ref(new Date())
+const currentDate = computed(() => props.dayTarget)
 
-const showheader = computed(() => isGreaterEqual(today.value, currentDate.value))
+const showHeader = computed(() => isGreaterEqual(today.value, currentDate.value))
 
 const userTasks = computed(() => {
   return taskStore.getTasksByDate(currentDate.value).filter(task => !task.daily)
-})
-
-onMounted(() => {
-
 })
 
 </script>

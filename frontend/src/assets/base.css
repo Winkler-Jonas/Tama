@@ -215,6 +215,12 @@ p {
     color: white;
 }
 
+.text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .btn-remove-default {
     margin: 0;
     padding: 0;

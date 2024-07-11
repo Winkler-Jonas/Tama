@@ -1,7 +1,31 @@
+/*
+* This file is part of Project-Tamado.
+*
+* Copyright (c) 2024 Jonas Winkler
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 import {defineStore} from 'pinia'
 import {ref, watchEffect, toRaw} from 'vue'
 import {formatDate} from "@/utils/calendarLogic.js";
 import websocketService from "@/services/registerWS.js";
+import api from "@/services/api.js";
 
 export const useUserStore = defineStore('user', () => {
     const email = ref('')
@@ -13,7 +37,7 @@ export const useUserStore = defineStore('user', () => {
     const weekStart = ref(true)
     const dailyTasks = ref(JSON.parse(localStorage.getItem('dailyTasks')) || {});
     const dailySelected = ref(0)
-    const userFocus = ref(JSON.parse(localStorage.getItem('userFocus')) || '')
+    const userFocus = ref(localStorage.getItem('userFocus') || '')
 
     function setDailySelected (idx) {
         dailySelected.value = idx
@@ -114,10 +138,18 @@ export const useUserStore = defineStore('user', () => {
         focusTasks.value[taskValue.key] = taskValue.value
     }
 
-    function setUserFocus(focus) {
-        userFocus.value = focus
-        const serializedData = JSON.stringify(userFocus.value);
-        localStorage.setItem('userFocus', serializedData);
+    async function setUserFocus(focus) {
+        try {
+            await api.patch(`/users/me/`, {focus: focus})
+            userFocus.value = focus
+            localStorage.setItem('userFocus', focus);
+        } catch (error) {
+            // no time
+        }
+    }
+
+    function getUserFocus() {
+        return (!(this.userFocus === '' || !this.userFocus))
     }
 
     function getTaskFocus(task) {
@@ -164,6 +196,7 @@ export const useUserStore = defineStore('user', () => {
         setWeekStart,
         getTaskFocus,
         setUserFocus,
+        getUserFocus,
         clearUserInfo,
         setWelcomeDone,
         setNotification,

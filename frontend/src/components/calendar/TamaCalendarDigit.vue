@@ -1,8 +1,32 @@
+/*
+* This file is part of Project-Tamado.
+*
+* Copyright (c) 2024 Jonas Winkler
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 <template>
   <div @click="toggleSelected" class="tama-calendar-digit-container">
-    <span class="tama-calendar-digit" :style="digitOnSelect" :class="{'tama-calendar-digit-today': styleToday}">
-      {{ calendarDigit }}
-    </span>
+    <div class="tama-calendar-digit" :style="digitOnSelect" :class="{'tama-calendar-digit-today': styleToday}">
+      <span>{{ calendarDigit }}</span>
+      <div v-if="hasTask" class="digit-has-task"></div>
+    </div>
     <transition name="day-selected" appear>
       <div v-if="isSelected || isToday" class="tama-calendar-select-img-container">
         <svg class="tama-calendar-select-svg" :class="{'tama-calendar-digit-today': styleToday && !isSelected}" viewBox="0 0 551.97 543.91">
@@ -26,6 +50,11 @@ const props = defineProps({
     required: true
   },
   isToday: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  hasTask: {
     type: Boolean,
     required: false,
     default: false
@@ -68,6 +97,17 @@ const toggleSelected = () => {
   padding-top: .4em;
   font-size: min(5vw, 50px);
   transition: color 0.5s ease;
+  display: flex;
+
+}
+
+.digit-has-task {
+  --dimenstion: 3px;
+  width: var(--dimenstion);
+  height: var(--dimenstion);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: var(--tama-color-orange);
 }
 
 .tama-calendar-select-img-container {

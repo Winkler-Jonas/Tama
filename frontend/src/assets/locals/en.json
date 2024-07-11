@@ -27,17 +27,17 @@
       "userShort": "Username too short",
       "emailTaken": "Email already taken",
       "passNoMatch": "Passwords do not match",
-      "mailNoMatch": "Email address do not match",
+      "mailNoMatch": "Email address does not match",
       "mailNoValid": "Please enter a valid Email address",
       "passInvalid": "Password contains invalid characters",
-      "passShort": "Password is to short. Min {min} characters",
+      "passShort": "Password is too short. Min {min} characters",
       "btnEnter": "Register",
       "unexpected": "An unexpected error occurred. Please try again later.",
-      "mailSent": "We have sent you an email with all necessary information on how to activate your your account...",
+      "mailSent": "We have sent you an email with all necessary information on how to activate your account...",
       "redirect": "Processing {num}"
     },
     "login": {
-      "hdr": "Sing in",
+      "hdr": "Sign in",
       "btn": "Sign In",
       "credentials": "The credentials you entered do not match any existing Account",
       "userShort": "Username too short",
@@ -62,7 +62,7 @@
       "email": {
         "hdr": "Ready?",
         "info": "Enter your email to create or sign into your account.",
-        "label": "EMail",
+        "label": "Email",
         "btn": "Get started"
       }
     },
@@ -108,6 +108,26 @@
     },
     "target": {
       "none": "Nothing to do, press \"+\" and add a new Task"
+    },
+    "profile": {
+      "greet": "Hi",
+      "logout": "Log out",
+      "invites": "Invites",
+      "focus": "Change focus",
+      "friends": {
+        "hdr": "Friends",
+        "placeholder": "Add your friends on Tamado"
+      },
+      "invite": {
+        "placeholder": "Invite a friend",
+        "send": "Your invite was sent",
+        "error": "We couldn't send your invite",
+        "from": "From:",
+        "at": "On:"
+      }
+    },
+    "calendar":{
+      "hdr": "Tasks"
     }
   },
   "error": {
@@ -115,7 +135,7 @@
       "unexpected": "An unexpected error occurred. Please try again later."
     },
     "pass": {
-      "short": "Password to short. Min. {min} characters!",
+      "short": "Password too short. Min. {min} characters!",
       "invalid": "Password contains invalid characters",
       "numeric": "Password cannot be exclusively be numeric!",
       "similar": "Password and username too similar!",
@@ -134,7 +154,7 @@
     },
     "email": {
       "valid": "The Email you entered appears to be invalid.",
-      "noMatch": "Email address do not match",
+      "noMatch": "Email address does not match",
       "taken": "Email already taken",
       "verified": "Unfortunately we were not able to verify your Email",
       "empty": "Please enter an email address"
@@ -142,7 +162,7 @@
     "ai": {
       "short": "Input required",
       "long": "Input too long",
-      "extern": "AI currently to accessible",
+      "extern": "AI currently not accessible",
       "unexpected": "Unexpected error. Please try again later"
     }
   },
@@ -165,8 +185,7 @@
         "never": "Never",
         "daily": "Daily",
         "weekly": "Weekly",
-        "monthly": "Monthly",
-        "yearly": "Yearly"
+        "monthly": "Monthly"
       },
       "due": {
         "label": "Due Date",
@@ -241,6 +260,10 @@
       "education": "Education",
       "hobbies": "Hobby",
       "finance": "Save Money"
+    },
+    "scoreBoard": {
+      "done": "Tasks done:",
+      "open": "Tasks open:"
     }
   }
 }

@@ -1,3 +1,26 @@
+/*
+* This file is part of Project-Tamado.
+*
+* Copyright (c) 2024 Jonas Winkler
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 <template>
   <section id="tama-edit-task" :style="slideHeight ? `min-height: ${slideUpHeight}vh`: ''">
     <div class="tama-edit-task-header">
@@ -59,7 +82,7 @@ import router from "@/router/index.js";
 import {useTaskStore} from "@/stores/taskStore.js";
 import {convertTask, taskAltered} from "@/utils/taskHandler.js";
 import {useUserStore} from "@/stores/userStore.js";
-import {isGreaterEqual} from "@/utils/calendarLogic.js";
+import {formatToDjangoDate, isGreaterEqual} from "@/utils/calendarLogic.js";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import AppRoundButton from "@/components/generic/AppRoundButton.vue";
 import TamaEditTaskEdit from "@/components/edit/TamaEditTaskEdit.vue";
@@ -84,9 +107,9 @@ const updateHeight = () => {
 onMounted(() => {
   updateHeight()
   window.addEventListener('resize', updateHeight);
-  const convertedTask = convertTask(props.taskObject, today.value, userStore.userFocus)
+  const convertedTask = convertTask(props.taskObject, props.addDate, userStore.userFocus)
   currentTask.value = convertedTask.obj
-  fallBackTask.value = convertTask(props.taskObject, today.value, userStore.userFocus).obj
+  fallBackTask.value = convertTask(props.taskObject, props.addDate, userStore.userFocus).obj
   editFunctionKeys.value = convertedTask.functions
   activeFunctions.value = [
       isGreaterEqual(today.value, convertedTask.obj.end_date) ? 'inProgress' : '',
@@ -114,6 +137,9 @@ const props = defineProps({
   slideUpHeight: {
     type: Number,
     required: false,
+  },
+  addDate: {
+    type: Date
   }
 })
 
@@ -126,13 +152,10 @@ const currentTask = ref({})
 const editFunctionKeys = ref([])
 const activeFunctions = ref([])
 const fallBackTask = ref({})
-const functionActive = computed(() =>
-      activeFunctions.value.some(item =>
-        noneInteractive.some(ni => item !== ni)))
 const inProgress = computed(() => isGreaterEqual(today.value, currentTask.value.end_date))
 const modalUnsavedExit = ref(false)
 const currentAction = ref('')
-const mutation = computed(() => taskAltered(currentTask.value, fallBackTask.value))
+const mutation = computed(() => taskAltered(currentTask.value, fallBackTask.value) || currentAction.value === 'trash')
 
 
 watch(activeFunctions, (newValue, oldValue) => {
@@ -225,8 +248,7 @@ const handleSubmitChanges = async () => {
     }
     try {
       await taskStore.createTask({...currentTask.value})
-      userStore.removeDailyByDesc(currentTask.value.description, today.value)
-      userStore.removeDailyByDesc(currentTask.value.description, today.value)
+      userStore.removeDailyByDesc(fallBackTask.value.description, props.addDate)
       emit('on-close')
     } catch (error) {
       showError()
@@ -236,41 +258,15 @@ const handleSubmitChanges = async () => {
       if (currentAction.value === 'trash') {
         await taskStore.deleteTask(props.taskObject.id)
       } else {
-        await taskStore.updateTask(props.taskObject.id, {...props.taskObject, ...currentTask.value})
+        const state = currentTask.value.done ? 'done' : currentTask.value.stroke ? 'cancelled' : 'inProgress'
+        await taskStore.updateTask(props.taskObject.id, currentTask.value, { key: [formatToDjangoDate(props.addDate)], value: state })
       }
       emit('on-close')
     } catch (error) {
-      // todo no connection (should be stored locally but no time to implement)
       showError()
     }
   }
 }
-
-/*const handleDoneClicked = () => {
-  const task = !props.isDaily ? currentTask.value : createDaily(props.taskObject.desc, today.value, userStore.userFocus)
-  if (undoneDaily.value) {
-    taskStore.createTask(task)
-
-    emit('onExit')
-  } else {
-    task.done = !task.done
-    task.stroke = false
-    taskStore.updateTask(task.id, task)
-  }
-}
-
-const handleStrokeClicked = () => {
-  const task = currentTask.value
-  task.stroke = !task.stroke
-  task.done = false
-  taskStore.updateTask(currentTask.value.id, task)
-}
-
-
-const handleDeleteClicked = () => {
-  taskStore.deleteTask(currentTask.value.id)
-  emit('onExit')
-}*/
 </script>
 
 <style scoped>
