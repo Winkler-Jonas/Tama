@@ -1,71 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Activate Your Account</title>
-    <style>
-        /* Import the font */
-        @import url('https://fonts.googleapis.com/css2?family=Short+Stack&display=swap');
+<html lang="de">
 
-        /* Define base styles and fallbacks */
-        body, p, h1, h2, h3, a, li {
-            font-family: 'Short Stack', 'Comic Sans MS', Arial, sans-serif;
-        }
-    </style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aktiviere deinen Account</title>
 </head>
-<body style="background: #83B6C7; margin: 0; padding: 20px; font-family: 'Short Stack', 'Comic Sans MS', Arial, sans-serif;">
-<table width="100%" cellspacing="0" cellpadding="0"
-       style="max-width: 600px; margin: auto; background: #ffffff; padding: 20px;">
-    <tr>
-        <td style="text-align: center; padding: 10px;">
-            <img src="https://tamado.app/assets/pet-UTjUnlmj.png" alt="logo"
-                 style="width: 100px; height: 100px; border-radius: 50%;">
-        </td>
-        <td style="text-align: center;">
-            <h1 style="font-size: 24px; margin: 0;">Tamado</h1>
-            <p>Account Aktivierung</p>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2" style="text-align: center;">
-            <h2>Hi {{ user.username }},</h2>
-            <p>Vielen Dank für die Registrierung. Bitte klick auf den Button unten, um deinen Account zu aktivieren.</p>
-            <p style="background-color: #FFA976; border-radius: 10px; padding: 10px; display: inline-block;">
-                <a href="https://{{ domain }}/activate/{{ uid }}/{{ token }}/"
-                   style="color: white; text-decoration: none;">Account aktivieren</a>
-            </p>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2">
-            <hr style="border: 0; height: 1px; background: #333; margin: 20px 0;">
-            <h3>Installiere Tamado auf deinem Smartphone</h3>
-            <table width="100%" cellspacing="0" cellpadding="0">
-                <tr>
-                    <td valign="top">
-                        <h4>Android</h4>
-                        <ol>
-                            <li>Öffne Chrome</li>
-                            <li>Navigiere zu <a href="https://{{ domain }}">Tamado</a></li>
-                            <li>Tippe auf das Menüsymbol</li>
-                            <li>Wähle 'Zum Startbildschirm hinzufügen'</li>
-                            <li>Befolge die Anweisungen</li>
-                        </ol>
-                    </td>
-                    <td valign="top">
-                        <h4>iPhone</h4>
-                        <ol>
-                            <li>Öffne Safari</li>
-                            <li>Besuche <a href="https://{{ domain }}">Tamado</a></li>
-                            <li>Tippe auf das Teilen-Symbol</li>
-                            <li>Wähle 'Zum Home-Bildschirm hinzufügen'</li>
-                            <li>Befolge die Anweisungen</li>
-                        </ol>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
+
+<body style="background-color: #ffffff; margin: 0; padding: 0; font-family: Arial, sans-serif; color: black;">
+  <div style="max-width: 600px; margin: 40px auto; background-color: #f7ede2; padding: 20px; border-radius: 8px; box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);">
+    <div style="text-align: center; padding-bottom: 20px;">
+      <table align="center" style="background-color: #83B6C7; width: 175px; height: 175px; border-radius: 50%; margin: 0 auto 20px;">
+        <tr>
+          <td align="center" valign="middle">
+            <img src="https://tamado.app/assets/pet-UTjUnlmj.png" alt="tamado.app Logo" style="width: 65%;">
+          </td>
+        </tr>
+      </table>      
+      <h2 style="margin: 0; font-family: Arial, sans-serif;">Aktiviere deinen Tamado Account</h2>
+    </div>
+    <div style="padding: 20px; text-align: center; border-top: 2px solid #eeeeee;">
+      <p><strong>Hi {{ user.username }},</strong></p>
+      <p>vielen Dank für deine Anmeldung bei Tamado.app. Um deine Anmeldung abzuschließen, bestätige bitte deine E-Mail-Adresse.</p>
+      <div style="text-align: center; margin: 20px 0;">
+        <a href="https://{{ domain }}/activate/{{ uid }}/{{ token }}/" style="background-color: #FFA976; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 16px;">E-Mail-Adresse bestätigen</a>
+      </div>
+    </div>
+    <div style="padding: 20px; text-align: center; border-top: 2px solid #eeeeee;">
+      <h3 style="margin-top: 20px; font-family: Arial, sans-serif;">Installiere Tamado auf deinem Smartphone</h3>
+      <table cellspacing="0" cellpadding="0" style="text-align: left; width: 100%; margin-top: 20px;">
+        <tr>
+          <td valign="top" style="padding: 10px;">
+            <h4 style="margin-bottom: 0; font-family: Arial, sans-serif;">Android</h4>
+            <ol style="padding: 20px; padding-left: 16px; margin-top: 0;">
+              <li>Öffne Chrome</li>
+              <li>Navigiere zu <a href="https://{{ domain }}" style="color: #FFA976;">Tamado</a></li>
+              <li>Tippe auf das Menüsymbol</li>
+              <li>Wähle 'Zum Startbildschirm hinzufügen'</li>
+              <li>Befolge die Anweisungen</li>
+            </ol>
+          </td>
+          <td valign="top" style="padding: 10px;">
+            <h4 style="margin-bottom: 0; font-family: Arial, sans-serif;">iPhone</h4>
+            <ol style="padding: 20px; padding-left: 16px; margin-top: 0;">
+              <li>Öffne Safari</li>
+              <li>Besuche <a href="https://{{ domain }}" style="color: #FFA976;">Tamado</a></li>
+              <li>Tippe auf das Teilen-Symbol</li>
+              <li>Wähle 'Zum Home-Bildschirm hinzufügen'</li>
+              <li>Befolge die Anweisungen</li>
+            </ol>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
 </body>
+
 </html>
