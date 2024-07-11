@@ -1,5 +1,30 @@
+/*
+* This file is part of Project-Tamado.
+*
+* Copyright (c) 2024 Jonas Winkler
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 <template>
-  <tama-focus-select :show-focus-select="!userStore.userFocus"/>
+  <tama-focus-select :show-focus-select="!userStore.getUserFocus()"/>
+  <tama-level-bar :current-points="0" :next-level="100" />
+  <tama-food-icon ref="foodRef" :tama-height="$route.meta.tama" @on-value-change="handleFoodIcon"/>
   <section id="tama-profile-view"
            :style="`top: ${$route.meta.tama}vh; height: ${100 - $route.meta.tama}vh`"
            class="main-gl-view">
@@ -55,9 +80,13 @@ import TamaDailyTasks from "@/components/target/TamaDailyTasks.vue";
 import {isGreaterEqual} from '@/utils/calendarLogic.js'
 import TamaFocusSelect from "@/components/focus/TamaFocusSelect.vue";
 import {useUserStore} from "@/stores/userStore.js";
+import {useAuthStore} from "@/stores/auth.js";
+import TamaLevelBar from "@/components/generic/TamaLevelBar.vue";
+import TamaFoodIcon from "@/components/generic/TamaFoodIcon.vue";
 
 const taskStore = useTaskStore()
 const userStore = useUserStore()
+const authStore = useAuthStore()
 
 const totalDailyTasks = ref(0)
 const totalNormalTasks = ref(0)
@@ -72,12 +101,19 @@ const selectedTask = ref({})
 const isDaily = ref(false)
 const slideUpHeight = ref(60)
 const showModal = ref(false)
+const currentPoints = ref(0)
+const requiredPoints = ref(0)
+const foodRef = ref(null)
 
 const modalViews = {
   TamaAddTask,
   TamaEditTask
 }
 
+const handleFoodIcon = (currentGoal) => {
+  currentPoints.value = currentGoal.current
+  requiredPoints.value = currentGoal.final
+}
 
 const handleHeightChange = (heightInVH) => {
   slideUpHeight.value = heightInVH
@@ -119,6 +155,7 @@ const handleTaskAdded = () => {
   taskStore.fetchTasks(currentMonth.value, currentYear.value)
   todayTasks.value = taskStore.getTasksByDate(currentDate.value)
   handleModalClose()
+  foodRef.value.handleClick()
 }
 
 const handleMonthChange = (monthYear) => {

@@ -108,6 +108,26 @@
     },
     "target": {
       "none": "Nichts zu tun, drücke \"+\" und füge eine neue Aufgabe hinzu"
+    },
+    "profile": {
+      "greet": "Hallo",
+      "logout": "Abmelden",
+      "invites": "Einladungen",
+      "focus": "Fokus ändern",
+      "friends": {
+        "hdr": "Freunde",
+        "placeholder": "Füge deine Freunde auf Tamado hinzu"
+      },
+      "invite": {
+        "placeholder": "Freunde einladen",
+        "send": "Deine Einladung wurde gesendet",
+        "error": "Wir konnten deine Einladung leider nicht senden",
+        "from": "Von:",
+        "at": "Am:"
+      }
+    },
+    "calendar":{
+      "hdr": "Aufgaben"
     }
   },
   "error": {
@@ -240,6 +260,10 @@
       "education": "Bildung",
       "hobbies": "Hobby",
       "finance": "Sparen"
+    },
+    "scoreBoard": {
+      "done": "Tasks abgeschlossen:",
+      "open": "Tasks offen:"
     }
   }
 }

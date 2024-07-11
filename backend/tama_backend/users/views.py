@@ -1,20 +1,47 @@
+#
+# This file is part of Project-Tamado.
+#
+# Copyright (c) 2024 Jonas Winkler
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from django.db import transaction
+from django.db import IntegrityError
+from django.db.models import Q
+from rest_framework.views import APIView
+from django.core.mail import EmailMessage
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.contrib.auth import authenticate, get_user_model
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
-from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
-from .models import CustomUser
-from .serializers import UserSerializer
+from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils.encoding import force_bytes, force_str
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from .models import CustomUser, FriendInvitation, Friendship, FOCUS_CATEGORIES
+from .serializers import UserSerializer, FriendInvitationSerializer, FriendshipSerializer
 
 
 # Utility functions
@@ -95,6 +122,15 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
         serializer = self.get_serializer(user)
         return Response(serializer.data)
 
+    def post(self, request, *args, **kwargs):
+        user = self.get_object()
+        focus = request.data.get('focus')
+        if focus is not None:
+            user.focus = focus
+            user.save(update_fields=['focus'])
+            return Response({'status': 'Focus updated successfully'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Focus parameter not provided'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ActivateView(generics.GenericAPIView):
@@ -136,3 +172,89 @@ class ResendActivationEmailView(APIView):
         send_activation_email(user, request)
         return Response({"message": "Activation email resent"}, status=status.HTTP_200_OK)
 
+
+class SendFriendInvitationView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def post(self, request):
+        receiver_username = request.data.get('receiver')
+        if not receiver_username:
+            return Response({'error': 'Invalid request: username required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if receiver_username == request.user.username:
+            return Response({'error': 'Cannot invite yourself'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            receiver = CustomUser.objects.get(username=receiver_username)
+            invitation = FriendInvitation(sender=request.user, receiver=receiver)
+            invitation.save()
+            return Response({'status': 'Invitation sent'}, status=status.HTTP_201_CREATED)
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'Receiver not found'}, status=status.HTTP_404_NOT_FOUND)
+        except IntegrityError:
+            return Response({'error': 'Invitation already sent'}, status=status.HTTP_409_CONFLICT)
+
+
+class ListFriendInvitationsView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        invitations = FriendInvitation.objects.filter(receiver=request.user, accepted=False)
+        serializer = FriendInvitationSerializer(invitations, many=True)
+        return Response(serializer.data)
+
+
+class AcceptFriendInvitationView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def post(self, request, invitation_id):
+        invitation = FriendInvitation.objects.filter(id=invitation_id, receiver=request.user).first()
+        if invitation:
+            with transaction.atomic():
+                Friendship.objects.create(user1=invitation.sender, user2=invitation.receiver)
+                Friendship.objects.create(user1=invitation.receiver, user2=invitation.sender)
+                invitation.delete()
+            return Response({'status': 'friendship established'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Invalid invitation'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ListFriendsView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    serializer_class = FriendshipSerializer
+
+    def get_queryset(self):
+        return Friendship.objects.filter(user1=self.request.user)
+
+
+class UserFriendDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    serializer_class = FriendshipSerializer
+    lookup_field = 'pk'
+
+    def get_queryset(self):
+        user = self.request.user
+        return Friendship.objects.filter(Q(user1=user) | Q(user2=user))
+
+    def destroy(self, request, *args, **pk):
+        friendship = self.get_object()
+
+        if not friendship:
+            return Response({'error': 'Friendship not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            with transaction.atomic():
+                inverse_friendship = Friendship.objects.filter(user1=friendship.user2, user2=friendship.user1).first()
+                friendship.delete()
+                if inverse_friendship:
+                    inverse_friendship.delete()
+
+            return Response({'status': 'Friendship ended successfully'}, status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

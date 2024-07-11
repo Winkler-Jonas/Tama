@@ -108,6 +108,26 @@
     },
     "target": {
       "none": "Nothing to do, press \"+\" and add a new Task"
+    },
+    "profile": {
+      "greet": "Hi",
+      "logout": "Log out",
+      "invites": "Invites",
+      "focus": "Change focus",
+      "friends": {
+        "hdr": "Friends",
+        "placeholder": "Add your friends on Tamado"
+      },
+      "invite": {
+        "placeholder": "Invite a friend",
+        "send": "Your invite was sent",
+        "error": "We couldn't send your invite",
+        "from": "From:",
+        "at": "On:"
+      }
+    },
+    "calendar":{
+      "hdr": "Tasks"
     }
   },
   "error": {
@@ -240,6 +260,10 @@
       "education": "Education",
       "hobbies": "Hobby",
       "finance": "Save Money"
+    },
+    "scoreBoard": {
+      "done": "Tasks done:",
+      "open": "Tasks open:"
     }
   }
 }

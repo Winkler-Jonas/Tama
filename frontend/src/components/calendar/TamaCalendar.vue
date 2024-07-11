@@ -1,3 +1,26 @@
+/*
+* This file is part of Project-Tamado.
+*
+* Copyright (c) 2024 Jonas Winkler
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 <template>
   <div class="tama-full-calendar">
     <div class="tama-full-calendar-header">
@@ -32,6 +55,7 @@
                 :style="day.month !== currentMonthDigit ? 'color: var(--tama-color-gray)' : ''"
                 :is-selected="[weekIdx, dayIdx].every((value, index) => value === currentSelected[index])"
                 :is-today="!simpleCalendar ? isToday(day.date) : isStartDate(day.date)"
+                :has-task="taskDates.includes(formatToDjangoDate(day.date))"
                 :calendar-digit="day.day_date"
                 @on-select="handleDaySelect(weekIdx, dayIdx, day.date)"
             />
@@ -43,7 +67,7 @@
 </template>
 
 <script setup>
-import {getCurrentMonth, getNextMonth, getPreviousMonth, isEqual} from "@/utils/calendarLogic.js";
+import {formatToDjangoDate, getCurrentMonth, getNextMonth, getPreviousMonth, isEqual} from "@/utils/calendarLogic.js";
 import TamaCalendarDigit from "@/components/calendar/TamaCalendarDigit.vue";
 import {computed, onBeforeMount, onMounted, ref, watch} from "vue";
 import {useUserStore} from "@/stores/userStore.js";
@@ -68,6 +92,10 @@ const props = defineProps({
   endDate: {
     type: Date,
     required: false
+  },
+  taskDates: {
+    type: Array,
+    default: []
   }
 })
 
@@ -178,13 +206,16 @@ const handleSwipeLeft = () => {
 }
 
 onBeforeMount(() => {
-  const start = new Date(startDate.value)
+  const start = new Date(blueCircle.value)
   createMonthArray(start)
   monthDays.value = getCurrentMonth(start, userStore.weekStart ? 1 : 0)
 })
 
 onMounted(() => {
-  currentSelected.value = findIndexOfDate(monthDays.value, orangeCircle.value)
+  if (props.simpleCalendar) {
+    currentSelected.value = findIndexOfDate(monthDays.value, orangeCircle.value)
+  }
+  currentSelected.value = [-1, -1] // remove selection for calendar view
   currentMonth.value = prevCurNextMonth.value[1]
 })
 
@@ -206,7 +237,12 @@ const handleDaySelect = async (week, day, date) => {
     handleSwipeLeft()
     currentSelected.value = findIndexOfDate(currentMonth.value, dateCpy)
   } else {
-    currentSelected.value = [week, day]
+    if (currentSelected.value.every((value, index) => value === [week, day][index])) {
+      date = null
+      currentSelected.value = [-1, -1]
+    } else {
+      currentSelected.value = [week, day]
+    }
   }
   emit('on-date-select', date)
   // retrieve Data from Date
@@ -220,7 +256,7 @@ const currentMonthDigit = computed(() => {
 
 watch(currentMonthDigit, (newValue, oldValue) => {
   if (newValue !== oldValue) {
-    emit('onMonthChange', {month: newValue, year: currentMonth.value.at(3).at(-1).date.getFullYear()})
+    emit('onMonthChange', {month: newValue + 1, monthStr: getHeader.value.month, year: currentMonth.value.at(3).at(-1).date.getFullYear()})
   }
 })
 
@@ -247,6 +283,10 @@ const getHeader = computed(() => {
     }
   }
   return {year: '', month: ''}
+})
+
+defineExpose({
+  getHeader
 })
 
 </script>

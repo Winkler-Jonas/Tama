@@ -1,3 +1,26 @@
+/*
+* This file is part of Project-Tamado.
+*
+* Copyright (c) 2024 Jonas Winkler
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 import { defineStore } from 'pinia';
 import api from '@/services/api';
 import {formatToDateString, formatToDjangoDate} from "@/utils/calendarLogic.js";
@@ -17,9 +40,35 @@ export const useTaskStore = defineStore('task', {
             const targetDate = formatToDjangoDate(date)
             return state.tasks.filter(task => Object.keys(task.task_instances).includes(targetDate));
         },
-        getTasksOfMonth: (state) => (date) => {
-            const yearMonth = formatToDjangoDate(date).substring(0, 7);
-            const x = state.tasks.filter(task => task.start_date.includes(yearMonth))
+        getTasksOfMonth: (state) => (dateStr) => {
+            try {
+                const filteredTasks = state.tasks.filter(task =>
+                    Object.keys(task.task_instances).some(dateKey =>
+                        dateKey.substring(0, 7) === dateStr
+                    )
+                );
+
+                // Then sort these tasks by the earliest date within the specified month in their task_instances
+                return filteredTasks.sort((taskA, taskB) => {
+                    // Find the earliest date in the specified month for taskA
+                    const datesA = Object.keys(taskA.task_instances)
+                        .filter(date => date.substring(0, 7) === dateStr)
+                        .sort();
+                    const earliestDateA = datesA.length > 0 ? new Date(datesA[0]) : new Date();
+
+                    // Find the earliest date in the specified month for taskB
+                    const datesB = Object.keys(taskB.task_instances)
+                        .filter(date => date.substring(0, 7) === dateStr)
+                        .sort();
+                    const earliestDateB = datesB.length > 0 ? new Date(datesB[0]) : new Date();
+
+                    // Compare the two dates to determine order
+                    return earliestDateA - earliestDateB;
+                });
+            } catch (error) {
+                console.log(error)
+            }
+
         }
     },
 
