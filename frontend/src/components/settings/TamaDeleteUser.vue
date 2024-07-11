@@ -56,7 +56,7 @@ const handleExitClicked = () => {
 const handleUserDelete = async () => {
   try {
     await authStore.deleteUser()
-    await router.push('/welcome')
+    await router.push('/')
   } catch (error) {
     serverError.value = true
   }

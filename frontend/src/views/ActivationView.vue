@@ -75,7 +75,7 @@ const activateAccount = async () => {
 }
 
 const handleButtonClick = () => {
-  router.push('/login')
+  router.push('/')
 }
 
 onMounted(() => {
